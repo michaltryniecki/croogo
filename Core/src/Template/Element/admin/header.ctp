@@ -30,9 +30,9 @@ $dashboardUrl = (new StringConverter())->linkStringToArray(
             'type' => 'dropdown',
             'htmlAttributes' => [
                 'id' => 'top-right-menu',
-                'class' => 'navbar-nav ml-auto',
+                'class' => 'nav navbar-nav ml-auto',
             ],
         ]);
         ?>
     <?php endif; ?>
-</header>
+</header> 

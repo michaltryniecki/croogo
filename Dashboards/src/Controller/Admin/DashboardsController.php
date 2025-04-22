@@ -66,6 +66,10 @@ class DashboardsController extends AppController
      */
     public function dashboard()
     {
+        if( $this->Auth->user('role_id') == 8 ) {
+            $this->redirect(['plugin' => 'Mobile', 'controller' => 'Wms', 'action' => 'index']);
+        }
+
         $boxesForDashboard = $this->Dashboards->find('all')->select([
             'id',
             'alias',

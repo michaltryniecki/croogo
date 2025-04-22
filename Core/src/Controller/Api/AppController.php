@@ -58,6 +58,10 @@ class AppController extends Controller
                 'parameter' => 'token',
                 'queryDatasource' => true,
             ];
+
+//            $authConfig['authorize']['ADmad/JwtAuth.Jwt'] = [
+//                'actionPath' => 'controllers',
+//            ];
         }
 
         return $authConfig;

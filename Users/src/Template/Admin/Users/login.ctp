@@ -38,9 +38,6 @@ $formEnd = $this->Form->end();
 
 ?>
 <div class="card rounded-plus bg-faded">
-    <div class="card-header">
-        <h5 class="card-title"><?= $this->fetch('title') ?></h5>
-    </div>
     <?= $formStart ?>
     <div class="card-body">
         <?php

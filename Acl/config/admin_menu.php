@@ -15,13 +15,3 @@ Nav::add('sidebar', 'users.children.permissions', [
     'weight' => 30,
 ]);
 
-Nav::add('sidebar', 'settings.children.acl', [
-    'title' => __d('croogo', 'Access Control'),
-    'url' => [
-        'prefix' => 'admin',
-        'plugin' => 'Croogo/Settings',
-        'controller' => 'Settings',
-        'action' => 'prefix',
-        'Access Control',
-    ],
-]);

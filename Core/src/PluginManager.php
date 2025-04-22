@@ -94,11 +94,11 @@ class PluginManager extends Plugin
      * @access public
      */
     public static $bundledPlugins = [
-        'Croogo/Blocks',
-        'Croogo/Contacts',
+//        'Croogo/Blocks',
+//        'Croogo/Contacts',
         'Croogo/Dashboards',
-        'Croogo/FileManager',
-        'Croogo/Meta',
+//        'Croogo/FileManager',
+//        'Croogo/Meta',
         'Croogo/Menus',
         'Croogo/Nodes',
         'Croogo/Taxonomy',
@@ -1368,13 +1368,13 @@ class PluginManager extends Plugin
             $corePlugins = [
                 'Croogo/Settings',
                 'Croogo/Acl',
-                'Croogo/Blocks',
-                'Croogo/Comments',
-                'Croogo/Contacts',
+//                'Croogo/Blocks',
+//                'Croogo/Comments',
+//                'Croogo/Contacts',
                 'Croogo/Menus',
-                'Croogo/Meta',
-                'Croogo/Nodes',
-                'Croogo/Taxonomy',
+//                'Croogo/Meta',
+//                'Croogo/Nodes',
+//                'Croogo/Taxonomy',
                 'Croogo/Users',
                 'Croogo/Wysiwyg',
                 'Croogo/Ckeditor',
@@ -1425,11 +1425,13 @@ class PluginManager extends Plugin
          */
         $aclPlugin = Configure::read('Site.acl_plugin');
         $pluginBootstraps = Configure::read('Hook.bootstraps');
+//        $pluginBootstraps = 'Croogo/Settings,Croogo/Menus,Croogo/Users,Croogo/FileManager,Croogo/Wysiwyg,Croogo/Dashboards,Sd,Products,EbayUK';
         $plugins = array_filter(explode(',', $pluginBootstraps));
 
         if (!in_array($aclPlugin, $plugins)) {
             $plugins = Hash::merge((array)$aclPlugin, $plugins);
         }
+
         $themes = [Configure::read('Site.theme'), Configure::read('Site.admin_theme')];
         time(function () use ($app, $plugins, $themes) {
             $option = [
@@ -1439,6 +1441,7 @@ class PluginManager extends Plugin
                 'routes' => true,
                 'events' => true
             ];
+
             foreach ($plugins as $plugin) {
                 $plugin = Inflector::camelize($plugin);
                 if (Plugin::isLoaded($plugin)) {

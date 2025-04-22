@@ -421,11 +421,11 @@ class CroogoHelper extends Helper
      */
     public function adminTab($title, $url, $options = [])
     {
-        $options = Hash::merge([
-            'data-toggle' => 'tab',
-        ], $options);
+//        $options = Hash::merge([
+//            'data-toggle' => 'tab',
+//        ], $options);
 
-        $options = $this->addClass($options, 'nav-link');
+        $options = $this->addClass($options, 'nav-link scroll');
 
         return $this->Html->tag('li', $this->Html->link($title, $url, $options), [
             'class' => 'nav-item',
@@ -473,7 +473,7 @@ class CroogoHelper extends Helper
                             $entity = $this->_View->viewVars[$this->_View->viewVars['viewVar']];
                             $tab['options']['elementData']['entity'] = $entity;
                         }
-                        $output .= $this->Html->tabStart($domId);
+                        $output .= $this->Html->tabStart($domId, ['class' => 'wayPoint']);
                         $output .= $this->_View->element(
                             $tab['element'],
                             $tab['options']['elementData'],

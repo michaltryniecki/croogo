@@ -106,25 +106,21 @@ class CroogoComponent extends Component
      */
     protected function _adminMenus()
     {
-        Nav::add('top-left', 'site', [
-            'icon' => false,
-            'title' => __d('croogo', 'Visit website'),
-            'url' => '/',
-            'weight' => 0,
-            'htmlAttributes' => [
-                'target' => '_blank',
-            ],
-        ]);
-
         $user = $this->getController()->request->getSession()->read('Auth.User');
         if (empty($user)) {
             return;
         }
-        $gravatarUrl = '<img src="//www.gravatar.com/avatar/' . md5($user['email']) . '?s=23" class="rounded mx-auto"/> ';
+//        $gravatarUrl = '<img src="//www.gravatar.com/avatar/' . md5($user['email']) . '?s=23" class="rounded mx-auto"/> ';
+//        Nav::add('top-right', 'events', [
+//            'icon' => 'bell',
+//            'title' => '',
+//            'url' => '#'
+//        ]);
         Nav::add('top-right', 'user', [
-            'icon' => false,
-            'title' => $user['username'],
-            'before' => $gravatarUrl,
+            'icon' => 'user',
+            'title' => '',
+//            'title' => $user['username'],
+            // 'before' => $gravatarUrl,
             'url' => '#',
             'children' => [
                 'profile' => [
@@ -139,6 +135,186 @@ class CroogoComponent extends Component
                     ],
                 ],
                 'separator-1' => [
+                    'separator' => true,
+                ],
+                'users' => [
+                    'icon' => 'users',
+                    'title' => __d('croogo', 'Users'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'Croogo/Users',
+                        'controller' => 'Users',
+                        'action' => 'index',
+                    ]
+                ],
+                'roles' => [
+                    'icon' => 'user-tag',
+                    'title' => __d('croogo', 'Roles'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'Croogo/Users',
+                        'controller' => 'Roles',
+                        'action' => 'index',
+                    ]
+                ],
+                'permissions' => [
+                    'icon' => 'user-lock',
+                    'title' => __d('croogo', 'Permissions'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'Croogo/Acl',
+                        'controller' => 'Permissions',
+                        'action' => 'index',
+                    ],
+                ],
+                'separator-2' => [
+                    'separator' => true,
+                ],
+                'cron' => [
+                    'icon' => 'stopwatch',
+                    'title' => __d('croogo', 'Jobs monitor'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'GpQueue',
+                        'controller' => 'QueuedJobs',
+                        'action' => 'index'
+                    ],
+                ],
+                'relist' => [
+                    'icon' => 'redo',
+                    'title' => __d('croogo', 'Relist monitor'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'Products',
+                        'controller' => 'relist',
+                        'action' => 'index'
+                    ],
+                ],
+                'separator-3' => [
+                    'separator' => true,
+                ],
+                'dictionaries' => [
+                    'icon' => 'book',
+                    'title' => __d('products', 'Dictionaries'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'products',
+                        'controller' => 'dictionaries',
+                        'action' => 'index'
+                    ]
+                ],
+                'ebay_store' => [
+                    'icon' => 'store',
+                    'title' => __d('products', 'eBay Store Cat.'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'products',
+                        'controller' => 'ebay-store-categories',
+                        'action' => 'index'
+                    ]
+                ],
+                'templates' => [
+                    'icon' => 'columns',
+                    'title' => __d('products', 'Templates'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'products',
+                        'controller' => 'templates',
+                        'action' => 'index'
+                    ]
+                ],
+                'orders' => [
+                    'icon' => 'shopping-cart',
+                    'title' => __d('products', 'Orders'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'orders',
+                        'controller' => 'orders',
+                        'action' => 'index'
+                    ]
+                ],
+                'warehouses' => [
+                    'icon' => 'warehouse',
+                    'title' => __d('products', 'Warehouses'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'products',
+                        'controller' => 'warehouses',
+                        'action' => 'index'
+                    ]
+                ],
+                'transfers' => [
+                    'icon' => 'list',
+                    'title' => __d('products', 'Transfers'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'products',
+                        'controller' => 'warehouse-transfers',
+                        'action' => 'index'
+                    ]
+                ],
+                'vehicles' => [
+                    'icon' => 'car',
+                    'title' => __d('products', 'Vehicles'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'products',
+                        'controller' => 'vehicles',
+                        'action' => 'index'
+                    ]
+                ],
+                'vin_vehicles' => [
+                    'icon' => 'car',
+                    'title' => __d('products', 'Vin database'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'products',
+                        'controller' => 'vin-vehicles',
+                        'action' => 'index'
+                    ]
+                ],
+                'statistics' => [
+                    'icon' => 'chart-line',
+                    'title' => __d('products', 'Statistics'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'statistics',
+                        'controller' => 'statistics',
+                        'action' => 'index'
+                    ]
+                ],
+                'events' => [
+                    'icon' => 'history',
+                    'title' => __d('products', 'Events'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'events',
+                        'controller' => 'events',
+                        'action' => 'index'
+                    ]
+                ],
+                'extensions' => [
+                    'icon' => 'magic',
+                    'title' => __d('croogo', 'Extensions'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'Croogo/Extensions',
+                        'controller' => 'Plugins',
+                        'action' => 'index',
+                    ]
+                ],
+                'settings' => [
+                    'icon' => 'cog',
+                    'title' => __d('croogo', 'Settings'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'Croogo/Settings',
+                        'controller' => 'Settings',
+                        'action' => 'prefix',
+                        'Currency Exchange',
+                    ]
+                ],
+                'separator-4' => [
                     'separator' => true,
                 ],
                 'logout' => [

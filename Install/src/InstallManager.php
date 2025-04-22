@@ -9,7 +9,6 @@ use Cake\Core\Plugin;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\LogTrait;
-use Cake\Utility\Security;
 use Cake\ORM\TableRegistry;
 use Croogo\Acl\AclGenerator;
 use Croogo\Core\Database\SequenceFixer;
@@ -20,6 +19,8 @@ class InstallManager
 {
     const PHP_VERSION = '7.1.30';
     const CAKE_VERSION = '3.8.0';
+
+    const DATASOURCE_REGEX = "/(\'Datasources'\s\=\>\s\[\n\s*\'default\'\s\=\>\s\[\n\X*\'__FIELD__\'\s\=\>\s\').*(\'\,)(?=\X*\'test\'\s\=\>\s)/";
 
     use LogTrait;
 
@@ -67,29 +68,20 @@ class InstallManager
         ];
     }
 
-    /**
-     * Set the security.salt value in application config file
-     *
-     * @return string Success or error message
-     */
-    public function replaceSalt()
+    protected function _updateDatasourceConfig($path, $field, $value)
     {
-        $file = ROOT . '/config/app.php';
-        $content = file_get_contents($file);
-        $newKey = hash('sha256', Security::randomBytes(64));
+        $config = file_get_contents($path);
+        $config = preg_replace(
+            str_replace('__FIELD__', $field, InstallManager::DATASOURCE_REGEX),
+            '$1' . addslashes($value) . '$2',
+            $config
+        );
 
-        $content = str_replace('__SALT__', $newKey, $content, $count);
-
-        if ($count == 0) {
-            return 'No Security.salt placeholder to replace.';
+        if (function_exists('opcache_reset')) {
+            opcache_reset();
         }
 
-        $result = file_put_contents($file, $content);
-        if ($result) {
-            return 'Updated Security.salt value in config/' . $file;
-        }
-
-        return 'Unable to update Security.salt value.';
+        return file_put_contents($path, $config);
     }
 
     public function createDatabaseFile($config)
@@ -106,7 +98,6 @@ class InstallManager
         ConnectionManager::setConfig('default', $config);
 
         try {
-            /** @var \Cake\Database\Connection */
             $db = ConnectionManager::get('default');
             $db->connect();
         } catch (MissingConnectionException $e) {
@@ -121,7 +112,11 @@ class InstallManager
         }
 
         $configPath = ROOT . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'app.php';
-        DatasourceConfigUpdater::update($configPath, $config);
+        foreach (['host', 'username', 'password', 'database', 'driver'] as $field) {
+            if (isset($config[$field]) && (!empty($config[$field] || $field == 'password'))) {
+                $this->_updateDatasourceConfig($configPath, $field, $config[$field]);
+            }
+        }
 
         return true;
     }
@@ -231,6 +226,31 @@ class InstallManager
         return $croogoPlugin->seed($plugin);
     }
 
+    /**
+     * Create admin user
+     *
+     * @var User $user User entity
+     * @return If user is created
+     */
+    public function createAdminUser($user)
+    {
+        $Users = TableRegistry::get('Croogo/Users.Users');
+        $Roles = TableRegistry::get('Croogo/Users.Roles');
+        $Roles->addBehavior('Croogo/Core.Aliasable');
+
+        $user->name = $user['username'];
+        $user->email = '';
+        $user->timezone = 'UTC';
+        $user->role_id = $Roles->byAlias('superadmin');
+        $user->status = true;
+        $user->activation_key = md5(uniqid());
+        if ($user->getErrors()) {
+            return __d('croogo', 'Unable to create administrative user. Validation errors:');
+        }
+
+        return $Users->save($user) !== false;
+    }
+
     public function setupAcos()
     {
         Cache::clearAll();
@@ -280,8 +300,8 @@ class InstallManager
             'controllers/Croogo\Users/Users/forgot' => [$public],
             'controllers/Croogo\Users/Users/reset' => [$public],
             'controllers/Croogo\Users/Users/login' => [$public],
-            'controllers/Croogo\Users/Users/logout' => [$public, $registered],
-            'controllers/Croogo\Users/Admin/Users/logout' => [$public, $registered],
+            'controllers/Croogo\Users/Users/logout' => [$registered],
+            'controllers/Croogo\Users/Admin/Users/logout' => [$registered],
             'controllers/Croogo\Users/Users/view' => [$registered],
 
             'controllers/Croogo\Dashboards/Admin/Dashboards' => [$admin],

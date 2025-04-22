@@ -171,11 +171,11 @@ class UsersController extends AppController
 
     public function afterCrudSave(Event $event)
     {
-        if ($event->getSubject()->success && $event->getSubject()->created) {
-            if ($this->getRequest()->getData('notification') != null) {
-                $this->Users->sendActivationEmail($event->getSubject()->entity);
-            }
-        }
+//        if ($event->getSubject()->success && $event->getSubject()->created) {
+//            if ($this->getRequest()->getData('notification') != null) {
+//                $this->Users->sendActivationEmail($event->getSubject()->entity);
+//            }
+//        }
     }
 
     public function beforeCrudRedirect(Event $event)

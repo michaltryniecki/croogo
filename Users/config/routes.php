@@ -13,11 +13,13 @@ Router::plugin('Croogo/Users', ['path' => '/'], function (RouteBuilder $route) {
         });
     });
 
-    Router::build($route, '/register', ['controller' => 'Users', 'action' => 'add']);
-    Router::build($route, '/user/:username', ['controller' => 'Users', 'action' => 'view'], ['pass' => ['username']]);
+    Router::build($route, '/', ['controller' => 'Users', 'action' => 'login']);
 
-    Router::build($route, '/users', ['controller' => 'Users', 'action' => 'index']);
-    Router::build($route, '/users/:action/*', ['controller' => 'Users']);
+//    Router::build($route, '/register', ['controller' => 'Users', 'action' => 'add']);
+//    Router::build($route, '/user/:username', ['controller' => 'Users', 'action' => 'view'], ['pass' => ['username']]);
+//
+//    Router::build($route, '/users', ['controller' => 'Users', 'action' => 'index']);
+//    Router::build($route, '/users/:action/*', ['controller' => 'Users']);
 });
 
 Router::plugin('Croogo/Users', ['path' => '/'], function (RouteBuilder $route) {
@@ -31,9 +33,11 @@ Router::plugin('Croogo/Users', ['path' => '/'], function (RouteBuilder $route) {
                     'lookup' => [
                         'action' => 'lookup',
                         'method' => 'GET',
-                    ],
+                    ]
                 ],
             ]);
+
+            $route->connect('/token', ['controller' => 'Users', 'action' => 'token', '_method' => 'POST']);
         });
     });
 });

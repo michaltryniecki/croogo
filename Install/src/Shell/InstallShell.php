@@ -2,12 +2,14 @@
 
 namespace Croogo\Install\Shell;
 
+use App\Console\Installer;
+use App\Controller\Component\AuthComponent;
 use Cake\Cache\Cache;
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
-use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\TableRegistry;
+use Composer\IO\BufferIO;
 use Croogo\Acl\AclGenerator;
 use Croogo\Core\PluginManager;
 use Croogo\Install\InstallManager;
@@ -129,9 +131,7 @@ class InstallShell extends Shell
 
     public function main()
     {
-        $InstallManager = new InstallManager();
-        $this->out();
-        $this->out($InstallManager->replaceSalt());
+        Installer::setSecuritySalt(ROOT, new BufferIO());
         $this->out();
         $this->out('Database settings:');
         $install['datasource'] = $this->_in(__d('croogo', 'DataSource'), [
@@ -148,6 +148,7 @@ class InstallShell extends Shell
         //$install['prefix'] = $this->_in(__d('croogo', 'Prefix'), null, '', 'prefix');
         $install['port'] = $this->_in(__d('croogo', 'Port'), null, null, 'port');
 
+        $InstallManager = new InstallManager();
         $isFileCreated = $InstallManager->createDatabaseFile($install);
         if ($isFileCreated !== true) {
             $this->err($isFileCreated);
@@ -216,10 +217,11 @@ class InstallShell extends Shell
 
         try {
             $this->out('Setting up admin user. Please wait...');
-            $user = TableRegistry::getTableLocator()->get('Croogo/Install.Install')->addAdminUser($user);
+            $Install = TableRegistry::get('Croogo/Install.Install');
+            $Install->addAdminUser($user);
             $InstallManager->installCompleted();
-        } catch (PersistenceFailedException $e) {
-            $this->abort('Error creating admin user: ' . $e->getMessage());
+        } catch (Exception $e) {
+            $this->err('Error creating admin user: ' . $e->getMessage());
         }
 
         $this->out();

@@ -128,14 +128,14 @@ class FileManagerEventHandler implements EventListenerInterface
      */
     public function onSetupAdminData($event)
     {
-        Nav::add('media.children.attachments', [
-            'title' => __d('croogo', 'Attachments'),
-            'url' => [
-                'prefix' => 'admin',
-                'plugin' => 'Croogo/FileManager',
-                'controller' => 'Attachments',
-                'action' => 'index',
-            ],
-        ]);
+//        Nav::add('media.children.attachments', [
+//            'title' => __d('croogo', 'Attachments'),
+//            'url' => [
+//                'prefix' => 'admin',
+//                'plugin' => 'Croogo/FileManager',
+//                'controller' => 'Attachments',
+//                'action' => 'index',
+//            ],
+//        ]);
     }
 }

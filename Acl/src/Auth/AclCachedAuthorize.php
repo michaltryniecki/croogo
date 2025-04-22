@@ -3,6 +3,7 @@
 namespace Croogo\Acl\Auth;
 
 use Acl\Auth\BaseAuthorize;
+use Acl\Controller\Component\AclComponent;
 use Cake\Cache\Cache;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
@@ -120,7 +121,8 @@ class AclCachedAuthorize extends BaseAuthorize
         }
 
         $allowed = false;
-        $Acl = $this->_registry->load('Acl');
+//        $Acl = $this->_registry->load('Acl');
+        $Acl = new AclComponent(new ComponentRegistry());
         list($plugin, $userModel) = pluginSplit($this->getConfig('userModel'));
 
         $action = $this->action($request);

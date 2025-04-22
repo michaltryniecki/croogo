@@ -56,9 +56,9 @@ class Router extends CakeRouter
         if (empty($request['api']) || empty($request['prefix'])) {
             return false;
         }
-        if ($request['api'] !== Configure::read('Croogo.Api.path')) {
-            return false;
-        }
+//        if ($request['api'] !== Configure::read('Croogo.Api.path')) {
+//            return false;
+//        }
 
         return true;
     }

@@ -41,7 +41,11 @@ if (!empty($searchFields)) :
         }
         $options['default'] = $this->getRequest()->getQuery($field);
         $label = __(Inflector::humanize(Inflector::underscore($label)));
-        $options['placeholder'] = __d('croogo', $label);
+
+        if( !isset($options['placeholder']) ) {
+            $options['placeholder'] = __d('croogo', $label);
+        }
+
         $this->Form->unlockField($field);
         echo $this->Form->input($field, $options);
     }

@@ -2,6 +2,7 @@
 
 namespace Croogo\Install\Controller;
 
+use App\Console\Installer;
 use Cake\Cache\Cache;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
@@ -12,7 +13,8 @@ use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
-use Cake\ORM\Exception\PersistenceFailedException;
+use Cake\Utility\File;
+use Composer\IO\BufferIO;
 use Croogo\Install\InstallManager;
 use Exception;
 
@@ -33,15 +35,11 @@ class InstallController extends Controller
         'Welcome', 'Database', 'Admin user', 'Completed'
     ];
 
-    /** @var \Croogo\Install\InstallManager */
-    protected $installManager;
-
     public function initialize()
     {
         $this->loadComponent('Flash');
 
         parent::initialize();
-        $this->installManager = new InstallManager();
     }
 
     /**
@@ -75,21 +73,6 @@ class InstallController extends Controller
      */
     protected function _check()
     {
-        $this->installManager->replaceSalt();
-        if (extension_loaded('pdo_mysql')):
-            $drivers[Mysql::class] = 'MySQL';
-        endif;
-        if (extension_loaded('pdo_sqlite')):
-            $drivers[Sqlite::class] = 'SQLite';
-        endif;
-        if (extension_loaded('pdo_pgsql')):
-            $drivers[Postgres::class] = 'PostgreSQL';
-        endif;
-        if (extension_loaded('pdo_sqlsrv')):
-            $drivers[Sqlserver::class] = 'Microsoft SQL Server';
-        endif;
-        $this->set(compact('drivers'));
-
         if (Configure::read('Croogo.installed') && Configure::read('Install.secured')) {
             $this->Flash->error('Already Installed');
 
@@ -130,8 +113,11 @@ class InstallController extends Controller
             return $this->redirect(['action' => 'adminuser']);
         }
 
+        Installer::setSecuritySalt(ROOT, new BufferIO());
+
         if ($this->getRequest()->is('post')) {
-            $result = $this->installManager->createDatabaseFile($this->getRequest()->getData());
+            $InstallManager = new InstallManager();
+            $result = $InstallManager->createDatabaseFile($this->getRequest()->getData());
             if ($result !== true) {
                 $this->Flash->error($result);
             } else {
@@ -146,14 +132,13 @@ class InstallController extends Controller
         $context = [
             'schema' => true,
             'defaults' => [
-                'driver' => '',
+                'driver' => 'Cake\Database\Driver\Mysql',
                 'host' => 'localhost',
                 'username' => 'root',
                 'database' => 'croogo',
             ],
         ];
         try {
-            /** @var \Cake\Database\Connection */
             $connection = ConnectionManager::get('default');
             $config = $connection->config();
             $currentConfiguration['exists'] = !empty($config) && !($config['username'] === 'my_app' && $config['database'] === 'my_app');
@@ -178,7 +163,6 @@ class InstallController extends Controller
     {
         $this->_check();
 
-        /** @var \Cake\Database\Connection */
         $connection = ConnectionManager::get('default');
         $connection->cacheMetadata(false);
         $schemaCollection = $connection->getSchemaCollection();
@@ -192,8 +176,9 @@ class InstallController extends Controller
             return;
         }
 
+        $install = new InstallManager();
         set_time_limit(10 * MINUTE);
-        $result = $this->installManager->setupDatabase();
+        $result = $install->setupDatabase();
 
         if ($result !== true) {
             $this->Flash->error($result === false ? __d('croogo', 'There was a problem installing Croogo') : $result);
@@ -207,9 +192,10 @@ class InstallController extends Controller
     public function acl()
     {
         try {
-            $this->installManager->controller = $this;
-            $this->installManager->setupAcos();
-            $this->installManager->setupGrants();
+            $install = new InstallManager();
+            $install->controller = $this;
+            $install->setupAcos();
+            $install->setupGrants();
 
             return $this->redirect(['action' => 'adminUser']);
         } catch (Exception $e) {
@@ -243,14 +229,15 @@ class InstallController extends Controller
 
         if ($this->getRequest()->is('put')) {
             Configure::write('Trackable.Auth.User.id', 1);
-            try {
-                $result = $this->Install->addAdminUser($this->getRequest()->getData());
-                $this->getRequest()->getSession()->write('Install.user', $result);
+            $user = $this->Users->patchEntity($user, $this->getRequest()->getData());
+            $install = new InstallManager();
+            $result = $install->createAdminUser($user);
+            if ($result === true) {
+                $this->getRequest()->getSession()->write('Install.user', $user);
 
                 return $this->redirect(['action' => 'finish']);
-            } catch (PersistenceFailedException $e) {
-                $this->Flash->error($e->getMessage());
             }
+            $this->Flash->error($result);
         }
 
         $this->set('user', $user);
@@ -269,7 +256,8 @@ class InstallController extends Controller
     {
         $this->_check();
 
-        $this->installManager->installCompleted();
+        $install = new InstallManager();
+        $install->installCompleted();
 
         $this->set('user', $this->getRequest()->getSession()->read('Install.user'));
         $this->getRequest()->getSession()->destroy();

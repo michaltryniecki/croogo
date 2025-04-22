@@ -8,6 +8,10 @@ if (!$this->getRequest()->is('ajax')) :
         'Croogo/Core.core/ekko-lightbox.min.css',
         'Croogo/Core.core/select2.min.css',
         'Croogo/Core.core/select2-bootstrap.min.css',
+        '/css/bootstrap.min',
+        '/css/all.min',
+        '/css/fontawesome.min',
         'Croogo/Core.core/custom.css',
+        '/css/custom'
     ]);
 endif;

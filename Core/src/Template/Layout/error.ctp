@@ -15,7 +15,6 @@ $this->loadHelper('Croogo/Core.Layout');
 $this->loadHelper('Croogo/Core.Js');
 $this->loadHelper('Croogo/Core.Theme');
 $this->loadHelper('Croogo/Menus.Menus');
-$this->loadHelper('Croogo/Meta.Meta');
 
 ?>
 <!DOCTYPE html>
@@ -26,7 +25,6 @@ $this->loadHelper('Croogo/Meta.Meta');
 
     <title><?= $this->fetch('title'); ?> - <?= $siteTitle; ?></title>
     <?php
-    echo $this->Meta->meta();
     echo $this->Layout->feed();
     $this->element('stylesheets');
     $this->element('javascripts');

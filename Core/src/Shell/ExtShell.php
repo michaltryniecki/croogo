@@ -290,7 +290,7 @@ class ExtShell extends AppShell
             if (!$active && !$all) {
                 continue;
             }
-            $data = $CroogoTheme->getData($theme);
+            $data = $CroogoTheme->getThemeData($theme);
             $author = isset($data['author']) ? $data['author'] : '';
             $this->out(__d('croogo', '%-20s%-50s%s', $theme, $author, $status));
         }
