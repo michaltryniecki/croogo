@@ -1,0 +1,41 @@
+name: Deploy staging
+
+on: [workflow_dispatch]
+
+jobs:
+  build-push-and-restart-production:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build and push image
+        run: |
+          mkdir /home/runner/.config/docker
+          touch /home/runner/.config/docker/daemon.json
+          echo '{"insecure-registries": ["${{ secrets.DOCKER_REGISTRY_URL }}"]}' > /home/runner/.config/docker/daemon.json
+          sudo sed -i '/ExecStart=/s/$/ --config-file=\/home\/runner\/.config\/docker\/daemon.json/' /lib/systemd/system/docker.service
+          sudo systemctl daemon-reload
+          sudo systemctl restart docker
+          docker login ${{ secrets.DOCKER_REGISTRY_URL }} -u ${{ secrets.DOCKER_REGISTRY_USERNAME }} -p ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+          docker build \
+            --build-arg ENV=${{ secrets.PRODUCTION_NEXT_PUBLIC_INDEX }} \
+            --tag ${{ secrets.DOCKER_REGISTRY_URL }}/${{ secrets.DOCKER_IMAGE_NAME }}:${{ secrets.PRODUCTION_DOCKER_IMAGE_TAG }} .
+          docker push ${{ secrets.DOCKER_REGISTRY_URL }}/${{ secrets.DOCKER_IMAGE_NAME }}:${{ secrets.PRODUCTION_DOCKER_IMAGE_TAG }}
+          docker logout
+
+      - name: Restart container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            docker login ${{ secrets.DOCKER_REGISTRY_URL }} -u ${{ secrets.DOCKER_REGISTRY_USERNAME }} -p ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+            docker pull ${{ secrets.DOCKER_REGISTRY_URL }}/${{ secrets.DOCKER_IMAGE_NAME }}:${{ secrets.PRODUCTION_DOCKER_IMAGE_TAG }}
+            docker kill ${{ secrets.PRODUCTION_DOCKER_CONTAINER_NAME }} || true
+            docker rm ${{ secrets.PRODUCTION_DOCKER_CONTAINER_NAME }} || true
+            docker run --detach --restart unless-stopped --publish ${{ secrets.PRODUCTION_HOST_PORT }}:3000 --name ${{ secrets.PRODUCTION_DOCKER_CONTAINER_NAME }} ${{ secrets.DOCKER_REGISTRY_URL }}/${{ secrets.DOCKER_IMAGE_NAME }}:${{ secrets.PRODUCTION_DOCKER_IMAGE_TAG }}
+            docker exec -t --user root registry bin/registry garbage-collect --delete-untagged /etc/docker/registry/config.yml
+            docker image prune --force
+            docker logout ${{ secrets.DOCKER_REGISTRY_URL }}
