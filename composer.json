@@ -53,6 +53,7 @@
             "Croogo\\Core\\": "Core/src",
             "Croogo\\Dashboards\\": "Dashboards/src",
             "Croogo\\Extensions\\": "Extensions/src",
+            "Croogo\\FileManager\\": "FileManager/src",
             "Croogo\\Install\\": "Install/src",
             "Croogo\\Menus\\": "Menus/src",
             "Croogo\\Settings\\": "Settings/src",
