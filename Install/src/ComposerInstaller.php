@@ -22,7 +22,6 @@ class ComposerInstaller extends PluginInstaller
         $composer = $event->getComposer();
         $config = $composer->getConfig();
         $vendorDir = realpath($config->get('vendor-dir'));
-        $croogoDir = dirname(dirname(__DIR__));
 
         $corePlugins = [
             'Acl', 'Core', 'Dashboards', 'Extensions', 'FileManager', 'Install', 'Menus',
@@ -31,7 +30,12 @@ class ComposerInstaller extends PluginInstaller
 
         $plugins = [];
         foreach ($corePlugins as $plugin) {
-            $plugins[] = "'Croogo/" . $plugin . "' => \$baseDir . '" . $croogoDir . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR . ",";
+            $plugins[] = "'Croogo/" . $plugin . "' => \$baseDir . '" .
+                DIRECTORY_SEPARATOR . $config->get('vendor-dir') .
+                DIRECTORY_SEPARATOR . "croogo" .
+                DIRECTORY_SEPARATOR . "croogo" .
+                DIRECTORY_SEPARATOR . $plugin .
+                DIRECTORY_SEPARATOR . "',";
         }
         $plugins[] = "],";
 
