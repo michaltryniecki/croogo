@@ -31,7 +31,7 @@ class ComposerInstaller extends PluginInstaller
         $plugins = [];
         foreach ($corePlugins as $plugin) {
             $plugins[] = "\t\t'Croogo/" . $plugin . "' => \$baseDir . '" .
-                DIRECTORY_SEPARATOR . $config->get('vendor-dir') .
+                DIRECTORY_SEPARATOR . "vendor" .
                 DIRECTORY_SEPARATOR . "croogo" .
                 DIRECTORY_SEPARATOR . "croogo" .
                 DIRECTORY_SEPARATOR . $plugin .
