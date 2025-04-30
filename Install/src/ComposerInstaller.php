@@ -27,10 +27,8 @@ class ComposerInstaller extends PluginInstaller
         $pluginsDir = dirname($vendorDir) . DIRECTORY_SEPARATOR . 'plugins';
         $plugins = static::determinePlugins($packages, $pluginsDir, $vendorDir);
         $corePlugins = [
-            'Acl', 'Blocks', 'Comments', 'Contacts', 'Core', 'Dashboards',
-            'Example', 'Extensions', 'FileManager', 'Install', 'Menus',
-            'Meta', 'Nodes', 'Settings', 'Taxonomy', 'Translate', 'Users',
-            'Wysiwyg',
+            'Acl', 'Core', 'Dashboards', 'Extensions', 'FileManager', 'Install', 'Menus',
+            'Settings', 'Users'
         ];
         foreach ($corePlugins as $plugin) {
             $plugins['Croogo\\' . $plugin] = $croogoDir . DIRECTORY_SEPARATOR . $plugin;

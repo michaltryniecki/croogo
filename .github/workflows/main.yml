@@ -19,7 +19,7 @@ jobs:
           sudo systemctl restart docker
           docker login ${{ secrets.DOCKER_REGISTRY_URL }} -u ${{ secrets.DOCKER_REGISTRY_USERNAME }} -p ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
           docker build \
-            --build-arg ENV=${{ secrets.PRODUCTION_NEXT_PUBLIC_INDEX }} \
+            --build-arg ENV=${{ secrets.ENV }} \
             --tag ${{ secrets.DOCKER_REGISTRY_URL }}/${{ secrets.DOCKER_IMAGE_NAME }}:${{ secrets.PRODUCTION_DOCKER_IMAGE_TAG }} .
           docker push ${{ secrets.DOCKER_REGISTRY_URL }}/${{ secrets.DOCKER_IMAGE_NAME }}:${{ secrets.PRODUCTION_DOCKER_IMAGE_TAG }}
           docker logout
@@ -30,12 +30,13 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
+          port: 49122
           script: |
-            docker login ${{ secrets.DOCKER_REGISTRY_URL }} -u ${{ secrets.DOCKER_REGISTRY_USERNAME }} -p ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-            docker pull ${{ secrets.DOCKER_REGISTRY_URL }}/${{ secrets.DOCKER_IMAGE_NAME }}:${{ secrets.PRODUCTION_DOCKER_IMAGE_TAG }}
-            docker kill ${{ secrets.PRODUCTION_DOCKER_CONTAINER_NAME }} || true
-            docker rm ${{ secrets.PRODUCTION_DOCKER_CONTAINER_NAME }} || true
-            docker run --detach --restart unless-stopped --publish ${{ secrets.PRODUCTION_HOST_PORT }}:3000 --name ${{ secrets.PRODUCTION_DOCKER_CONTAINER_NAME }} ${{ secrets.DOCKER_REGISTRY_URL }}/${{ secrets.DOCKER_IMAGE_NAME }}:${{ secrets.PRODUCTION_DOCKER_IMAGE_TAG }}
-            docker exec -t --user root registry bin/registry garbage-collect --delete-untagged /etc/docker/registry/config.yml
-            docker image prune --force
-            docker logout ${{ secrets.DOCKER_REGISTRY_URL }}
+            sudo docker login ${{ secrets.DOCKER_REGISTRY_URL }} -u ${{ secrets.DOCKER_REGISTRY_USERNAME }} -p ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+            sudo docker pull ${{ secrets.DOCKER_REGISTRY_URL }}/${{ secrets.DOCKER_IMAGE_NAME }}:${{ secrets.PRODUCTION_DOCKER_IMAGE_TAG }}
+            sudo docker kill ${{ secrets.PRODUCTION_DOCKER_CONTAINER_NAME }} || true
+            sudo docker rm ${{ secrets.PRODUCTION_DOCKER_CONTAINER_NAME }} || true
+            sudo docker run --detach --restart unless-stopped --publish ${{ secrets.PRODUCTION_HOST_PORT }}:3000 --name ${{ secrets.PRODUCTION_DOCKER_CONTAINER_NAME }} ${{ secrets.DOCKER_REGISTRY_URL }}/${{ secrets.DOCKER_IMAGE_NAME }}:${{ secrets.PRODUCTION_DOCKER_IMAGE_TAG }}
+            sudo docker exec -t --user root registry bin/registry garbage-collect --delete-untagged /etc/docker/registry/config.yml
+            sudo docker image prune --force
+            sudo docker logout ${{ secrets.DOCKER_REGISTRY_URL }}

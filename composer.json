@@ -57,9 +57,7 @@
             "Croogo\\Install\\": "Install/src",
             "Croogo\\Menus\\": "Menus/src",
             "Croogo\\Settings\\": "Settings/src",
-            "Croogo\\Taxonomy\\": "Taxonomy/src",
-            "Croogo\\Users\\": "Users/src",
-            "Croogo\\Wysiwyg\\": "Wysiwyg/src"
+            "Croogo\\Users\\": "Users/src"
         },
         "files": [
             "Core/src/functions.php"
@@ -76,7 +74,6 @@
             "Croogo\\Menus\\Test\\": "Menus/tests",
             "Croogo\\Settings\\Test\\": "Settings/tests",
             "Croogo\\Users\\Test\\": "Users/tests",
-            "Croogo\\Wysiwyg\\Test\\": "Wysiwyg/tests",
             "App\\": "tests/test_app/src",
             "Nodes\\": "tests/test_app/plugins/Nodes/src",
             "Shops\\": "tests/test_app/plugins/Shops/src",
@@ -112,7 +109,6 @@
         "croogo/menus": "self.version",
         "croogo/settings": "self.version",
         "croogo/users": "self.version",
-        "croogo/wysiwyg": "self.version"
     },
     "extra": {
         "branch-alias": {
