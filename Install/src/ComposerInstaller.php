@@ -30,14 +30,14 @@ class ComposerInstaller extends PluginInstaller
 
         $plugins = [];
         foreach ($corePlugins as $plugin) {
-            $plugins[] = "'Croogo/" . $plugin . "' => \$baseDir . '" .
+            $plugins[] = "\t\t'Croogo/" . $plugin . "' => \$baseDir . '" .
                 DIRECTORY_SEPARATOR . $config->get('vendor-dir') .
                 DIRECTORY_SEPARATOR . "croogo" .
                 DIRECTORY_SEPARATOR . "croogo" .
                 DIRECTORY_SEPARATOR . $plugin .
                 DIRECTORY_SEPARATOR . "',";
         }
-        $plugins[] = "],";
+        $plugins[] = "\t],";
 
         $cakephp_plugins = file_get_contents( $vendorDir . DIRECTORY_SEPARATOR . 'cakephp-plugins.php' );
 
