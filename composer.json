@@ -108,7 +108,7 @@
         "croogo/install": "self.version",
         "croogo/menus": "self.version",
         "croogo/settings": "self.version",
-        "croogo/users": "self.version",
+        "croogo/users": "self.version"
     },
     "extra": {
         "branch-alias": {
