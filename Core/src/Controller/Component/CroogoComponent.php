@@ -133,9 +133,11 @@ class CroogoComponent extends Component
                         'action' => 'view',
                         $user['id'],
                     ],
+                    'weight' => 10
                 ],
                 'separator-1' => [
                     'separator' => true,
+                    'weight' => 20
                 ],
                 'users' => [
                     'icon' => 'users',
@@ -145,7 +147,8 @@ class CroogoComponent extends Component
                         'plugin' => 'Croogo/Users',
                         'controller' => 'Users',
                         'action' => 'index',
-                    ]
+                    ],
+                    'weight' => 30
                 ],
                 'roles' => [
                     'icon' => 'user-tag',
@@ -155,7 +158,8 @@ class CroogoComponent extends Component
                         'plugin' => 'Croogo/Users',
                         'controller' => 'Roles',
                         'action' => 'index',
-                    ]
+                    ],
+                    'weight' => 40
                 ],
                 'permissions' => [
                     'icon' => 'user-lock',
@@ -166,9 +170,11 @@ class CroogoComponent extends Component
                         'controller' => 'Permissions',
                         'action' => 'index',
                     ],
+                    'weight' => 50
                 ],
                 'separator-2' => [
                     'separator' => true,
+                    'weight' => 60
                 ],
                 'cron' => [
                     'icon' => 'stopwatch',
@@ -179,6 +185,7 @@ class CroogoComponent extends Component
                         'controller' => 'QueuedJobs',
                         'action' => 'index'
                     ],
+                    'weight' => 70
                 ],
                 'relist' => [
                     'icon' => 'redo',
@@ -189,9 +196,11 @@ class CroogoComponent extends Component
                         'controller' => 'relist',
                         'action' => 'index'
                     ],
+                    'weight' => 80
                 ],
                 'separator-3' => [
                     'separator' => true,
+                    'weight' => 90
                 ],
                 'dictionaries' => [
                     'icon' => 'book',
@@ -201,7 +210,8 @@ class CroogoComponent extends Component
                         'plugin' => 'products',
                         'controller' => 'dictionaries',
                         'action' => 'index'
-                    ]
+                    ],
+                    'weight' => 100
                 ],
                 'ebay_store' => [
                     'icon' => 'store',
@@ -209,9 +219,10 @@ class CroogoComponent extends Component
                     'url' => [
                         'prefix' => 'admin',
                         'plugin' => 'products',
-                        'controller' => 'ebay-store-categories',
+                        'controller' => 'EbayStoreCategories',
                         'action' => 'index'
-                    ]
+                    ],
+                    'weight' => 110
                 ],
                 'templates' => [
                     'icon' => 'columns',
@@ -221,7 +232,8 @@ class CroogoComponent extends Component
                         'plugin' => 'products',
                         'controller' => 'templates',
                         'action' => 'index'
-                    ]
+                    ],
+                    'weight' => 120
                 ],
                 'orders' => [
                     'icon' => 'shopping-cart',
@@ -231,7 +243,8 @@ class CroogoComponent extends Component
                         'plugin' => 'orders',
                         'controller' => 'orders',
                         'action' => 'index'
-                    ]
+                    ],
+                    'weight' => 130
                 ],
                 'warehouses' => [
                     'icon' => 'warehouse',
@@ -241,7 +254,19 @@ class CroogoComponent extends Component
                         'plugin' => 'products',
                         'controller' => 'warehouses',
                         'action' => 'index'
-                    ]
+                    ],
+                    'weight' => 140
+                ],
+                'choosing_car_parts' => [
+                    'icon' => 'car',
+                    'title' => __d('products', 'Choosing Car Parts'),
+                    'url' => [
+                        'prefix' => 'admin',
+                        'plugin' => 'ChoosingCarParts',
+                        'controller' => 'ChoosingCarPartsGroup',
+                        'action' => 'index'
+                    ],
+                    'weight' => 150
                 ],
                 'transfers' => [
                     'icon' => 'list',
@@ -249,9 +274,10 @@ class CroogoComponent extends Component
                     'url' => [
                         'prefix' => 'admin',
                         'plugin' => 'products',
-                        'controller' => 'warehouse-transfers',
+                        'controller' => 'WarehouseTransfers',
                         'action' => 'index'
-                    ]
+                    ],
+                    'weight' => 160
                 ],
                 'vehicles' => [
                     'icon' => 'car',
@@ -261,7 +287,8 @@ class CroogoComponent extends Component
                         'plugin' => 'products',
                         'controller' => 'vehicles',
                         'action' => 'index'
-                    ]
+                    ],
+                    'weight' => 170
                 ],
                 'vin_vehicles' => [
                     'icon' => 'car',
@@ -269,9 +296,10 @@ class CroogoComponent extends Component
                     'url' => [
                         'prefix' => 'admin',
                         'plugin' => 'products',
-                        'controller' => 'vin-vehicles',
+                        'controller' => 'VinVehicles',
                         'action' => 'index'
-                    ]
+                    ],
+                    'weight' => 180
                 ],
                 'statistics' => [
                     'icon' => 'chart-line',
@@ -281,7 +309,8 @@ class CroogoComponent extends Component
                         'plugin' => 'statistics',
                         'controller' => 'statistics',
                         'action' => 'index'
-                    ]
+                    ],
+                    'weight' => 190
                 ],
                 'events' => [
                     'icon' => 'history',
@@ -291,7 +320,8 @@ class CroogoComponent extends Component
                         'plugin' => 'events',
                         'controller' => 'events',
                         'action' => 'index'
-                    ]
+                    ],
+                    'weight' => 200
                 ],
                 'extensions' => [
                     'icon' => 'magic',
@@ -301,7 +331,8 @@ class CroogoComponent extends Component
                         'plugin' => 'Croogo/Extensions',
                         'controller' => 'Plugins',
                         'action' => 'index',
-                    ]
+                    ],
+                    'weight' => 210
                 ],
                 'settings' => [
                     'icon' => 'cog',
@@ -312,10 +343,12 @@ class CroogoComponent extends Component
                         'controller' => 'Settings',
                         'action' => 'prefix',
                         'Currency Exchange',
-                    ]
+                    ],
+                    'weight' => 220
                 ],
                 'separator-4' => [
                     'separator' => true,
+                    'weight' => 980
                 ],
                 'logout' => [
                     'icon' => 'power-off',
@@ -326,6 +359,7 @@ class CroogoComponent extends Component
                         'controller' => 'Users',
                         'action' => 'logout',
                     ],
+                    'weight' => 990
                 ],
             ],
         ]);
