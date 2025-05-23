@@ -123,18 +123,18 @@ class CroogoComponent extends Component
             // 'before' => $gravatarUrl,
             'url' => '#',
             'children' => [
-                'profile' => [
-                    'title' => __d('croogo', 'Profile'),
-                    'icon' => 'user',
-                    'url' => [
-                        'prefix' => 'admin',
-                        'plugin' => 'Croogo/Users',
-                        'controller' => 'Users',
-                        'action' => 'view',
-                        $user['id'],
-                    ],
-                    'weight' => 10
-                ],
+//                'profile' => [
+//                    'title' => __d('croogo', 'Profile'),
+//                    'icon' => 'user',
+//                    'url' => [
+//                        'prefix' => 'admin',
+//                        'plugin' => 'Croogo/Users',
+//                        'controller' => 'Users',
+//                        'action' => 'view',
+//                        $user['id'],
+//                    ],
+//                    'weight' => 10
+//                ],
                 'separator-1' => [
                     'separator' => true,
                     'weight' => 20
