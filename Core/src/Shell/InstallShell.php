@@ -139,7 +139,7 @@ class InstallShell extends AppShell
     /**
      * Display help/options
      */
-    public function getOptionParser()
+    public function getOptionParser(): \Cake\Console\ConsoleOptionParser
     {
         return parent::getOptionParser()
             ->setDescription(__d('croogo', 'Download, Install & Activate Plugins & Themes'))

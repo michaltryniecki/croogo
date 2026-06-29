@@ -36,7 +36,7 @@ class FilterComponent extends Component
      * @param Event $event instance of event
      * @return void
      */
-    public function beforeFilter(Event $event)
+    public function beforeFilter(\Cake\Event\EventInterface $event): void
     {
         $this->_controller = $event->getSubject();
 
@@ -138,7 +138,7 @@ class FilterComponent extends Component
      *
      * @return void
      */
-    public function configureLoginActions()
+    public function configureLoginActions(): void
     {
         $this->_controller->Auth->setConfig('loginAction', [
             'prefix' => false,
@@ -207,7 +207,7 @@ class FilterComponent extends Component
      *
      * @return void
      */
-    public function auth()
+    public function auth(): void
     {
         $this->_configure();
         $user = $this->_controller->Auth->user();

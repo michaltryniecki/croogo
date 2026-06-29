@@ -26,7 +26,7 @@ class UserAroBehavior extends Behavior
     /**
      * Setup
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->_setupMultirole($this->_table);
     }
@@ -52,7 +52,7 @@ class UserAroBehavior extends Behavior
      * @param bool $entity
      * @return void
      */
-    public function afterSave(Event $event, Entity $entity)
+    public function afterSave(\Cake\Event\EventInterface $event, Entity $entity): void
     {
         // update ACO alias
         if (!empty($entity->username)) {
@@ -73,7 +73,7 @@ class UserAroBehavior extends Behavior
     /**
      * afterDelete
      */
-    public function afterDelete(Event $event)
+    public function afterDelete(\Cake\Event\EventInterface $event): void
     {
         Cache::clearGroup('acl', 'permissions');
     }

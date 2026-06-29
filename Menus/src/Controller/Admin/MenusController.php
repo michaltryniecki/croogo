@@ -24,7 +24,7 @@ class MenusController extends AppController
         ];
     }
 
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
         if ($this->getRequest()->getParam('action') === 'toggle') {
@@ -36,7 +36,7 @@ class MenusController extends AppController
      * @param \Cake\Event\Event $event
      * @return void
      */
-    public function beforeCrudRedirect(Event $event)
+    public function beforeCrudRedirect(Event $event): void
     {
         if ($this->redirectToSelf($event)) {
             return;

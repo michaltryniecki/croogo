@@ -61,7 +61,7 @@ class MenusHelper extends Helper
     /**
      * beforeRender
      */
-    public function beforeRender($viewFile)
+    public function beforeRender($viewFile): void
     {
         $request = $this->getView()->getRequest();
         if (($request->getParam('prefix') === 'admin') && (!$request->is('ajax'))) {

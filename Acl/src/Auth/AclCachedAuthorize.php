@@ -10,7 +10,7 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Http\ServerRequest;
 use Cake\Log\Log;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest as Request;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 
@@ -161,7 +161,7 @@ class AclCachedAuthorize extends BaseAuthorize
 
         // bail out when controller's primary model does not want row level acl
         $controller = $this->_registry->getController();
-        $model = $controller->name;
+        $model = $controller->getName();
         $Model = $controller->{$model};
         if ($Model && !$Model->behaviors()->has('RowLevelAcl')) {
             return $allowed;
@@ -227,7 +227,7 @@ class AclCachedAuthorize extends BaseAuthorize
 
         list($plugin, $userModel) = pluginSplit($this->getConfig('userModel'));
         $acoNode = [
-            'model' => $this->_registry->getController()->name,
+            'model' => $this->_registry->getController()->getName(),
             'foreign_key' => $id,
         ];
         $alias = sprintf('%s.%s', $acoNode['model'], $acoNode['foreign_key']);

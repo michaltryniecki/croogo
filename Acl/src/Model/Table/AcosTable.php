@@ -81,7 +81,7 @@ class AcosTable extends \Acl\Model\Table\AcosTable
      * @param array $allowRoles Role aliases
      * @return void
      */
-    public function addAco($action, $allowRoles = [])
+    public function addAco($action, $allowRoles = []): void
     {
         // AROs
         $roles = [];
@@ -112,7 +112,7 @@ class AcosTable extends \Acl\Model\Table\AcosTable
      * @param string $action possible values: ControllerName, ControllerName/method_name
      * @return void
      */
-    public function removeAco($action)
+    public function removeAco($action): void
     {
         $acoNodes = $this->node($action);
         if ($acoNodes) {

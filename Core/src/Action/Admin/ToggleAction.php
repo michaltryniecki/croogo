@@ -34,7 +34,7 @@ class ToggleAction extends BaseAction
         $entity = $this->_table()->get($id);
         $entity->set($this->getConfig('field'), $status);
         if (!$this->_table()->save($entity)) {
-            throw new Exception(__d('croogo', 'Failed toggling field %s to %s', $this->config('field'), $status));
+            throw new Exception(__d('croogo', 'Failed toggling field %s to %s', $this->getConfig('field'), $status));
         }
 
         $this->_controller()->set(compact('id', 'status'));

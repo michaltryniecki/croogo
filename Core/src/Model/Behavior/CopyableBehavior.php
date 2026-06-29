@@ -284,7 +284,7 @@ class CopyableBehavior extends Behavior
         $belongsToMany = $table->associations()->getByType('BelongsToMany');
         foreach ($belongsToMany as $key => $val) {
             // retrieve the reverse association
-            $hasMany = $val->getTarget()->association($val->junction()->getAlias());
+            $hasMany = $val->getTarget()->getAssociation($val->junction()->getAlias());
             $property = $hasMany->getProperty();
 
             if (!$record->has($property) || empty($record->{$property})) {

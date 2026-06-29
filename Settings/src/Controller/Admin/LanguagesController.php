@@ -16,7 +16,7 @@ use Cake\Event\Event;
  */
 class LanguagesController extends AppController
 {
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
 
@@ -66,7 +66,7 @@ class LanguagesController extends AppController
 
     public function index()
     {
-        $this->Crud->on('beforePaginate', function (Event $e) {
+        $this->Crud->on('beforePaginate', function (Event $e): void {
             if (empty($this->getRequest()->getQuery('sort'))) {
                 $e->getSubject()->query
                     ->orderDesc('status');

@@ -26,7 +26,7 @@ class RecaptchaHelper extends Helper
     /**
      * beforeRender
      */
-    public function beforeRender($viewFile)
+    public function beforeRender($viewFile): void
     {
         if ($this->getView()->getRequest()->is('ajax')) {
             return;

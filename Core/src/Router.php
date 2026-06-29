@@ -30,7 +30,7 @@ class Router extends CakeRouter
     /**
      * Helper method to setup both default and localized route
      */
-    public static function build(RouteBuilder $builder, $path, $defaults, $options = [])
+    public static function build(RouteBuilder $builder, $path, $defaults, $options = []): void
     {
         if (PluginManager::isLoaded('Croogo/Translate')) {
             $languages = Configure::read('I18n.languages');
@@ -109,7 +109,7 @@ class Router extends CakeRouter
      *
      * @return void
      */
-    public static function localize()
+    public static function localize(): void
     {
         if (PluginManager::isLoaded('Croogo/Translate')) {
             static::connect('/:locale/:plugin/:controller/:action/*', [], ['locale' => '[a-z]{3}']);
@@ -123,7 +123,7 @@ class Router extends CakeRouter
      * @param string $aliasRegex
      * @return void
      */
-    public static function contentType($aliasRegex, $routeBuilder)
+    public static function contentType($aliasRegex, $routeBuilder): void
     {
         static::build($routeBuilder, '/:type', [
             'plugin' => 'Croogo/Nodes', 'controller' => 'Nodes',
@@ -163,7 +163,7 @@ class Router extends CakeRouter
      *
      * @return void
      */
-    public static function routableContentTypes($routeBuilder)
+    public static function routableContentTypes($routeBuilder): void
     {
         try {
             $types = TableRegistry::get('Croogo/Taxonomy.Types')->find('all', [
@@ -213,7 +213,7 @@ class Router extends CakeRouter
      *
      * @return void
      */
-    public static function homepage()
+    public static function homepage(): void
     {
         $homeUrl = Configure::read('Site.home_url');
         if ($homeUrl && strpos($homeUrl, ':') !== false) {

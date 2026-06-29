@@ -5,7 +5,7 @@ namespace Croogo\Core\Test\TestCase\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest as Request;
 use Cake\TestSuite\IntegrationTestCase;
 use Cake\Utility\Hash;
 use Croogo\Core\Controller\AppController;
@@ -14,23 +14,23 @@ use Croogo\Core\Croogo;
 class TestAppController extends AppController
 {
 
-    public function admin_edit()
+    public function admin_edit(): void
     {
     }
 
-    public function admin_add()
+    public function admin_add(): void
     {
     }
 
-    public function register()
+    public function register(): void
     {
     }
 
-    public function admin_index()
+    public function admin_index(): void
     {
     }
 
-    public function admin_index_no_actions()
+    public function admin_index_no_actions(): void
     {
     }
 }
@@ -44,7 +44,7 @@ class CroogoAppControllerTest extends IntegrationTestCase
 //      'plugin.Croogo/Nodes.Node',
     ];
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -60,7 +60,7 @@ class CroogoAppControllerTest extends IntegrationTestCase
 //      ));
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         unset($this->controller);
@@ -69,7 +69,7 @@ class CroogoAppControllerTest extends IntegrationTestCase
     /**
      * testRenderExistingView
      */
-    public function testRenderExistingView()
+    public function testRenderExistingView(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 
@@ -82,7 +82,7 @@ class CroogoAppControllerTest extends IntegrationTestCase
     /**
      * testRenderAdminFormFallback
      */
-    public function testRenderAdminFormFallback()
+    public function testRenderAdminFormFallback(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 
@@ -95,7 +95,7 @@ class CroogoAppControllerTest extends IntegrationTestCase
     /**
      * testRenderOverridenAdminFormWithTheme
      */
-    public function testRenderOverridenAdminFormWithTheme()
+    public function testRenderOverridenAdminFormWithTheme(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 
@@ -113,13 +113,13 @@ class CroogoAppControllerTest extends IntegrationTestCase
         ]);
 
         $File->delete();
-        $this->assertContains($expected, trim($result));
+        $this->assertStringContainsString($expected, trim($result));
     }
 
     /**
      * testRenderNonEditView
      */
-    public function testRenderNonEditView()
+    public function testRenderNonEditView(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 
@@ -132,7 +132,7 @@ class CroogoAppControllerTest extends IntegrationTestCase
     /**
      * testRenderDefaultActionsBlock
      */
-    public function testRenderDefaultActionsBlock()
+    public function testRenderDefaultActionsBlock(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 
@@ -148,7 +148,7 @@ class CroogoAppControllerTest extends IntegrationTestCase
     /**
      * testRenderNoActionsBlock
      */
-    public function testRenderNoActionsBlock()
+    public function testRenderNoActionsBlock(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 
@@ -164,7 +164,7 @@ class CroogoAppControllerTest extends IntegrationTestCase
     /**
      * testSetFlashDefaults
      */
-    public function testSetFlashDefaults()
+    public function testSetFlashDefaults(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 
@@ -181,7 +181,7 @@ class CroogoAppControllerTest extends IntegrationTestCase
     /**
      * testSetFlashUnescaped
      */
-    public function testSetFlashUnescaped()
+    public function testSetFlashUnescaped(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 
@@ -198,7 +198,7 @@ class CroogoAppControllerTest extends IntegrationTestCase
     /**
      * testPaginatorIsNotLoadedWithoutCache
      */
-    public function testPaginatorIsNotLoadedWithoutCache()
+    public function testPaginatorIsNotLoadedWithoutCache(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 
@@ -216,7 +216,7 @@ class CroogoAppControllerTest extends IntegrationTestCase
     /**
      * testPaginatorIsLoadedWithCache
      */
-    public function testPaginatorIsLoadedWithCache()
+    public function testPaginatorIsLoadedWithCache(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 
@@ -234,7 +234,7 @@ class CroogoAppControllerTest extends IntegrationTestCase
     /**
      * Test Setup Component
      */
-    public function testSetupComponent()
+    public function testSetupComponent(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 

@@ -14,7 +14,7 @@ class CroogoJsonTest extends CroogoTestCase
     /**
      * testStringify
      */
-    public function testStringify()
+    public function testStringify(): void
     {
         $options = 0;
         if (version_compare(PHP_VERSION, '5.3.3', '>=')) {

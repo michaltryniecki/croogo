@@ -17,7 +17,7 @@ use Cake\Cache\Cache;
 class CachesController extends AppController
 {
 
-    public function index()
+    public function index(): void
     {
         $caches = [];
         $configured = Cache::configured();
@@ -28,7 +28,7 @@ class CachesController extends AppController
             }
         }
         foreach ($configured as $cache) {
-            $engine = Cache::engine($cache);
+            $engine = Cache::pool($cache);
             $caches[$cache] = $engine;
         }
         $this->set(compact('caches'));

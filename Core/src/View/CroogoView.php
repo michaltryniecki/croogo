@@ -68,7 +68,7 @@ class CroogoView extends AppView
         return $this->_paths = $paths;
     }
 
-    public function loadHelpers()
+    public function loadHelpers(): void
     {
         parent::loadHelpers();
 
@@ -90,7 +90,7 @@ class CroogoView extends AppView
         ]);
     }
 
-    public function loadHelperList($list)
+    public function loadHelperList($list): void
     {
         foreach ((array)$list as $helper => $config) {
             if (!is_array($config)) {

@@ -14,7 +14,7 @@ class ComponentsPanel extends DebugPanel
 
     protected $_loadedComponents = [];
 
-    public function afterFilter(Event $event)
+    public function afterFilter(Event $event): void
     {
         /* @var ComponentRegistry $componentRegistry */
         if (!isset($event->getSubject()->View)) {
@@ -43,7 +43,7 @@ class ComponentsPanel extends DebugPanel
         return count($this->_loadedComponents);
     }
 
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [
             'Controller.shutdown' => 'afterFilter'

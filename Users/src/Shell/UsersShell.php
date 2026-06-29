@@ -21,7 +21,7 @@ class UsersShell extends Shell
     /**
      * Initialize
      */
-    public function initialize()
+    public function initialize(): void
     {
         Configure::write('Trackable.Auth.User', ['id' => 1]);
         $this->loadModel('Croogo/Users.Users');

@@ -19,7 +19,7 @@ use Cake\Utility\Hash;
 class DashboardsController extends AppController
 {
 
-    public function beforeFilter(Event $event)
+    public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         parent::beforeFilter($event);
 
@@ -33,7 +33,7 @@ class DashboardsController extends AppController
      *
      * Load the dashboards helper
      */
-    public function beforeRender(Event $event)
+    public function beforeRender(\Cake\Event\EventInterface $event)
     {
         parent::beforeRender($event);
 
@@ -47,7 +47,7 @@ class DashboardsController extends AppController
      *
      * @return void
      */
-    public function index()
+    public function index(): void
     {
         $query = $this->Dashboards->find()
             ->where([
@@ -64,7 +64,7 @@ class DashboardsController extends AppController
      *
      * @return void
      */
-    public function dashboard()
+    public function dashboard(): void
     {
         if( $this->Auth->user('role_id') == 8 ) {
             $this->redirect(['plugin' => 'Mobile', 'controller' => 'Wms', 'action' => 'index']);
@@ -139,7 +139,7 @@ class DashboardsController extends AppController
      * @param int $status Status
      * @return void
      */
-    public function toggle($id = null, $status = null)
+    public function toggle($id = null, $status = null): void
     {
         $this->Croogo->fieldToggle($this->Dashboards, $id, $status);
     }

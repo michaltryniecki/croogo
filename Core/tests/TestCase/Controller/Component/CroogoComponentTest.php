@@ -5,15 +5,15 @@ namespace Croogo\Core\Test\TestCase\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Event\Event;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\ServerRequest as Request;
+use Cake\Http\Response;
 use Croogo\Core\Controller\Component\CroogoComponent;
 use Croogo\Core\TestSuite\TestCase;
 
 class MockCroogoComponent extends CroogoComponent
 {
 
-    public function startup(Event $event)
+    public function startup(\Cake\Event\EventInterface $event): void
     {
         $this->_controller = $event->getSubject();
     }
@@ -39,7 +39,7 @@ class CroogoComponentTest extends TestCase
     public $component = null;
     public $controller = null;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -61,7 +61,7 @@ class CroogoComponentTest extends TestCase
 //      $this->Controller->startupProcess();
     }
 
-    public function testAddRemoveAcos()
+    public function testAddRemoveAcos(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 
@@ -101,7 +101,7 @@ class CroogoComponentTest extends TestCase
         ];
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 

@@ -20,10 +20,10 @@ class CroogoShell extends AppShell
     /**
      * Display help/options
      */
-    public function getOptionParser()
+    public function getOptionParser(): \Cake\Console\ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
-        $parser->description(__d('croogo', 'Croogo Utilities'))
+        $parser->setDescription(__d('croogo', 'Croogo Utilities'))
             ->addSubcommand('password', [
                 'help' => 'Get hashed password',
                 'parser' => [
@@ -50,7 +50,7 @@ class CroogoShell extends AppShell
      *
      * Usage: ./Console/cake croogo password myPasswordHere
      */
-    public function password()
+    public function password(): void
     {
         $value = trim($this->args['0']);
         $this->out(Security::hash($value, null, true));

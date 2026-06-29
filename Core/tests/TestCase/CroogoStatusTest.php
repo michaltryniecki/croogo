@@ -9,7 +9,7 @@ use Croogo\Core\TestSuite\CroogoTestCase;
 
 class CroogoStatusTest extends CroogoTestCase implements EventListenerInterface
 {
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [
             'Croogo.Status.setup' => [
@@ -21,7 +21,7 @@ class CroogoStatusTest extends CroogoTestCase implements EventListenerInterface
     /**
      * onCroogoStatusSetup
      */
-    public function onCroogoStatusSetup($event)
+    public function onCroogoStatusSetup($event): void
     {
         $event->getData('publishing')[4] = 'Added by event handler';
     }
@@ -29,7 +29,7 @@ class CroogoStatusTest extends CroogoTestCase implements EventListenerInterface
     /**
      * setUp
      */
-    public function setUp()
+    public function setUp(): void
     {
         EventManager::instance()->on($this);
         $this->CroogoStatus = new Status();
@@ -38,7 +38,7 @@ class CroogoStatusTest extends CroogoTestCase implements EventListenerInterface
     /**
      * tearDown
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         EventManager::instance()->off($this);
         unset($this->CroogoStatus);
@@ -47,7 +47,7 @@ class CroogoStatusTest extends CroogoTestCase implements EventListenerInterface
     /**
      * testByDescription
      */
-    public function testByDescription()
+    public function testByDescription(): void
     {
         $result = $this->CroogoStatus->byDescription('Published');
         $this->assertEquals(1, $result);
@@ -56,7 +56,7 @@ class CroogoStatusTest extends CroogoTestCase implements EventListenerInterface
     /**
      * testById
      */
-    public function testById()
+    public function testById(): void
     {
         $result = $this->CroogoStatus->byId(2);
         $this->assertEquals('Preview', $result);
@@ -65,7 +65,7 @@ class CroogoStatusTest extends CroogoTestCase implements EventListenerInterface
     /**
      * testStatuses
      */
-    public function testStatuses()
+    public function testStatuses(): void
     {
         $result = $this->CroogoStatus->statuses();
         $this->assertTrue(count($result) >= 3);
@@ -74,7 +74,7 @@ class CroogoStatusTest extends CroogoTestCase implements EventListenerInterface
     /**
      * testStatus
      */
-    public function testStatus()
+    public function testStatus(): void
     {
         $expected = [Status::PUBLISHED];
         $result = $this->CroogoStatus->status();
@@ -84,7 +84,7 @@ class CroogoStatusTest extends CroogoTestCase implements EventListenerInterface
     /**
      * modifyStatus callback
      */
-    public function modifyStatus($event)
+    public function modifyStatus($event): void
     {
         switch ($event->getData('accessType')) {
             case 'webmaster':
@@ -103,7 +103,7 @@ class CroogoStatusTest extends CroogoTestCase implements EventListenerInterface
     /**
      * testStatusModifiedByEventHandler
      */
-    public function testStatusModifiedByEventHandler()
+    public function testStatusModifiedByEventHandler(): void
     {
         $callback = [$this, 'modifyStatus'];
         EventManager::instance()->on($this);
@@ -126,7 +126,7 @@ class CroogoStatusTest extends CroogoTestCase implements EventListenerInterface
     /**
      * testArrayAccessUsage
      */
-    public function testArrayAccessUsage()
+    public function testArrayAccessUsage(): void
     {
         $newIndex = 5;
         $count = count($this->CroogoStatus->statuses());

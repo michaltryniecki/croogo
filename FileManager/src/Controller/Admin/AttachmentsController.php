@@ -41,7 +41,7 @@ class AttachmentsController extends AppController
         'limit' => 5,
     ];
 
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
         $this->loadComponent('Search.Prg', [
@@ -60,7 +60,7 @@ class AttachmentsController extends AppController
      * @return void
      * @access public
      */
-    public function beforeFilter(Event $event)
+    public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         parent::beforeFilter($event);
 
@@ -75,7 +75,7 @@ class AttachmentsController extends AppController
      * @return void
      * @access public
      */
-    public function index()
+    public function index(): void
     {
         $this->set('title_for_layout', __d('croogo', 'Attachments'));
 
@@ -351,13 +351,13 @@ class AttachmentsController extends AppController
      * @return void
      * @access public
      */
-    public function browse()
+    public function browse(): void
     {
         $this->viewBuilder()->setLayout('admin_popup');
         $this->index();
     }
 
-    public function listing()
+    public function listing(): void
     {
         if ($this->getRequest()->is('ajax')) {
             $this->viewBuilder()->setLayout('ajax');

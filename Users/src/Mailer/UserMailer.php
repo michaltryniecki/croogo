@@ -45,7 +45,7 @@ class UserMailer extends Mailer
             ]);
     }
 
-    public function onRegistration(Event $event, User $user)
+    public function onRegistration(Event $event, User $user): void
     {
         $this->send('registrationActivation', [$user]);
     }

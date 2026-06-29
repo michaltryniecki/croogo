@@ -38,7 +38,7 @@ class LocalesController extends AppController
      *
      * @return void
      */
-    public function index()
+    public function index(): void
     {
         $this->set('title_for_layout', __d('croogo', 'Locales'));
 

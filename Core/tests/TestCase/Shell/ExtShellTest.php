@@ -51,7 +51,7 @@ class ExtShellTest extends CroogoTestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $Folder = new Folder(APP . 'Plugin' . DS . 'Example');
@@ -64,7 +64,7 @@ class ExtShellTest extends CroogoTestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $Folder = new Folder(Plugin::path('Croogo/Core') . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'Example');
@@ -76,7 +76,7 @@ class ExtShellTest extends CroogoTestCase
      *
      * @return void
      */
-    public function testPlugin()
+    public function testPlugin(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 
@@ -108,7 +108,7 @@ class ExtShellTest extends CroogoTestCase
     /**
      * testForceActivation
      */
-    public function testForceActivation()
+    public function testForceActivation(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 
@@ -129,7 +129,7 @@ class ExtShellTest extends CroogoTestCase
     /**
      * testForceDeactivation
      */
-    public function testForceDeactivation()
+    public function testForceDeactivation(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 
@@ -152,7 +152,7 @@ class ExtShellTest extends CroogoTestCase
      *
      * @return void
      */
-    public function testTheme()
+    public function testTheme(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 

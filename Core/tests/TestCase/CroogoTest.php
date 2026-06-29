@@ -17,7 +17,7 @@ class CroogoTest extends TestCase
 //      'plugin.Croogo/Settings.Setting',
     ];
 
-    public function testCrossPluginHooks()
+    public function testCrossPluginHooks(): void
     {
         PluginManager::load(['Shops', 'Suppliers'], [
             'bootstrap' => true,
@@ -30,7 +30,7 @@ class CroogoTest extends TestCase
     /**
      * test Croogo::hookApiComponent
      */
-    public function testHookApiComponent()
+    public function testHookApiComponent(): void
     {
         $hooks = Configure::read('Hook.controller_properties');
         Configure::write('Hook.controller_properties', []);

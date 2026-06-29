@@ -3,8 +3,8 @@
 namespace Croogo\Core\Database\Type;
 
 use ArrayObject;
-use Cake\Database\Driver;
-use Cake\Database\Type;
+use Cake\Database\DriverInterface;
+use Cake\Database\Type\BaseType;
 use Croogo\Core\Utility\StringConverter;
 use PDO;
 
@@ -15,15 +15,15 @@ use PDO;
  * @license  http://www.opensource.org/licenses/mit-license.php The MIT License
  * @link     http://www.croogo.org
  */
-class ParamsType extends Type
+class ParamsType extends BaseType
 {
 
     /**
      * @param $value
-     * @param Driver $driver
+     * @param DriverInterface $driver
      * @return array
      */
-    public function toPHP($value, Driver $driver)
+    public function toPHP($value, DriverInterface $driver)
     {
         if (empty($value) || $value === null) {
             return new ArrayObject();
@@ -47,20 +47,20 @@ class ParamsType extends Type
 
     /**
      * @param $value
-     * @param Driver $driver
+     * @param DriverInterface $driver
      * @return array
      */
-    public function toDatabase($value, Driver $driver)
+    public function toDatabase($value, DriverInterface $driver)
     {
         return $this->arrayToParams($value);
     }
 
     /**
      * @param $value
-     * @param Driver $driver
+     * @param DriverInterface $driver
      * @return int
      */
-    public function toStatement($value, Driver $driver)
+    public function toStatement($value, DriverInterface $driver)
     {
         if ($value === null) {
             return PDO::PARAM_NULL;

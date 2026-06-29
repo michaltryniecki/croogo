@@ -7,7 +7,7 @@ use Crud\Listener\BaseListener;
 
 class ChooserListener extends BaseListener
 {
-    public function beforeFilter(Event $event)
+    public function beforeFilter(Event $event): void
     {
         if (!$this->_controller()->request->getQuery('chooser')) {
             return;

@@ -54,10 +54,10 @@ class DateTimeWidget extends CakeDateTimeWidget
             switch ($type) {
                 case 'date':
                 case 'time':
-                    $val = Type::build($type)->marshal($val);
+                    $val = \Cake\Database\TypeFactory::build($type)->marshal($val);
                     break;
                 default:
-                    $val = Type::build('datetime')->marshal($val);
+                    $val = \Cake\Database\TypeFactory::build('datetime')->marshal($val);
             }
         }
 

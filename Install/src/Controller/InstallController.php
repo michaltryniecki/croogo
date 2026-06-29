@@ -35,7 +35,7 @@ class InstallController extends Controller
         'Welcome', 'Database', 'Admin user', 'Completed'
     ];
 
-    public function initialize()
+    public function initialize(): void
     {
         $this->loadComponent('Flash');
 
@@ -48,7 +48,7 @@ class InstallController extends Controller
      * @return void
      * @access public
      */
-    public function beforeFilter(Event $event)
+    public function beforeFilter(\Cake\Event\EventInterface $event): void
     {
         parent::beforeFilter($event);
 
@@ -88,7 +88,7 @@ class InstallController extends Controller
      * @return void
      * @access public
      */
-    public function index()
+    public function index(): void
     {
         $this->_check();
 
@@ -210,7 +210,7 @@ class InstallController extends Controller
      * Undoes all previous database work
      * @return void
      */
-    public function undo()
+    public function undo(): void
     {
     }
 
@@ -252,7 +252,7 @@ class InstallController extends Controller
      * @return void
      * @access public
      */
-    public function finish($token = null)
+    public function finish($token = null): void
     {
         $this->_check();
 

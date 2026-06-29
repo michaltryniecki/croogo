@@ -22,7 +22,7 @@ class RowLevelAclBehavior extends Behavior
      * creator. If 'RolePermission' is present, 'grant' or 'inherit' permissions
      * for the role.
      */
-    public function afterSave(Event $event)
+    public function afterSave(\Cake\Event\EventInterface $event): void
     {
         $entity = $event->data['entity'];
         if (!$entity || !$entity->id) {

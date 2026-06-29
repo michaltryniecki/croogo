@@ -21,7 +21,7 @@ class ActionsController extends AppController
 
     private $Acos;
 
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
 
@@ -31,7 +31,7 @@ class ActionsController extends AppController
     /**
      * admin_index
      */
-    public function index($id = null)
+    public function index($id = null): void
     {
         if ($id == null) {
             $root = $this->Acos->node('controllers')->firstOrFail();

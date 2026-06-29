@@ -24,7 +24,7 @@ use Croogo\Menus\Model\Table\LinksTable;
  */
 class LinksController extends AppController
 {
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
 
@@ -36,7 +36,7 @@ class LinksController extends AppController
         }
     }
 
-    public function index()
+    public function index(): void
     {
         $menuId = $this->getRequest()->getQuery('menu_id');
         $menu = $this->Links->Menus->get($menuId);
@@ -61,7 +61,7 @@ class LinksController extends AppController
      *
      * @param int $id
      *
-     * @return \Cake\Network\Response|null|void
+     * @return \Cake\Http\Response|null|void
      */
     public function delete($id = null)
     {
@@ -88,7 +88,7 @@ class LinksController extends AppController
      * @param int $id
      * @param int $step
      *
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Http\Response|null
      */
     public function moveup($id, $step = 1)
     {
@@ -125,7 +125,7 @@ class LinksController extends AppController
      * @param int $id
      * @param int $step
      *
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Http\Response|null
      */
     public function movedown($id, $step = 1)
     {
@@ -187,7 +187,7 @@ class LinksController extends AppController
         return $this->BulkProcess->process($this->Links, $action, $ids, $options);
     }
 
-    public function beforeCrudRender(Event $event)
+    public function beforeCrudRender(Event $event): void
     {
         $menuId = null;
         $conditions = [];
@@ -210,7 +210,7 @@ class LinksController extends AppController
         $this->set('parentLinks', $this->Links->find('treeList')->where($conditions));
     }
 
-    public function beforeCrudRedirect(Event $event)
+    public function beforeCrudRedirect(Event $event): void
     {
         if ($this->redirectToSelf($event)) {
             return;

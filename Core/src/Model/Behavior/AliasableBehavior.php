@@ -37,7 +37,7 @@ class AliasableBehavior extends Behavior
      */
     protected $_byAlias = [];
 
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->reload();
     }
@@ -47,7 +47,7 @@ class AliasableBehavior extends Behavior
      *
      * @return void
      */
-    public function reload()
+    public function reload(): void
     {
         $this->_byIds = $this->_table
             ->find('list', [

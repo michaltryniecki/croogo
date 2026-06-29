@@ -22,7 +22,7 @@ use Croogo\Core\Model\Table\CroogoTable;
 class LinksTable extends CroogoTable
 {
 
-    public function validationDefault(Validator $validator)
+    public function validationDefault(Validator $validator): \Cake\Validation\Validator
     {
         $validator
             ->notBlank('title', __d('croogo', 'Title cannot be empty.'));
@@ -38,7 +38,7 @@ class LinksTable extends CroogoTable
         return $validator;
     }
 
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->addBehavior('Tree');
         $this->addBehavior('Croogo/Core.Cached', [
@@ -87,7 +87,7 @@ class LinksTable extends CroogoTable
      * @param int $menuId menu id
      * @return void
      */
-    public function setTreeScope($menuId)
+    public function setTreeScope($menuId): void
     {
         $settings = [
             'scope' => ['menu_id' => $menuId],
@@ -104,7 +104,7 @@ class LinksTable extends CroogoTable
     /**
      * Calls TreeBehavior::recover when we are changing scope
      */
-    public function afterSave(Event $event, Entity $entity, $options = [])
+    public function afterSave(\Cake\Event\EventInterface $event, Entity $entity, $options = []): void
     {
         if ($entity->isNew()) {
             return;

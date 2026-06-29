@@ -26,12 +26,14 @@ class TestInstallShell extends InstallShell
         return $this->_githubUrl($url);
     }
 
-    public function out($message = null, $newlines = 1, $level = Shell::NORMAL)
+    public function out($message = null, int $newlines = 1, int $level = Shell::NORMAL): ?int
     {
+        return null;
     }
 
-    public function err($message = null, $newlines = 1)
+    public function err($message = null, int $newlines = 1): int
     {
+        return 0;
     }
 }
 
@@ -62,7 +64,7 @@ class InstallShellTest extends CroogoTestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -79,7 +81,7 @@ class InstallShellTest extends CroogoTestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $Folder = new Folder(TMP);
@@ -98,7 +100,7 @@ class InstallShellTest extends CroogoTestCase
      *
      * @return void
      */
-    public function testInstallPlugin()
+    public function testInstallPlugin(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 
@@ -124,7 +126,7 @@ class InstallShellTest extends CroogoTestCase
      *
      * @return void
      */
-    public function testInstallTheme()
+    public function testInstallTheme(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 
@@ -148,7 +150,7 @@ class InstallShellTest extends CroogoTestCase
     /**
      * testGithubUrl
      */
-    public function testGithubUrl()
+    public function testGithubUrl(): void
     {
         $Shell = new TestInstallShell();
 
@@ -167,7 +169,7 @@ class InstallShellTest extends CroogoTestCase
     /**
      * testComposerInstall
      */
-    public function testComposerInstall()
+    public function testComposerInstall(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 

@@ -41,7 +41,7 @@ class FileManagerEventHandler implements EventListenerInterface
     /**
      * Registers usage when new attachment is created and attached to a resource
      */
-    public function onNewAttachment($event)
+    public function onNewAttachment($event): void
     {
         $controller = $event->getSubject();
         $request = $controller->request;
@@ -83,7 +83,7 @@ class FileManagerEventHandler implements EventListenerInterface
      *
      * @return void
      */
-    public function onSetupLinkChooser($event)
+    public function onSetupLinkChooser($event): void
     {
         $linkChoosers = [];
         $linkChoosers['Images'] = [
@@ -126,7 +126,7 @@ class FileManagerEventHandler implements EventListenerInterface
     /**
      * Setup admin data
      */
-    public function onSetupAdminData($event)
+    public function onSetupAdminData($event): void
     {
 //        Nav::add('media.children.attachments', [
 //            'title' => __d('croogo', 'Attachments'),

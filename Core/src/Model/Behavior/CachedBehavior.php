@@ -27,7 +27,7 @@ class CachedBehavior extends Behavior
      * afterSave callback
      * @return void
      */
-    public function afterSave()
+    public function afterSave(): void
     {
         $this->_deleteCachedFiles();
     }
@@ -37,7 +37,7 @@ class CachedBehavior extends Behavior
      *
      * @return void
      */
-    public function afterDelete()
+    public function afterDelete(): void
     {
         $this->_deleteCachedFiles();
     }

@@ -9,7 +9,7 @@ class AssetUsagesController extends AppController
         'Croogo/FileManager.AssetUsages',
     ];
 
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
 
@@ -21,7 +21,7 @@ class AssetUsagesController extends AppController
         }
     }
 
-    public function add()
+    public function add(): void
     {
         if ($this->getRequest()->getQuery()) {
             $assetId = $this->getRequest()->getQuery('asset_id');
@@ -55,9 +55,9 @@ class AssetUsagesController extends AppController
         $this->redirect($this->referer());
     }
 
-    public function changeType()
+    public function changeType(): void
     {
-        $this->viewBuilder()->className('Json');
+        $this->viewBuilder()->setClassName('Json');
         $result = true;
         $data = ['pk' => null, 'value' => null];
         if (isset($this->getRequest()->data['pk'])) {
@@ -78,7 +78,7 @@ class AssetUsagesController extends AppController
         $this->set('_serialize', 'result');
     }
 
-    public function unregister()
+    public function unregister(): void
     {
         $this->viewBuilder()->setClassName('Json');
         $result = false;

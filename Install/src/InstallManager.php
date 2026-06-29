@@ -251,7 +251,7 @@ class InstallManager
         return $Users->save($user) !== false;
     }
 
-    public function setupAcos()
+    public function setupAcos(): void
     {
         Cache::clearAll();
         $generator = new AclGenerator();
@@ -262,14 +262,14 @@ class InstallManager
         $generator->insertAcos(ConnectionManager::get('default'));
     }
 
-    public function setupGrants($success = null, $error = null)
+    public function setupGrants($success = null, $error = null): void
     {
         if (!$success) {
-            $success = function () {
+            $success = function (): void {
             };
         }
         if (!$error) {
-            $error = function () {
+            $error = function (): void {
             };
         }
 

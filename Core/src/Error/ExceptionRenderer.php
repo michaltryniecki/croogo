@@ -44,7 +44,7 @@ class ExceptionRenderer extends CakeExceptionRenderer
         }
         if (empty($controller)) {
             $controller = new Controller($request, $response);
-            $controller->viewBuilder()->className('Croogo/Core.Croogo');
+            $controller->viewBuilder()->setClassName('Croogo/Core.Croogo');
         }
 
         return $controller;

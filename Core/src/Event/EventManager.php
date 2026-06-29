@@ -60,7 +60,7 @@ class EventManager extends CakeEventManager
      *
      * @return void
      */
-    public static function loadListeners()
+    public static function loadListeners(): void
     {
         $eventManager = EventManager::instance();
         $cached = Cache::read('EventHandlers', 'cached_settings');
@@ -108,7 +108,7 @@ class EventManager extends CakeEventManager
      * @see EventManager::attach()
      * @return void
      */
-    public function attach($callable, $eventKey = null, array $options = [])
+    public function attach($callable, $eventKey = null, array $options = []): void
     {
         parent::on($eventKey, $options, $callable);
         if (is_object($callable)) {
@@ -122,7 +122,7 @@ class EventManager extends CakeEventManager
      * @see EventManager::detach()
      * @return void
      */
-    public function detach($callable, $eventKey = null)
+    public function detach($callable, $eventKey = null): void
     {
         if (is_object($callable)) {
             $key = get_class($callable);
@@ -136,7 +136,7 @@ class EventManager extends CakeEventManager
      * @param $plugin string
      * @return void
      */
-    public function detachPluginSubscribers($plugin)
+    public function detachPluginSubscribers($plugin): void
     {
         $eventHandlers = Configure::read('EventHandlers');
         if (empty($eventHandlers)) {

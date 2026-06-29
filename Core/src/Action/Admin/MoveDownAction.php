@@ -105,7 +105,7 @@ class MoveDownAction extends BaseAction
      * HTTP PUT handler
      *
      * @param mixed $id Record id
-     * @return void|\Cake\Network\Response
+     * @return void|\Cake\Http\Response
      */
     protected function _put($id, $step = 1)
     {
@@ -113,7 +113,7 @@ class MoveDownAction extends BaseAction
         $subject->set(['id' => $id]);
 
         $entity = $this->_findRecord($id, $subject);
-        $entity->set($this->config('field'), $entity->get($this->config('field')) + $step);
+        $entity->set($this->getConfig('field'), $entity->get($this->getConfig('field')) + $step);
 
         $this->_trigger('beforeMoveUp', $subject);
         if (call_user_func([$this->_table(), $this->saveMethod()], $entity, $this->saveOptions())) {
@@ -129,7 +129,7 @@ class MoveDownAction extends BaseAction
      * Thin proxy for _put
      *
      * @param mixed $id Record id
-     * @return void|\Cake\Network\Response
+     * @return void|\Cake\Http\Response
      */
     protected function _post($id = null)
     {
@@ -140,7 +140,7 @@ class MoveDownAction extends BaseAction
      * Success callback
      *
      * @param \Crud\Event\Subject $subject Event subject
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     protected function _success(Subject $subject)
     {
@@ -161,7 +161,7 @@ class MoveDownAction extends BaseAction
      * Error callback
      *
      * @param \Crud\Event\Subject $subject Event subject
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     protected function _error(Subject $subject)
     {

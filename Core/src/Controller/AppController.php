@@ -10,6 +10,7 @@ use Cake\Http\Response;
 use Cake\Http\ResponseEmitter;
 use Cake\Http\ServerRequest;
 use Cake\View\Exception\MissingTemplateException;
+use Closure;
 use Croogo\Core\Croogo;
 
 /**
@@ -75,7 +76,7 @@ class AppController extends \App\Controller\AppController implements HookableCom
     /**
      * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
         $this->_dispatchBeforeInitialize();
 
@@ -87,7 +88,7 @@ class AppController extends \App\Controller\AppController implements HookableCom
     /**
      * {@inheritDoc}
      */
-    public function beforeRender(Event $event)
+    public function beforeRender(\Cake\Event\EventInterface $event): void
     {
         parent::beforeRender($event);
 
@@ -100,7 +101,7 @@ class AppController extends \App\Controller\AppController implements HookableCom
     /**
      * {@inheritDoc}
      */
-    public function render($view = null, $layout = null)
+    public function render($view = null, $layout = null): \Cake\Http\Response
     {
         if ($this->getRequest()->getParam('prefix') === 'admin') {
             Croogo::dispatchEvent('Croogo.setupAdminData', $this);
@@ -125,23 +126,23 @@ class AppController extends \App\Controller\AppController implements HookableCom
      *
      * @throws MissingActionException
      */
-    public function invokeAction()
+    public function invokeAction(Closure $action, array $args): void
     {
-        $request = $this->request;
+        $request = $this->getRequest();
         try {
-            return parent::invokeAction();
+            parent::invokeAction($action, $args);
         } catch (MissingActionException $e) {
-            $params = $request->params;
-            $prefix = isset($params['prefix']) ? $params['prefix'] : '';
-            $action = str_replace($prefix . '_', '', $params['action']);
+            $prefix = $request->getParam('prefix', '');
+            $actionName = str_replace($prefix . '_', '', $request->getParam('action'));
             foreach ($this->_apiComponents as $component => $setting) {
                 if (empty($this->{$component})) {
                     continue;
                 }
-                if ($this->{$component}->isValidAction($action)) {
+                if ($this->{$component}->isValidAction($actionName)) {
                     $this->setRequest($request);
+                    $this->{$component}->{$actionName}($this);
 
-                    return $this->{$component}->{$action}($this);
+                    return;
                 }
             }
             throw $e;
@@ -154,7 +155,7 @@ class AppController extends \App\Controller\AppController implements HookableCom
      * @return void
      * @throws MissingComponentException
      */
-    public function beforeFilter(Event $event)
+    public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         parent::beforeFilter($event);
         $aclFilterComponent = 'Filter';
@@ -175,7 +176,7 @@ class AppController extends \App\Controller\AppController implements HookableCom
                 $this->viewBuilder()->setLayout('maintenance');
                 $this->response->statusCode(503);
                 $this->set('title_for_layout', __d('croogo', 'Site down for maintenance'));
-                $this->viewBuilder()->templatePath('Maintenance');
+                $this->viewBuilder()->setTemplatePath('Maintenance');
                 $this->render('Croogo/Core.blank');
             }
         }
@@ -201,7 +202,7 @@ class AppController extends \App\Controller\AppController implements HookableCom
      *
      * @return bool
      */
-    public function _securityError($type = null, $exception = null)
+    public function _securityError($type = null, $exception = null): void
     {
         switch ($type) {
             case 'auth':

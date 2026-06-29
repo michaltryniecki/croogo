@@ -58,7 +58,7 @@ class HtmlHelper extends BaseHtmlHelper
     /**
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         $events = parent::implementedEvents();
         $events['Helper.Layout.beforeFilter'] = [
