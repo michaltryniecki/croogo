@@ -95,26 +95,17 @@ Configure::write('Session', [
 // Ensure default test connection is defined
 if (!getenv('db_class')) {
     putenv('db_class=Cake\Database\Driver\Sqlite');
-    putenv('db_dsn=sqlite::memory:');
+    putenv('db_dsn=sqlite:///:memory:');
 }
-ConnectionManager::setConfig('test', [
+// CakePHP 4 oczekuje DSN pod kluczem 'url' (klucz 'dsn' nie jest parsowany);
+// pusty 'database'/'username' z getenv psuły konfigurację sqlite.
+$testDbConfig = [
     'className' => 'Cake\Database\Connection',
-    'driver' => getenv('db_class'),
-    'dsn' => getenv('db_dsn'),
-    'database' => getenv('db_database'),
-    'username' => getenv('db_login'),
-    'password' => getenv('db_password'),
-    'timezone' => 'UTC'
-]);
-ConnectionManager::setConfig('test_migrations', [
-    'className' => 'Cake\Database\Connection',
-    'driver' => getenv('db_class'),
-    'dsn' => getenv('db_dsn'),
-    'database' => getenv('db_database'),
-    'username' => getenv('db_login'),
-    'password' => getenv('db_password'),
-    'timezone' => 'UTC'
-]);
+    'url' => getenv('db_dsn'),
+    'timezone' => 'UTC',
+];
+ConnectionManager::setConfig('test', $testDbConfig);
+ConnectionManager::setConfig('test_migrations', $testDbConfig);
 
 $settingsFixture = new SettingsFixture();
 
@@ -126,7 +117,10 @@ $settingsFixture->insert(ConnectionManager::get('default'));
 PluginManager::load('Croogo/Core', ['bootstrap' => true, 'routes' => true]);
 PluginManager::load('Croogo/Settings', ['bootstrap' => true, 'routes' => true]);
 
-DispatcherFactory::add('Routing');
-DispatcherFactory::add('ControllerFactory');
+// DispatcherFactory zostało usunięte w CakePHP 4 (dispatch przez middleware/Application).
+if (class_exists(DispatcherFactory::class)) {
+    DispatcherFactory::add('Routing');
+    DispatcherFactory::add('ControllerFactory');
+}
 
 class_alias('Croogo\Core\TestSuite\TestCase', 'Croogo\Core\TestSuite\CroogoTestCase');
