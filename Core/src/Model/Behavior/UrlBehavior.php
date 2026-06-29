@@ -27,7 +27,7 @@ class UrlBehavior extends Behavior
         'pass' => []
     ];
 
-    public function beforeFind(Event $event, Query $query, $options)
+    public function beforeFind(\Cake\Event\EventInterface $event, Query $query, $options): void
     {
         $query->formatResults(function ($results) {
             return $results->map(function ($row) {

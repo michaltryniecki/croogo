@@ -68,12 +68,12 @@ class Status implements ArrayAccess
         return $result;
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->_statuses[$offset] = $value;
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         if (isset($this->_statuses[$offset])) {
             unset($this->_statuses[$offset]);

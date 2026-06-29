@@ -8,7 +8,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
-use Cake\Network\Exception\MethodNotAllowedException;
+use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Croogo\Core\Exception\Exception;
@@ -78,7 +78,7 @@ class CroogoComponent extends Component
      * @param object $event instance of controller
      * @return void
      */
-    public function startup(Event $event)
+    public function startup(\Cake\Event\EventInterface $event): void
     {
         $this->_controller = $event->getSubject();
 
@@ -136,7 +136,7 @@ class CroogoComponent extends Component
      * @param array $allowRoles Role aliases
      * @return void
      */
-    public function addAco($action, $allowRoles = [])
+    public function addAco($action, $allowRoles = []): void
     {
         $this->_controller->CroogoAccess->addAco($action, $allowRoles);
     }
@@ -149,7 +149,7 @@ class CroogoComponent extends Component
      * @param string $action possible values: ControllerName, ControllerName/method_name
      * @return void
      */
-    public function removeAco($action)
+    public function removeAco($action): void
     {
         $this->_controller->CroogoAccess->removeAco($action);
     }
@@ -234,7 +234,7 @@ class CroogoComponent extends Component
      * @param string|array $templates view path or array of view paths
      * @return void
      */
-    public function viewFallback($templates)
+    public function viewFallback($templates): void
     {
         $templates = (array)$templates;
         $controller = $this->_controller;
@@ -243,7 +243,7 @@ class CroogoComponent extends Component
             foreach ($templatePaths as $templatePath) {
                 $templatePath = $templatePath . $this->_viewPath() . DS . $template;
                 if (file_exists($templatePath . '.ctp')) {
-                    $controller->viewBuilder()->template($this->_viewPath() . DS . $template);
+                    $controller->viewBuilder()->setTemplate($this->_viewPath() . DS . $template);
 
                     return;
                 }
@@ -272,7 +272,7 @@ class CroogoComponent extends Component
             return;
         }
         if (!$controller->request->is('post')) {
-            throw new MethodNotAllowedException();
+            throw new \Cake\Http\Exception\MethodNotAllowedException();
         }
         $controller->Security->setConfig('validatePost', false);
     }

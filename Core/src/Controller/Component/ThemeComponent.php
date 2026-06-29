@@ -25,7 +25,7 @@ class ThemeComponent extends Component
         parent::__construct($registry, $config);
     }
 
-    public function beforeFilter(Event $event)
+    public function beforeFilter(\Cake\Event\EventInterface $event): void
     {
         $this->_controller = $event->getSubject();
         $theme = $this->getConfig('theme');
@@ -46,7 +46,7 @@ class ThemeComponent extends Component
      *
      * @return void
      */
-    public function loadThemeSettings($theme)
+    public function loadThemeSettings($theme): void
     {
         $prefix = $this->request->getParam('prefix');
         $croogoTheme = new CroogoTheme();

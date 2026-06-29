@@ -66,14 +66,14 @@ class CroogoTable extends Table
         parent::__construct($config);
     }
 
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return parent::implementedEvents() + [
             'Model.initialize' => 'onModelInitialized',
         ];
     }
 
-    public function onModelInitialized(Event $event)
+    public function onModelInitialized(Event $event): void
     {
         foreach ($this->hookedBehaviors as $behavior => $config) {
             $this->addBehavior($behavior, $config);
@@ -140,7 +140,7 @@ class CroogoTable extends Table
             $this->_editFields = $editFields;
         }
         if (empty($this->_editFields)) {
-            $this->_editFields = $this->schema()->columns();
+            $this->_editFields = $this->getSchema()->columns();
             $id = array_search('id', $this->_editFields);
             if ($id !== false) {
                 unset($this->_editFields[$id]);

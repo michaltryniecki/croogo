@@ -137,7 +137,7 @@ class PluginManager extends Plugin
      *
      * @return void
      */
-    public function setController(AppController $controller)
+    public function setController(AppController $controller): void
     {
         $this->_Controller = $controller;
     }
@@ -634,7 +634,7 @@ class PluginManager extends Plugin
      * @param string $plugin Plugin name
      * @return void
      */
-    public function addBootstrap($plugin)
+    public function addBootstrap($plugin): void
     {
         $hookBootstraps = Configure::read('Hook.bootstraps');
         if (!$hookBootstraps) {
@@ -661,7 +661,7 @@ class PluginManager extends Plugin
      * @param string $plugin Plugin name
      * @return void
      */
-    public function removeBootstrap($plugin)
+    public function removeBootstrap($plugin): void
     {
         $hookBootstraps = Configure::read('Hook.bootstraps');
         if (!$hookBootstraps) {
@@ -839,7 +839,7 @@ class PluginManager extends Plugin
             if (isset($pluginActivation) && method_exists($pluginActivation, 'onDeactivation')) {
                 $pluginActivation->onDeactivation($this->_Controller);
             }
-            static::unload($plugin);
+            static::clear($plugin);
 
             Cache::clear('croogo_menus');
             Cache::delete('file_map', '_cake_core_');
@@ -853,7 +853,7 @@ class PluginManager extends Plugin
     /**
      * Cache plugin dependency list
      */
-    public static function cacheDependencies()
+    public static function cacheDependencies(): void
     {
         $pluginDeps = Cache::read('pluginDeps', 'cached_settings');
         if (!$pluginDeps) {
@@ -912,7 +912,7 @@ class PluginManager extends Plugin
      * @return void
      * @see Plugin::load()
      */
-    public static function load($plugin, array $config = [])
+    public static function load($plugin, array $config = []): void
     {
         if (is_array($plugin)) {
             foreach ($plugin as $name => $conf) {
@@ -984,7 +984,7 @@ class PluginManager extends Plugin
      * @param string $plugin name of the plugin to forget
      * @return void
      */
-    public static function unload($plugin = null)
+    public static function clear($plugin = null): void
     {
         if (is_array($plugin)) {
             foreach ($plugin as $name) {
@@ -1245,7 +1245,7 @@ class PluginManager extends Plugin
      * @param PluginApplicationInterface $app
      * @return void
      */
-    public static function setup(PluginApplicationInterface $app)
+    public static function setup(PluginApplicationInterface $app): void
     {
         $dbConfigExists = false;
 
@@ -1327,7 +1327,7 @@ class PluginManager extends Plugin
      * @param $app
      * @return void
      */
-    public static function croogoBootstrap($app)
+    public static function croogoBootstrap($app): void
     {
         Configure::write(
             'DebugKit.panels',
@@ -1361,7 +1361,7 @@ class PluginManager extends Plugin
         // Make sure that the Croogo event manager is the global one
         EventManager::instance();
 
-        time(function () {
+        time(function (): void {
 
             /**
              * Locale
@@ -1420,7 +1420,7 @@ class PluginManager extends Plugin
             return $package;
         });
 
-        time(function () use ($app) {
+        time(function () use ($app): void {
             /**
              * Load required plugins
              */
@@ -1453,7 +1453,7 @@ class PluginManager extends Plugin
             $plugins = Hash::merge((array)$aclPlugin, $plugins);
         }
         $themes = [Configure::read('Site.theme'), Configure::read('Site.admin_theme')];
-        time(function () use ($app, $plugins, $themes) {
+        time(function () use ($app, $plugins, $themes): void {
             $option = [
                 'autoload' => true,
                 'bootstrap' => true,
@@ -1490,13 +1490,13 @@ class PluginManager extends Plugin
 
         // FIXME DispatcherFactory::add('Croogo/Core.HomePage');
 
-        time(function () {
+        time(function (): void {
             PluginManager::events();
 
             EventManager::loadListeners();
         }, 'Registering plugin listeners');
 
-        time(function () {
+        time(function (): void {
             Croogo::dispatchEvent('Croogo.bootstrapComplete');
         }, 'event-Croogo.bootstrapComplete', 'Event: Croogo.bootstrapComplete');
     }

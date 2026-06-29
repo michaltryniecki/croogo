@@ -37,7 +37,7 @@ class BulkProcessComponent extends Component
     /**
      * beforeFilter
      */
-    public function beforeFilter(Event $event)
+    public function beforeFilter(\Cake\Event\EventInterface $event): void
     {
         $this->_controller = $event->getSubject();
         if ($this->_controller->request->getParam('action') == 'process') {
@@ -148,7 +148,7 @@ class BulkProcessComponent extends Component
             if (!empty($messageMap[$action])) {
                 $message = $messageMap[$action];
             } else {
-                $message = __d('croogo', '%s processed', Inflector::humanize($table->alias()));
+                $message = __d('croogo', '%s processed', Inflector::humanize($table->getAlias()));
             }
             $flashMethod = 'success';
             Croogo::dispatchEvent($eventName, $Controller, compact($ids));

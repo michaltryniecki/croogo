@@ -6,7 +6,7 @@ use Cake\Database\Driver;
 use Cake\Database\Type;
 use PDO;
 
-class EncodedType extends Type
+class EncodedType extends \Cake\Database\TypeFactory
 {
 
     public function toPHP($value, Driver $driver)

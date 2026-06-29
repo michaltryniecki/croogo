@@ -45,7 +45,7 @@ class PublishableBehavior extends Behavior
      *
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->_CroogoStatus = new Status();
     }
@@ -65,7 +65,7 @@ class PublishableBehavior extends Behavior
      *
      * @return array Options passed to Model::find()
      */
-    public function beforeFind(Event $event, Query $query, $options)
+    public function beforeFind(\Cake\Event\EventInterface $event, Query $query, $options)
     {
         $table = $this->_table;
         $config = $this->getConfig();

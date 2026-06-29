@@ -25,7 +25,7 @@ class ErrorController extends \Cake\Controller\ErrorController implements Hookab
 {
     use HookableComponentTrait;
 
-    public function initialize()
+    public function initialize(): void
     {
         $this->_dispatchBeforeInitialize();
 
@@ -49,7 +49,7 @@ class ErrorController extends \Cake\Controller\ErrorController implements Hookab
      *
      * @return void
      */
-    public function beforeFilter(Event $event)
+    public function beforeFilter(\Cake\Event\EventInterface $event): void
     {
         parent::beforeFilter($event);
         if ($this->getRequest()->is('json')) {

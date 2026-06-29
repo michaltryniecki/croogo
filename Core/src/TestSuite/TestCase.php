@@ -49,7 +49,7 @@ class TestCase extends CakeTestCase
         EventManager::instance(new EventManager);
         Configure::write('EventHandlers', []);
 
-        PluginManager::unload('Croogo/Install');
+        PluginManager::clear('Croogo/Install');
         Configure::write('Acl.database', 'test');
 
         $this->previousPlugins = Plugin::loaded();
@@ -62,7 +62,7 @@ class TestCase extends CakeTestCase
         // Unload all plugins that were loaded while running tests
         $diff = array_diff(Plugin::loaded(), $this->previousPlugins);
         foreach ($diff as $plugin) {
-            PluginManager::unload($plugin);
+            PluginManager::clear($plugin);
         }
     }
 

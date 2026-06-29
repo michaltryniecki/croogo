@@ -136,7 +136,7 @@ class ExtShell extends AppShell
     /**
      * Display help/options
      */
-    public function getOptionParser()
+    public function getOptionParser(): \Cake\Console\ConsoleOptionParser
     {
         return parent::getOptionParser()
             ->setDescription(__d('croogo', 'Activate Plugins & Themes'))
@@ -248,7 +248,7 @@ class ExtShell extends AppShell
     /**
      * List plugins
      */
-    public function plugins($plugin = null)
+    public function plugins($plugin = null): void
     {
         $all = $this->params['all'];
         $plugins = $plugin == null ? array_keys(Configure::read('plugins')) : [$plugin];
@@ -274,7 +274,7 @@ class ExtShell extends AppShell
     /**
      * List themes
      */
-    public function themes($theme = null)
+    public function themes($theme = null): void
     {
         $CroogoTheme = new CroogoTheme();
         $all = $this->params['all'];

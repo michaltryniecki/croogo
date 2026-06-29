@@ -13,21 +13,21 @@ class CroogoNavTest extends CroogoTestCase
 
     protected static $_menus = [];
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         self::$_menus = Nav::items('sidebar');
         Nav::activeMenu('sidebar');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Nav::clear(null);
         Nav::items('sidebar', self::$_menus);
     }
 
-    public function testNav()
+    public function testNav(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 
@@ -68,7 +68,7 @@ class CroogoNavTest extends CroogoTestCase
     /**
      * @expectedException UnexpectedValueException
      */
-    public function testNavClearWithException()
+    public function testNavClearWithException(): void
     {
         Nav::clear('bogus');
     }
@@ -76,7 +76,7 @@ class CroogoNavTest extends CroogoTestCase
     /**
      * testNavItemsWithBogusMenu
      */
-    public function testNavItemsWithBogusMenu()
+    public function testNavItemsWithBogusMenu(): void
     {
         $result = Nav::items('bogus');
         $this->assertEquals([], $result);
@@ -85,7 +85,7 @@ class CroogoNavTest extends CroogoTestCase
     /**
      * Test Get Menus
      */
-    public function testNavGetMenus()
+    public function testNavGetMenus(): void
     {
         $result = Nav::menus();
         $this->assertEquals(['sidebar'], $result);
@@ -100,7 +100,7 @@ class CroogoNavTest extends CroogoTestCase
     /**
      * Test multiple menu
      */
-    public function testNavMultipleMenus()
+    public function testNavMultipleMenus(): void
     {
         Nav::activeMenu('top');
         Nav::add('foo', ['title' => 'foo']);
@@ -112,7 +112,7 @@ class CroogoNavTest extends CroogoTestCase
         $this->assertTrue(in_array('foo', $menus), 'foo missing in top');
     }
 
-    public function testNavMerge()
+    public function testNavMerge(): void
     {
         $foo = ['title' => 'foo', 'access' => ['public', 'admin']];
         $bar = ['title' => 'bar', 'access' => ['admin']];
@@ -126,7 +126,7 @@ class CroogoNavTest extends CroogoTestCase
         $this->assertEquals($expected, $items['foo']['access']);
     }
 
-    public function testNavMergeSameArray()
+    public function testNavMergeSameArray(): void
     {
         Nav::clear();
         $foo = ['url' => ['action' => 'index', 'hi']];
@@ -137,7 +137,7 @@ class CroogoNavTest extends CroogoTestCase
         $this->assertEquals($expected, $items['foo']['url']);
     }
 
-    public function testNavOverwrite()
+    public function testNavOverwrite(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 

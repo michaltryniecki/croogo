@@ -17,7 +17,7 @@ class PublishableBehaviorTest extends CroogoTestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 //      $this->OrderRecord = ClassRegistry::init('OrderRecord');
@@ -34,7 +34,7 @@ class PublishableBehaviorTest extends CroogoTestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         unset($this->OrderRecord);
@@ -44,7 +44,7 @@ class PublishableBehaviorTest extends CroogoTestCase
     /**
      * testPeriodFilter
      */
-    public function testPeriodFilter()
+    public function testPeriodFilter(): void
     {
         $this->markTestIncomplete('This test needs to be ported to CakePHP 3.0');
 

@@ -4,7 +4,7 @@ namespace Croogo\Core\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
-use Cake\Network\Http\Client;
+use Cake\Http\Client;
 
 /**
  * Recaptcha Component
@@ -40,7 +40,7 @@ class RecaptchaComponent extends Component
     /**
      * initialize
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $controller = $this->_registry->getController();
         $this->_controller = $controller;
@@ -58,7 +58,7 @@ class RecaptchaComponent extends Component
     /**
      * startup
      */
-    public function startup()
+    public function startup(): void
     {
         $this->_publicKey = Configure::read('Service.recaptcha_public_key');
         $this->_privateKey = Configure::read('Service.recaptcha_private_key');

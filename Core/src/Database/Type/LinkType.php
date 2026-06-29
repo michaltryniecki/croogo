@@ -6,7 +6,7 @@ use Cake\Database\Driver;
 use Cake\Database\Type;
 use Croogo\Core\Link;
 
-class LinkType extends Type
+class LinkType extends \Cake\Database\TypeFactory
 {
 
     public function toPHP($value, Driver $driver)

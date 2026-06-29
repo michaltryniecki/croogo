@@ -5,7 +5,7 @@ namespace Croogo\Core\TestSuite;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\EntityInterface;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest as Request;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestCase as CakeIntegrationTestCase;
@@ -51,7 +51,7 @@ class IntegrationTestCase extends CakeIntegrationTestCase
         EventManager::instance(new EventManager);
         Configure::write('EventHandlers', []);
 
-        PluginManager::unload('Croogo/Install');
+        PluginManager::clear('Croogo/Install');
         PluginManager::load('Croogo/Example', ['autoload' => true, 'path' => '../Example/']);
         Configure::write('Acl.database', 'test');
 
@@ -66,7 +66,7 @@ class IntegrationTestCase extends CakeIntegrationTestCase
         parent::tearDown();
 
         // Unload all plugins that were loaded while running tests
-        PluginManager::unload(array_diff(Plugin::loaded(), $this->previousPlugins));
+        PluginManager::clear(array_diff(Plugin::loaded(), $this->previousPlugins));
     }
 
     /**
@@ -86,7 +86,7 @@ class IntegrationTestCase extends CakeIntegrationTestCase
     /**
      * @param \Croogo\Users\Model\Entity\User|\Cake\ORM\Query|string $user
      */
-    public function user($user)
+    public function user($user): void
     {
         if (is_string($user)) {
             $user = TableRegistry::get('Croogo/Users.Users')
@@ -111,7 +111,7 @@ class IntegrationTestCase extends CakeIntegrationTestCase
      * @param int $index
      * @param string $message The failure message that will be appended to the generated message.
      */
-    public function assertFlash($expected, $key = 'flash', $index = 0, $message = '')
+    public function assertFlash($expected, $key = 'flash', $index = 0, $message = ''): void
     {
         $this->assertSession(
             $expected,

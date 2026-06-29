@@ -15,7 +15,7 @@ use PDO;
  * @license  http://www.opensource.org/licenses/mit-license.php The MIT License
  * @link     http://www.croogo.org
  */
-class ParamsType extends Type
+class ParamsType extends \Cake\Database\TypeFactory
 {
 
     /**
