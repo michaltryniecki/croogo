@@ -15,7 +15,7 @@ class StringConverterTest extends CroogoTestCase
      */
     private $Converter;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->Converter = new StringConverter();
