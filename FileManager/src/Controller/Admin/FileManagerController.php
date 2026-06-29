@@ -24,7 +24,7 @@ class FileManagerController extends AppController
     /**
      * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
         $this->FileManager = new FileManager();
@@ -69,7 +69,7 @@ class FileManagerController extends AppController
      * @return void
      * @access public
      */
-    public function browse()
+    public function browse(): void
     {
         $this->folder = new Folder;
 
@@ -368,7 +368,7 @@ class FileManagerController extends AppController
      * @return void
      * @access public
      */
-    public function chmod()
+    public function chmod(): void
     {
     }
 }

@@ -31,7 +31,7 @@ class AclEventHandler implements EventListenerInterface
     /**
      * Dispatcher.beforeDispatch handler
      */
-    public function onBeforeDispatch($event)
+    public function onBeforeDispatch($event): void
     {
         if (!Configure::read('Access Control.splitSession')) {
             return;

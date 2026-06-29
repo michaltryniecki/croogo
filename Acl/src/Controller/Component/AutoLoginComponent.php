@@ -47,7 +47,7 @@ class AutoLoginComponent extends Component
     /**
      * Component startup
      */
-    public function startup(Event $event)
+    public function startup(\Cake\Event\EventInterface $event): void
     {
         $this->_Controller = $controller = $event->getSubject();
         $controller->getEventManager()->on(

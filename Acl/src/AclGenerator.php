@@ -26,7 +26,7 @@ class AclGenerator extends AclExtras
      * @param ConnectionInterface $connection
      * @return void
      */
-    public function insertAcos(ConnectionInterface $connection)
+    public function insertAcos(ConnectionInterface $connection): void
     {
         $this->Aco->setConnection($connection);
         $this->acoUpdate();
@@ -71,7 +71,7 @@ class AclGenerator extends AclExtras
     /**
      * @return void
      */
-    public function syncContentAcos()
+    public function syncContentAcos(): void
     {
         $models = Configure::read('Access Control.models');
         if (!$models) {
@@ -101,9 +101,9 @@ class AclGenerator extends AclExtras
                     $node = $Acos->node($row);
                 } catch (\Exception $e) {
                     $aco = $Acos->newEntity([
-                        'model' => $Model->alias(),
+                        'model' => $Model->getAlias(),
                         'foreign_key' => $row->id,
-                        'alias' => sprintf('%s.%s', $Model->alias(), $row->id),
+                        'alias' => sprintf('%s.%s', $Model->getAlias(), $row->id),
                         'parent_id' => $parent->id,
                     ]);
                     $saved = $Acos->save($aco);

@@ -45,7 +45,7 @@ class DashboardsHelper extends Helper
     /**
      * Before Render callback
      */
-    public function beforeRender($viewFile)
+    public function beforeRender($viewFile): void
     {
         $request = $this->getView()->getRequest();
         if ($request->getParam('prefix') === 'admin') {

@@ -4,7 +4,7 @@ namespace Croogo\Users\Controller\Api\V10;
 
 use Cake\Core\Configure;
 use Cake\Event\Event;
-use Cake\Network\Exception\NotFoundException;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Utility\Security;
 use Croogo\Core\Controller\Api\AppController;
 use Firebase\JWT\JWT;
@@ -15,7 +15,7 @@ use Firebase\JWT\JWT;
 class UsersController extends AppController
 {
 
-    public function beforeFilter(Event $event)
+    public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         parent::beforeFilter($event);
         $this->Auth->allow('token');
@@ -58,7 +58,7 @@ class UsersController extends AppController
         if ($user) {
             $token = $this->generateToken($user);
         } else {
-            throw new NotFoundException();
+            throw new \Cake\Http\Exception\NotFoundException();
         }
 
         $this->set([

@@ -38,7 +38,7 @@ class UsersTable extends CroogoTable
         'role_id' => ['type' => 'value'],
     ];
 
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $multiRole = Configure::read('Access Control.multiRole');
 
@@ -181,7 +181,7 @@ class UsersTable extends CroogoTable
         return true;
     }
 
-    public function sendActivationEmail($user)
+    public function sendActivationEmail($user): void
     {
         $email = $this->getMailer('Croogo/Users.User')
             ->viewVars(compact('user'))
@@ -210,7 +210,7 @@ class UsersTable extends CroogoTable
         return $user;
     }
 
-    public function validationDefault(Validator $validator)
+    public function validationDefault(Validator $validator): \Cake\Validation\Validator
     {
         return $validator
             ->add('username', [

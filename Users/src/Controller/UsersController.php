@@ -22,7 +22,7 @@ class UsersController extends AppController
     /**
      * {inheritdoc}
      */
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
         $this->Auth->allow(['logout']);

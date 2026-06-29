@@ -40,7 +40,7 @@ class AttachmentsTable extends CroogoTable
      * @param array $config
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->setTable('attachments');
 
@@ -282,7 +282,7 @@ class AttachmentsTable extends CroogoTable
      *
      * @return bool|string
      */
-    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options = null)
+    public function beforeSave(\Cake\Event\EventInterface $event, EntityInterface $entity, ArrayObject $options = null)
     {
         if (!empty($entity->asset->file['name'])) {
             $file = $entity->asset->file;
@@ -590,7 +590,7 @@ class AttachmentsTable extends CroogoTable
         $image = Image::make($path);
 
         $stream = $image
-            ->resize($w, null, function ($constraint) {
+            ->resize($w, null, function ($constraint): void {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             })

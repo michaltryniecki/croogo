@@ -34,7 +34,7 @@ class UsersController extends AppController
      *
      * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
 
@@ -89,11 +89,11 @@ class UsersController extends AppController
         ];
     }
 
-    public function beforeFilter(Event $event)
+    public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         parent::beforeFilter($event);
 
-        $this->Crud->on('relatedModel', function (Event $event) {
+        $this->Crud->on('relatedModel', function (Event $event): void {
             if ($event->getSubject()->name == 'Roles') {
                 $event->getSubject()->query = $this->Users->Roles
                     ->find('roleHierarchy')
@@ -105,7 +105,7 @@ class UsersController extends AppController
         });
     }
 
-    public function beforeSetupAdminData()
+    public function beforeSetupAdminData(): void
     {
         $this->Auth->allow('resetPassword');
     }
@@ -156,7 +156,7 @@ class UsersController extends AppController
      * @param \Cake\Event\Event $event Event object
      * @return void
      */
-    public function beforeCrudSave(Event $event)
+    public function beforeCrudSave(Event $event): void
     {
         /**
          * @var \Croogo\Users\Model\Entity\User
@@ -169,7 +169,7 @@ class UsersController extends AppController
         $entity->activation_key = $this->Users->generateActivationKey();
     }
 
-    public function afterCrudSave(Event $event)
+    public function afterCrudSave(Event $event): void
     {
 //        if ($event->getSubject()->success && $event->getSubject()->created) {
 //            if ($this->getRequest()->getData('notification') != null) {
@@ -178,7 +178,7 @@ class UsersController extends AppController
 //        }
     }
 
-    public function beforeCrudRedirect(Event $event)
+    public function beforeCrudRedirect(Event $event): void
     {
         if ($this->redirectToSelf($event)) {
             return;
@@ -291,7 +291,7 @@ class UsersController extends AppController
         return $this->redirect($this->Auth->logout());
     }
 
-    public function beforeLookup(Event $event)
+    public function beforeLookup(Event $event): void
     {
         /** @var \Cake\ORM\Query $query */
         $query = $event->getSubject()->query;
@@ -320,7 +320,7 @@ class UsersController extends AppController
             ]);
     }
 
-    public function beforePaginate(Event $event)
+    public function beforePaginate(Event $event): void
     {
         /** @var \Cake\ORM\Query $query */
         $query = $event->getSubject()->query;

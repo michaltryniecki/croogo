@@ -35,7 +35,7 @@ class PluginsController extends AppController
      *
      * @return void
      */
-    public function beforeFilter(Event $event)
+    public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         parent::beforeFilter($event);
 
@@ -48,7 +48,7 @@ class PluginsController extends AppController
      *
      * @return void
      */
-    public function index()
+    public function index(): void
     {
         $this->set('title_for_layout', __d('croogo', 'Plugins'));
 

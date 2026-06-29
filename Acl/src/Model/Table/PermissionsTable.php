@@ -21,7 +21,7 @@ class PermissionsTable extends \Acl\Model\Table\PermissionsTable
     /**
      * afterSave
      */
-    public function afterSave($created, $options = [])
+    public function afterSave(\Cake\Event\EventInterface $created, $options = []): void
     {
         Cache::clearGroup('acl', 'permissions');
     }

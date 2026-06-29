@@ -52,16 +52,16 @@ class RowLevelAclComponent extends Component
      * attaches Acl and RowLevelAcl behavior to the controller's primary model and
      * hook the appropriate admin tabs
      */
-    public function initialize(array $settings)
+    public function initialize(array $settings): void
     {
         $controller = $this->getController();
-        $Model = $controller->{$controller->name};
+        $Model = $controller->{$controller->getName()};
         $Model->addBehavior('Acl', [
             'className' => 'Croogo/Core.CroogoAcl', 'type' => 'controlled',
         ]);
         $Model->addBehavior('Croogo/Acl.RowLevelAcl');
 
-        $name = $controller->name;
+        $name = $controller->getName();
         $element = 'Croogo/Acl.admin/row_acl';
         if (!empty($this->settings['adminTabElement'])) {
             $element = $this->settings['adminTabElement'];
@@ -78,7 +78,7 @@ class RowLevelAclComponent extends Component
     /**
      * startup
      */
-    public function startup(Event $event)
+    public function startup(\Cake\Event\EventInterface $event): void
     {
         $controller = $this->getController();
         if (!empty($controller->request->params['pass'][0])) {
@@ -101,7 +101,7 @@ class RowLevelAclComponent extends Component
         $roles = $Role->find('list', [
             'cache' => ['name' => 'roles', 'config' => 'permissions'],
         ]);
-        $modelClass = $controller->name;
+        $modelClass = $controller->getName();
         $aco = ['model' => $modelClass, 'foreign_key' => $id];
         foreach ($roles as $roleId => $role) {
             $aro = ['model' => 'Roles', 'foreign_key' => $roleId];

@@ -17,7 +17,7 @@ class ComposerInstaller extends PluginInstaller
      * @param Event $event
      * @return void
      */
-    public static function postAutoloadDump(Event $event)
+    public static function postAutoloadDump(Event $event): void
     {
         $composer = $event->getComposer();
         $config = $composer->getConfig();

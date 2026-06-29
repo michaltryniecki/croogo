@@ -35,7 +35,7 @@ class AccessComponent extends Component
      *
      * @param Event $event
      */
-    public function startup(Event $event)
+    public function startup(\Cake\Event\EventInterface $event): void
     {
         $controller = $event->getSubject();
         $this->_controller = $controller;
@@ -80,7 +80,7 @@ class AccessComponent extends Component
      * @param array $allowRoles Role aliases
      * @return void
      */
-    public function addAco($action, $allowRoles = [])
+    public function addAco($action, $allowRoles = []): void
     {
         $actionPath = $this->_controller->Auth->config('authorize.all.actionPath');
         if (strpos($action, $actionPath) === false) {
@@ -102,7 +102,7 @@ class AccessComponent extends Component
      * @param string $action action path
      * @return void
      */
-    public function removeAco($action)
+    public function removeAco($action): void
     {
         $actionPath = $this->_controller->Auth->authorize['all']['actionPath'];
         if (strpos($action, $actionPath) === false) {

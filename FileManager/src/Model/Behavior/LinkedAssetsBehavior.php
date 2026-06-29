@@ -26,7 +26,7 @@ class LinkedAssetsBehavior extends Behavior
      * @param array $config
      * @return void
      */
-    public function initialize(array $config = [])
+    public function initialize(array $config = []): void
     {
         $this->_table->addAssociations([
             'hasMany' => [
@@ -50,7 +50,7 @@ class LinkedAssetsBehavior extends Behavior
      *
      * @return Query
      */
-    public function beforeFind(Event $event, Query $query, ArrayObject $options, $primary)
+    public function beforeFind(\Cake\Event\EventInterface $event, Query $query, ArrayObject $options, $primary)
     {
         //if ($model->findQueryType == 'list') {
             //return $query;

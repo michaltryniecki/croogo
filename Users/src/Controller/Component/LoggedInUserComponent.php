@@ -10,7 +10,7 @@ use Cake\ORM\TableRegistry;
 class LoggedInUserComponent extends Component
 {
 
-    public function beforeFilter(Event $event)
+    public function beforeFilter(\Cake\Event\EventInterface $event): void
     {
         /** @var Controller $controller */
         $controller = $event->getSubject();

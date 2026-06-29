@@ -11,9 +11,9 @@ class MenusHelperTest extends TestCase
 {
 
     public $fixtures = [
-        'plugin.users.user',
-        'plugin.users.role',
-        'plugin.settings.setting',
+        'plugin.Users',
+        'plugin.Users',
+        'plugin.Settings',
     ];
 
     /**
@@ -48,7 +48,7 @@ class MenusHelperTest extends TestCase
     /**
      * Test [menu] shortcode
      */
-    public function testMenuShortcode()
+    public function testMenuShortcode(): void
     {
         $content = '[menu:blogroll]';
         $this->View->viewVars['menusForLayout']['blogroll'] = [

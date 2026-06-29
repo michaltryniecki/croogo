@@ -43,7 +43,7 @@ class MenuComponent extends Component
      * @param object $event instance of controller
      * @return void
      */
-    public function startup(Event $event)
+    public function startup(\Cake\Event\EventInterface $event): void
     {
         $this->controller = $event->getSubject();
         if (isset($this->controller->Link)) {
@@ -76,7 +76,7 @@ class MenuComponent extends Component
      *
      * @param Event $event
      */
-    public function beforeRender(Event $event)
+    public function beforeRender(\Cake\Event\EventInterface $event): void
     {
         $event->getSubject()->set('menusForLayout', $this->menusForLayout);
     }
@@ -88,7 +88,7 @@ class MenuComponent extends Component
      *
      * @return void
      */
-    public function menus()
+    public function menus(): void
     {
         $menus = ['main'];
 

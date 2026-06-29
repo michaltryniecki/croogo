@@ -19,7 +19,7 @@ use Croogo\Core\Croogo;
 class PermissionsController extends AppController
 {
 
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
 
@@ -34,7 +34,7 @@ class PermissionsController extends AppController
      *
      * @return void
      */
-    public function beforeFilter(Event $event)
+    public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         parent::beforeFilter($event);
         if ($this->getRequest()->getParam('action') == 'toggle') {
@@ -48,7 +48,7 @@ class PermissionsController extends AppController
      * @param id integer aco id, when null, the root ACO is used
      * @return void
      */
-    public function index($id = null, $level = null)
+    public function index($id = null, $level = null): void
     {
         if ($this->getRequest()->getQuery('root')) {
             $query = strtolower($this->getRequest()->getQuery('root'));
@@ -143,7 +143,7 @@ class PermissionsController extends AppController
             Cache::delete('permissions_public', 'permissions');
         }
 
-        $this->viewBuilder()->autoLayout(false);
+        $this->viewBuilder()->enableAutoLayout(false);
 
         $this->set(compact('acoId', 'aroId', 'data', 'success', 'permitted'));
     }

@@ -92,7 +92,7 @@ class AssetsFilterHelper extends Helper
                 continue;
             }
 
-            $options = !empty($assets[$assetId]) ? $assets[$assetId] : ['class' => $this->_View->Theme->getCssClass('thumbnailClass')];
+            $options = !empty($assets[$assetId]) ? $assets[$assetId] : ['class' => $this->_View->getTheme()->getCssClass('thumbnailClass')];
             $img = $this->Html->image($assetUsage->asset->path, $options);
             $regex = '/' . preg_quote($tagMatches[0][$i]) . '/';
             $content = preg_replace($regex, $img, $content);
@@ -104,7 +104,7 @@ class AssetsFilterHelper extends Helper
     /**
      * @return void
      */
-    public function afterSetNode()
+    public function afterSetNode(): void
     {
         $body = $this->Nodes->field('body');
         //$body = $this->filter($body, array(
