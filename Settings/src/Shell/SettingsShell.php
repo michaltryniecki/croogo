@@ -29,7 +29,7 @@ class SettingsShell extends Shell
     /**
      * Initialize
      */
-    public function initialize()
+    public function initialize(): void
     {
         $this->loadModel('Croogo/Settings.Settings');
         Configure::write('Trackable.Auth.User', ['id' => 1]);
@@ -126,7 +126,7 @@ class SettingsShell extends Shell
      * @param string $key
      * @return void
      */
-    public function read()
+    public function read(): void
     {
         if (empty($this->args)) {
             if ($this->params['all'] === true) {
@@ -159,7 +159,7 @@ class SettingsShell extends Shell
      * @param string $val
      * @return void
      */
-    public function write()
+    public function write(): void
     {
         $key = $this->args[0];
         $val = $this->args[1];
@@ -210,7 +210,7 @@ class SettingsShell extends Shell
      * @param string $key
      * @return void
      */
-    public function delete()
+    public function delete(): void
     {
         $key = $this->args[0];
         $setting = $this->Settings->find()

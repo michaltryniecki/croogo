@@ -117,6 +117,11 @@ $settingsFixture->insert(ConnectionManager::get('default'));
 PluginManager::load('Croogo/Core', ['bootstrap' => true, 'routes' => true]);
 PluginManager::load('Croogo/Settings', ['bootstrap' => true, 'routes' => true]);
 
+// Niestandardowe typy kolumn Croogo (normalnie mapowane w PluginManager::croogoBootstrap).
+\Cake\Database\TypeFactory::map('params', 'Croogo\Core\Database\Type\ParamsType');
+\Cake\Database\TypeFactory::map('encoded', 'Croogo\Core\Database\Type\EncodedType');
+\Cake\Database\TypeFactory::map('link', 'Croogo\Core\Database\Type\LinkType');
+
 // DispatcherFactory zostało usunięte w CakePHP 4 (dispatch przez middleware/Application).
 if (class_exists(DispatcherFactory::class)) {
     DispatcherFactory::add('Routing');

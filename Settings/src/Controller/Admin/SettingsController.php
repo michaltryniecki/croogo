@@ -18,7 +18,7 @@ use Exception;
  */
 class SettingsController extends AppController
 {
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
 
@@ -32,7 +32,7 @@ class SettingsController extends AppController
         ];
     }
 
-    public function beforeCrudRedirect(Event $event)
+    public function beforeCrudRedirect(Event $event): void
     {
         if ($this->redirectToSelf($event)) {
             return;

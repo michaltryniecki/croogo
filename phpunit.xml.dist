@@ -43,6 +43,11 @@
             <exclude>./Core/tests/TestCase/Controller/Component/BulkProcessComponentTest.php</exclude>
             <exclude>./Core/tests/TestCase/Model/Behavior/UrlBehaviorTest.php</exclude>
         </testsuite>
+        <testsuite name="Settings">
+            <directory>./Settings/tests/TestCase</directory>
+            <!-- odwołuje się do usuniętego pluginu Blocks (fixtura) -->
+            <exclude>./Settings/tests/TestCase/Controller/Admin/LanguagesControllerTest.php</exclude>
+        </testsuite>
     </testsuites>
 
     <!-- Setup a listener for fixtures -->
