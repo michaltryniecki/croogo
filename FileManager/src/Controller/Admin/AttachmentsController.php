@@ -30,12 +30,6 @@ class AttachmentsController extends AppController
      * @var array
      * @access public
      */
-    public $helpers = [
-        'Croogo/FileManager.AssetsImage',
-        'Croogo/FileManager.FileManager',
-        'Text',
-    ];
-
     public $paginate = [
         'paramType' => 'querystring',
         'limit' => 5,
@@ -44,6 +38,12 @@ class AttachmentsController extends AppController
     public function initialize(): void
     {
         parent::initialize();
+        // Cake 4.5+: $helpers jako właściwość kontrolera usunięte -> setHelpers().
+        $this->viewBuilder()->setHelpers([
+            'Croogo/FileManager.AssetsImage',
+            'Croogo/FileManager.FileManager',
+            'Text',
+        ]);
         // Search 6: PrgComponent scalony w SearchComponent (Search.Search).
         $this->loadComponent('Search.Search', [
             'actions' => [
