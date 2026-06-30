@@ -265,7 +265,9 @@ class Croogo
                 $pluginPath = $object->getParam('plugin') . '.';
             }
             if (!empty($object->getParam('controller'))) {
-                $controller = $object->getParam('controller');
+                // Cake 4 (InflectedRoute) przekazuje 'controller' małymi literami;
+                // App::className wymaga CamelCase, inaczej $objectName=null i merge '*' się psuje.
+                $controller = Inflector::camelize($object->getParam('controller'));
             }
             if (!empty($object->getParam('prefix'))) {
                 $prefixes = array_map(

@@ -9,7 +9,7 @@ Router::plugin('Croogo/Users', ['path' => '/'], function (RouteBuilder $route) {
         $route->applyMiddleware('csrf');
 
         $route->scope('/users', [], function (RouteBuilder $route) {
-            $route->fallbacks();
+            $route->fallbacks('InflectedRoute');
         });
     });
 
