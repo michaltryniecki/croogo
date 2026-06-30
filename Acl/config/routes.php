@@ -9,7 +9,7 @@ Router::plugin('Croogo/Acl', ['path' => '/'], function (RouteBuilder $route) {
         $route->applyMiddleware('csrf');
 
         $route->scope('/acl', [], function (RouteBuilder $route) {
-            $route->fallbacks('InflectedRoute');
+            $route->fallbacks('Croogo/Core.InflectedRoute');
         });
     });
 });

@@ -9,7 +9,7 @@ Router::plugin('Croogo/Menus', ['path' => '/'], function (RouteBuilder $route) {
         $route->applyMiddleware('csrf');
 
         $route->scope('/menus', [], function (RouteBuilder $route) {
-            $route->fallbacks('InflectedRoute');
+            $route->fallbacks('Croogo/Core.InflectedRoute');
         });
     });
 });

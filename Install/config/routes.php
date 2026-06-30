@@ -7,5 +7,5 @@ Router::connect('/*', []);
 
 Router::plugin('Croogo/Install', ['path' => '/install'], function ($route) {
     $route->applyMiddleware('csrf');
-    $route->fallbacks('InflectedRoute');
+    $route->fallbacks('Croogo/Core.InflectedRoute');
 });
