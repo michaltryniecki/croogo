@@ -55,8 +55,10 @@ class CachedBehavior extends Behavior
                 foreach ($configs[$group] as $config) {
                     Cache::clearGroup($group, $config);
                 }
-            } catch (InvalidArgumentException $e) {
-                //Ignore invalid cache configs
+            } catch (\Exception $e) {
+                // Ignore invalid cache configs. Cake 4 rzuca
+                // Cake\Cache\Exception\InvalidArgumentException (nie SPL) dla
+                // niezdefiniowanej grupy — w Cake 3 zwracało pusto.
             }
         }
     }

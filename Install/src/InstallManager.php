@@ -129,7 +129,7 @@ class InstallManager
     public function installCompleted()
     {
         PluginManager::load('Croogo/Settings', ['routes' => true]);
-        $Setting = TableRegistry::get('Croogo/Settings.Settings');
+        $Setting = TableRegistry::getTableLocator()->get('Croogo/Settings.Settings');
         $Setting->removeBehavior('Cached');
         if (!function_exists('mcrypt_decrypt') && !function_exists('openssl_decrypt')) {
             $Setting->write('Access Control.autoLoginDuration', '');
@@ -148,17 +148,13 @@ class InstallManager
      */
     public function setupDatabase()
     {
+        // Tylko pluginy obecne w tym forku (pełny Croogo miał też Blocks/Taxonomy/
+        // Meta/Nodes/Comments/Contacts — usunięte z forka).
         $plugins = [
             'Croogo/Users',
             'Croogo/Acl',
             'Croogo/Settings',
-            'Croogo/Blocks',
-            'Croogo/Taxonomy',
             'Croogo/FileManager',
-            'Croogo/Meta',
-            'Croogo/Nodes',
-            'Croogo/Comments',
-            'Croogo/Contacts',
             'Croogo/Menus',
             'Croogo/Dashboards',
         ];
@@ -337,7 +333,9 @@ class DummyShell extends Shell
     use LogTrait;
     public function out($msg = null, $newlines = 1, $level = Shell::NORMAL): ?int
     {
-        $msg = preg_replace('/\<\/?\w+\>/', null, $msg);
+        $msg = preg_replace('/\<\/?\w+\>/', '', (string)$msg);
         $this->log($msg);
+
+        return null;
     }
 }
