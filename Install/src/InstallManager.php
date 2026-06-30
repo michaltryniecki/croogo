@@ -148,17 +148,13 @@ class InstallManager
      */
     public function setupDatabase()
     {
+        // Tylko pluginy obecne w tym forku (pełny Croogo miał też Blocks/Taxonomy/
+        // Meta/Nodes/Comments/Contacts — usunięte z forka).
         $plugins = [
             'Croogo/Users',
             'Croogo/Acl',
             'Croogo/Settings',
-            'Croogo/Blocks',
-            'Croogo/Taxonomy',
             'Croogo/FileManager',
-            'Croogo/Meta',
-            'Croogo/Nodes',
-            'Croogo/Comments',
-            'Croogo/Contacts',
             'Croogo/Menus',
             'Croogo/Dashboards',
         ];

@@ -34,7 +34,7 @@ class UsersTable extends CroogoTable
     ];
 
     public $filterArgs = [
-        'name' => ['type' => 'like', 'field' => ['Users.name', 'Users.username']],
+        'name' => ['type' => 'like', 'fields' => ['Users.name', 'Users.username']],
         'role_id' => ['type' => 'value'],
     ];
 
@@ -67,7 +67,7 @@ class UsersTable extends CroogoTable
 
         $this->searchManager()
             ->add('name', 'Search.Like', [
-                'field' => ['Users.name', 'Users.username', 'Users.email'],
+                'fields' => ['Users.name', 'Users.username', 'Users.email'],
                 'before' => true,
                 'after' => true,
             ]);
