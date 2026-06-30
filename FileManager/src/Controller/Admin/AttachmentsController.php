@@ -44,7 +44,8 @@ class AttachmentsController extends AppController
     public function initialize(): void
     {
         parent::initialize();
-        $this->loadComponent('Search.Prg', [
+        // Search 6: PrgComponent scalony w SearchComponent (Search.Search).
+        $this->loadComponent('Search.Search', [
             'actions' => [
                 'index', 'browse', 'listings',
             ],
