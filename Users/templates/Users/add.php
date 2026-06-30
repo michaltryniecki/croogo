@@ -5,7 +5,7 @@ $this->assign('title', __d('croogo', 'Registration'));
 ?>
 <div class="users form">
     <h2><?= $this->fetch('title') ?></h2>
-    <?= $this->Form->create('User') ?>
+    <?= $this->Form->create(null) ?>
         <fieldset>
         <?php
             echo $this->Form->input('username');
