@@ -125,7 +125,7 @@ class FormHelper extends BaseFormHelper
      * @param array $fieldName Options list
      * @return array
      */
-    protected function _parseOptions($fieldName, $options)
+    protected function _parseOptions($fieldName, $options): array
     {
         $options = parent::_parseOptions($fieldName, $options);
 
@@ -200,7 +200,7 @@ class FormHelper extends BaseFormHelper
      * @return string A formatted opening FORM tag
      * @see FormHelper::create()
      */
-    public function create($model = null, array $options = [])
+    public function create($model = null, array $options = []): string
     {
         if (!empty($options['fieldAccess'])) {
             $this->_fieldAccess = $this->_setupFieldAccess($options['fieldAccess']);
@@ -216,7 +216,7 @@ class FormHelper extends BaseFormHelper
         return $this->control($fieldName, $options);
     }
 
-    public function control($fieldName, array $options = [])
+    public function control($fieldName, array $options = []): string
     {
         if (!$this->_isEditable($fieldName)) {
             return null;

@@ -335,7 +335,7 @@ class InstallManager
 class DummyShell extends Shell
 {
     use LogTrait;
-    public function out($msg = null, $newlines = 1, $level = Shell::NORMAL)
+    public function out($msg = null, $newlines = 1, $level = Shell::NORMAL): ?int
     {
         $msg = preg_replace('/\<\/?\w+\>/', null, $msg);
         $this->log($msg);

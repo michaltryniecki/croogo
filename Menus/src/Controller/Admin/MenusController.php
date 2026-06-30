@@ -17,7 +17,7 @@ use Cake\Event\Event;
 class MenusController extends AppController
 {
 
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return parent::implementedEvents() + [
             'Crud.beforeRedirect' => 'beforeCrudRedirect',

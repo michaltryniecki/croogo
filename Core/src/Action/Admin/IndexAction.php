@@ -6,7 +6,7 @@ use Crud\Action\IndexAction as CrudIndexAction;
 
 class IndexAction extends CrudIndexAction
 {
-    protected function _handle()
+    protected function _handle(): ?\Cake\Http\Response
     {
         parent::_handle();
 

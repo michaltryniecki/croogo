@@ -60,7 +60,7 @@ class AttachmentsController extends AppController
      * @return void
      * @access public
      */
-    public function beforeFilter(\Cake\Event\EventInterface $event)
+    public function beforeFilter(\Cake\Event\EventInterface $event): void
     {
         parent::beforeFilter($event);
 

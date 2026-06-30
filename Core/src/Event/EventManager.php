@@ -64,7 +64,8 @@ class EventManager extends CakeEventManager
     {
         $eventManager = EventManager::instance();
         $cached = Cache::read('EventHandlers', 'cached_settings');
-        if ($cached === false) {
+        // Cake 4: Cache::read() zwraca null na miss (w Cake 3 było false).
+        if (!is_array($cached)) {
             $eventHandlers = Configure::read('EventHandlers');
             $validKeys = ['eventKey' => null, 'options' => []];
             $cached = [];
@@ -98,7 +99,9 @@ class EventManager extends CakeEventManager
                 $class = App::className($class, 'Event');
                 $settings = isset($eventOptions['options']) ? $eventOptions['options'] : [];
                 $listener = new $class($settings);
-                $eventManager->on($listener, $eventKey, $eventOptions);
+                // Cake 4: listener implementujący implementedEvents() rejestruje się
+                // jednym argumentem (Cake 3 tolerował dodatkowe eventKey/options).
+                $eventManager->on($listener);
             }
         }
     }

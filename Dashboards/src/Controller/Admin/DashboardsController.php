@@ -19,7 +19,7 @@ use Cake\Utility\Hash;
 class DashboardsController extends AppController
 {
 
-    public function beforeFilter(\Cake\Event\EventInterface $event)
+    public function beforeFilter(\Cake\Event\EventInterface $event): void
     {
         parent::beforeFilter($event);
 
@@ -33,7 +33,7 @@ class DashboardsController extends AppController
      *
      * Load the dashboards helper
      */
-    public function beforeRender(\Cake\Event\EventInterface $event)
+    public function beforeRender(\Cake\Event\EventInterface $event): void
     {
         parent::beforeRender($event);
 

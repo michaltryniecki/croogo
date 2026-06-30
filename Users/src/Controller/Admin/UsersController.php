@@ -75,7 +75,7 @@ class UsersController extends AppController
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return parent::implementedEvents() + [
             'Controller.Users.beforeAdminLogin' => 'onBeforeAdminLogin',
@@ -89,7 +89,7 @@ class UsersController extends AppController
         ];
     }
 
-    public function beforeFilter(\Cake\Event\EventInterface $event)
+    public function beforeFilter(\Cake\Event\EventInterface $event): void
     {
         parent::beforeFilter($event);
 

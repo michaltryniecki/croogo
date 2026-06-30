@@ -220,7 +220,7 @@ class LinksController extends AppController
         $event->getSubject()->url['menu_id'] = $entity->menu_id;
     }
 
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return parent::implementedEvents() + [
             'Crud.beforeRender' => 'beforeCrudRender',
