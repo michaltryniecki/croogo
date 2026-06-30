@@ -8,11 +8,13 @@ class IndexAction extends CrudIndexAction
 {
     protected function _handle(): ?\Cake\Http\Response
     {
-        parent::_handle();
+        $response = parent::_handle();
 
         $this->_controller()->set([
             'displayFields' => $this->getConfig('displayFields'),
             'searchFields' => $this->getConfig('searchFields'),
         ]);
+
+        return $response;
     }
 }
