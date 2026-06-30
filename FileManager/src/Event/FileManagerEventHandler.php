@@ -44,7 +44,7 @@ class FileManagerEventHandler implements EventListenerInterface
     public function onNewAttachment($event): void
     {
         $controller = $event->getSubject();
-        $request = $controller->request;
+        $request = $controller->getRequest();
         $attachment = $event->getData('attachment');
 
         // create poster for video, ideally should be done via a job queue
@@ -131,7 +131,7 @@ class FileManagerEventHandler implements EventListenerInterface
 //        Nav::add('media.children.attachments', [
 //            'title' => __d('croogo', 'Attachments'),
 //            'url' => [
-//                'prefix' => 'admin',
+//                'prefix' => 'Admin',
 //                'plugin' => 'Croogo/FileManager',
 //                'controller' => 'Attachments',
 //                'action' => 'index',

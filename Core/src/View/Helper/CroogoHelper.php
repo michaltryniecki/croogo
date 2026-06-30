@@ -85,7 +85,7 @@ class CroogoHelper extends Helper
     {
         $options = Hash::merge(['block' => true, 'defer' => true], $options);
         $request = $this->getView()->getRequest();
-        if ($request->is('ajax') || $request->getParam('prefix') !== 'admin') {
+        if ($request->is('ajax') || $request->getParam('prefix') !== 'Admin') {
             return null;
         }
 
@@ -463,14 +463,14 @@ class CroogoHelper extends Helper
 
                 if (!isset($tab['options']['type']) ||
                     (isset($tab['options']['type']) &&
-                        (in_array($this->_View->viewVars['typeAlias'], $tab['options']['type'])))
+                        (in_array($this->_View->get('typeAlias'), $tab['options']['type'])))
                 ) {
                     $domId = strtolower(Inflector::singularize($request->getParam('controller'))) .
                         '-' .
                         strtolower(Text::slug($title, '-'));
                     if ($this->adminTabs) {
-                        if (isset($this->_View->viewVars['viewVar'])) {
-                            $entity = $this->_View->viewVars[$this->_View->viewVars['viewVar']];
+                        if ($this->_View->get('viewVar') !== null) {
+                            $entity = $this->_View->get($this->_View->get('viewVar'));
                             $tab['options']['elementData']['entity'] = $entity;
                         }
                         $output .= $this->Html->tabStart($domId, ['class' => 'wayPoint']);
@@ -534,10 +534,10 @@ class CroogoHelper extends Helper
                 ],
             ], $box);
             $issetType = isset($box['options']['type']);
-            $typeInTypeAlias = $issetType && in_array($this->_View->viewVars['typeAlias'], $box['options']['type']);
+            $typeInTypeAlias = $issetType && in_array($this->_View->get('typeAlias'), $box['options']['type']);
             if (!$issetType || $typeInTypeAlias) {
-                if (isset($this->_View->viewVars['viewVar'])) {
-                    $entity = $this->_View->viewVars[$this->_View->viewVars['viewVar']];
+                if ($this->_View->get('viewVar') !== null) {
+                    $entity = $this->_View->get($this->_View->get('viewVar'));
                     $box['options']['elementData']['entity'] = $entity;
                 }
                 $output .= $this->Html->beginBox($title);

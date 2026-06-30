@@ -48,7 +48,7 @@ class RecaptchaComponent extends Component
             return;
         }
 
-        if (in_array($this->request->getParam('action'), $this->getConfig('actions'))) {
+        if (in_array($this->getController()->getRequest()->getParam('action'), $this->getConfig('actions'))) {
             $controller->Security->validatePost = false;
         }
 
@@ -72,8 +72,8 @@ class RecaptchaComponent extends Component
      */
     public function verify()
     {
-        if ($this->request->getData('g-recaptcha-response')) {
-            $captcha = $this->request->getData('g-recaptcha-response');
+        if ($this->getController()->getRequest()->getData('g-recaptcha-response')) {
+            $captcha = $this->getController()->getRequest()->getData('g-recaptcha-response');
             $response = $this->_getApiResponse($captcha);
 
             if (!$response->success) {

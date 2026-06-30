@@ -40,7 +40,7 @@ class BulkProcessComponent extends Component
     public function beforeFilter(\Cake\Event\EventInterface $event): void
     {
         $this->_controller = $event->getSubject();
-        if ($this->_controller->request->getParam('action') == 'process') {
+        if ($this->_controller->getRequest()->getParam('action') == 'process') {
             $this->_controller->Security->setConfig('validatePost', false);
         }
     }
@@ -55,8 +55,8 @@ class BulkProcessComponent extends Component
      */
     public function getRequestVars($model, $primaryKey = 'id')
     {
-        $data = $this->_controller->request->getData($model);
-        $action = $this->_controller->request->getData('action');
+        $data = $this->_controller->getRequest()->getData($model);
+        $action = $this->_controller->getRequest()->getData('action');
         $ids = [];
         foreach ($data as $id => $value) {
             if (is_array($value) && !empty($value[$primaryKey])) {

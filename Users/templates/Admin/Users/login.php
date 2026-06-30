@@ -4,7 +4,7 @@ use Cake\Core\Configure;
 
 $this->assign('title', __d('croogo', 'Login'));
 
-$formStart = $this->Form->create(false, ['url' => ['action' => 'login']]);
+$formStart = $this->Form->create(null, ['url' => ['action' => 'login']]);
 $body = $this->Form->input('username', [
     'placeholder' => __d('croogo', 'Username'),
     'label' => false,
@@ -26,7 +26,7 @@ if (Configure::read('Access Control.autoLoginDuration')) :
 endif;
 
 $footer = $this->Html->link(__d('croogo', 'Forgot password?'), [
-    'prefix' => 'admin',
+    'prefix' => 'Admin',
     'plugin' => 'Croogo/Users',
     'controller' => 'Users',
     'action' => 'forgot',

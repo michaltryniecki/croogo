@@ -39,7 +39,7 @@ class AccessComponent extends Component
     {
         $controller = $event->getSubject();
         $this->_controller = $controller;
-        if ($controller->request->getParam('prefix') != 'admin') {
+        if ($controller->getRequest()->getParam('prefix') != 'Admin') {
             return;
         }
 
@@ -61,8 +61,8 @@ class AccessComponent extends Component
         Croogo::hookAdminTab('Admin/Roles/edit', $title, $element);
 
         $id = null;
-        if (!empty($this->_controller->request->getParam('pass')[0])) {
-            $id = $this->_controller->request->getParam('pass')[0];
+        if (!empty($this->_controller->getRequest()->getParam('pass')[0])) {
+            $id = $this->_controller->getRequest()->getParam('pass')[0];
         }
         $this->_controller->set('parents', $this->_controller->Roles->allowedParents($id));
     }

@@ -167,7 +167,7 @@ class UsersTable extends CroogoTable
         // Send out an password reset email
         $email = $this
             ->getMailer('Croogo/Users.User')
-            ->viewVars(compact('options'))
+            ->setViewVars(compact('options'))
             ->send('resetPassword', [$user]);
         if (!$email) {
             return false;
@@ -184,7 +184,7 @@ class UsersTable extends CroogoTable
     public function sendActivationEmail($user): void
     {
         $email = $this->getMailer('Croogo/Users.User')
-            ->viewVars(compact('user'))
+            ->setViewVars(compact('user'))
             ->send('registrationActivation', [$user]);
 
         Croogo::dispatchEvent('Model.Users.afterActivationEmail',

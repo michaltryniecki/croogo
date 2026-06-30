@@ -73,7 +73,7 @@ class CroogoView extends AppView
         parent::loadHelpers();
 
         $prefix = $this->getRequest()->getParam('prefix') ?: '';
-        if ($prefix === 'admin') {
+        if ($prefix === 'Admin') {
             $this->loadHelper('Croogo/Core.Croogo');
         }
 
@@ -82,7 +82,7 @@ class CroogoView extends AppView
             $this->loadHelperList($themeConfig['settings']['prefixes'][$prefix]['helpers']);
         }
 
-        $hookHelpers = Croogo::options('Hook.view_builder_options', $this->request, 'helpers');
+        $hookHelpers = Croogo::options('Hook.view_builder_options', $this->getRequest(), 'helpers');
 
         $this->loadHelperList($hookHelpers);
         $this->loadHelper('Time', [

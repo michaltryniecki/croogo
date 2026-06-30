@@ -150,8 +150,8 @@ class MoveUpAction extends BaseAction
         $this->setFlash('success', $subject);
 
         $redirect = ['action' => 'index'];
-        if ($this->_controller()->request->referer()) {
-            $redirect = $this->_controller()->request->referer();
+        if ($this->_controller()->getRequest()->referer()) {
+            $redirect = $this->_controller()->getRequest()->referer();
         }
 
         return $this->_redirect($subject, $redirect);

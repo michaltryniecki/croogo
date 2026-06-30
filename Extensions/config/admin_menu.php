@@ -8,7 +8,7 @@ Nav::add('sidebar', 'extensions', [
     'icon' => 'magic',
     'title' => __d('croogo', 'Extensions'),
     'url' => [
-        'prefix' => 'admin',
+        'prefix' => 'Admin',
         'plugin' => 'Croogo/Extensions',
         'controller' => 'Plugins',
         'action' => 'index',

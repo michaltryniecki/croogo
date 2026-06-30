@@ -48,7 +48,7 @@ class DashboardsHelper extends Helper
     public function beforeRender($viewFile): void
     {
         $request = $this->getView()->getRequest();
-        if ($request->getParam('prefix') === 'admin') {
+        if ($request->getParam('prefix') === 'Admin') {
             Croogo::dispatchEvent('Croogo.setupAdminDashboardData', $this->_View);
         }
     }
@@ -79,8 +79,8 @@ class DashboardsHelper extends Helper
 
         $cssSetting = $this->Theme->settings('css');
 
-        if (!empty($this->_View->viewVars['boxes_for_dashboard'])) {
-            $boxesForLayout = collection($this->_View->viewVars['boxes_for_dashboard'])->combine('alias', function ($entity) {
+        if (!empty($this->_View->get('boxes_for_dashboard'))) {
+            $boxesForLayout = collection($this->_View->get('boxes_for_dashboard'))->combine('alias', function ($entity) {
                 return $entity;
             })->toArray();
             $dashboards = [];

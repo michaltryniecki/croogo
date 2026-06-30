@@ -81,8 +81,8 @@ class RowLevelAclComponent extends Component
     public function startup(\Cake\Event\EventInterface $event): void
     {
         $controller = $this->getController();
-        if (!empty($controller->request->params['pass'][0])) {
-            $id = $controller->request->params['pass'][0];
+        if (!empty($controller->getRequest()->getParam('pass')[0])) {
+            $id = $controller->getRequest()->getParam('pass')[0];
             $this->_rolePermissions($id);
         }
     }

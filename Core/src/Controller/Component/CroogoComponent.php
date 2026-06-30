@@ -82,8 +82,8 @@ class CroogoComponent extends Component
     {
         $this->_controller = $event->getSubject();
 
-        if ($this->_controller->request->getParam('prefix') == 'admin') {
-            if (!$this->_controller->request->getParam('requested')) {
+        if ($this->_controller->getRequest()->getParam('prefix') == 'Admin') {
+            if (!$this->_controller->getRequest()->getParam('requested')) {
                 $this->_adminData();
             }
         }
@@ -106,7 +106,7 @@ class CroogoComponent extends Component
      */
     protected function _adminMenus()
     {
-        $user = $this->getController()->request->getSession()->read('Auth.User');
+        $user = $this->getController()->getRequest()->getSession()->read('Auth.User');
         if (empty($user)) {
             return;
         }
@@ -119,7 +119,7 @@ class CroogoComponent extends Component
      */
     public function roleId()
     {
-        $roleId = $this->_controller->request->getSession()->read('Auth.User.role_id');
+        $roleId = $this->_controller->getRequest()->getSession()->read('Auth.User.role_id');
         if ($roleId) {
             return $roleId;
         }
@@ -254,10 +254,10 @@ class CroogoComponent extends Component
     protected function _viewPath()
     {
         $viewPath = $this->_controller->getName();
-        if (!empty($this->request->getParam('prefix'))) {
+        if (!empty($this->getController()->getRequest()->getParam('prefix'))) {
             $prefixes = array_map(
                 'Cake\Utility\Inflector::camelize',
-                explode('/', $this->_controller->request->params['prefix'])
+                explode('/', $this->_controller->getRequest()->getParam('prefix'))
             );
             $viewPath = implode(DS, $prefixes) . DS . $viewPath;
         }
@@ -268,10 +268,10 @@ class CroogoComponent extends Component
     public function protectToggleAction()
     {
         $controller = $this->getController();
-        if ($controller->request->getParam('action') !== 'toggle') {
+        if ($controller->getRequest()->getParam('action') !== 'toggle') {
             return;
         }
-        if (!$controller->request->is('post')) {
+        if (!$controller->getRequest()->is('post')) {
             throw new \Cake\Http\Exception\MethodNotAllowedException();
         }
         $controller->Security->setConfig('validatePost', false);

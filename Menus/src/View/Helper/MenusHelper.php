@@ -64,7 +64,7 @@ class MenusHelper extends Helper
     public function beforeRender($viewFile): void
     {
         $request = $this->getView()->getRequest();
-        if (($request->getParam('prefix') === 'admin') && (!$request->is('ajax'))) {
+        if (($request->getParam('prefix') === 'Admin') && (!$request->is('ajax'))) {
             $this->_adminMenu();
             if ($request->getParam('plugin') == 'Croogo/Menus') {
                 $this->_View->Js->buffer('Links.init();');
@@ -77,10 +77,10 @@ class MenusHelper extends Helper
      */
     protected function _adminMenu()
     {
-        if (empty($this->_View->viewVars['menus_for_admin_layout'])) {
+        if (empty($this->_View->get('menus_for_admin_layout'))) {
             return;
         }
-        $menus = $this->_View->viewVars['menus_for_admin_layout'];
+        $menus = $this->_View->get('menus_for_admin_layout');
         if (!Nav::check('sidebar', 'menus')) {
             return;
         }
@@ -90,7 +90,7 @@ class MenusHelper extends Helper
             Nav::add('sidebar', 'menus.children.' . $menu->alias, [
                 'title' => $menu->title,
                 'url' => [
-                    'prefix' => 'admin',
+                    'prefix' => 'Admin',
                     'plugin' => 'Croogo/Menus',
                     'controller' => 'Links',
                     'action' => 'index',
@@ -150,7 +150,7 @@ class MenusHelper extends Helper
      */
     protected function verticalNav($menuAlias, $options = [])
     {
-        $menu = Hash::get($this->_View->viewVars, "menusForLayout.$menuAlias");
+        $menu = Hash::get((array)$this->_View->get('menusForLayout'), $menuAlias);
         if (!$menu) {
             return false;
         }
@@ -207,10 +207,10 @@ class MenusHelper extends Helper
         ];
         $options = array_merge($_options, $options);
 
-        if (!isset($this->_View->viewVars['menusForLayout'][$menuAlias])) {
+        if (empty($this->_View->get('menusForLayout')[$menuAlias])) {
             return false;
         }
-        $menu = $this->_View->viewVars['menusForLayout'][$menuAlias];
+        $menu = $this->_View->get('menusForLayout')[$menuAlias];
         $output = $this->_View->element($options['element'], [
             'menu' => $menu,
             'options' => $options,

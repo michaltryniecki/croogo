@@ -73,8 +73,8 @@ class AclHelper extends Helper
     public function linkIsAllowedByUserId($userId, $url)
     {
         if (is_array($url)) {
-            if (isset($url['admin']) && $url['admin'] == true && empty($url['prefix'])) {
-                $url['prefix'] = 'admin';
+            if (isset($url['Admin']) && $url['Admin'] == true && empty($url['prefix'])) {
+                $url['prefix'] = 'Admin';
             }
             $prefix = isset($url['prefix']) ? $url['prefix'] : null;
             $plugin = empty($url['plugin']) ? null : str_replace('/', '\\', Inflector::camelize($url['plugin'])) . '/';
