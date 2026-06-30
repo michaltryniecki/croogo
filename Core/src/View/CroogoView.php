@@ -70,6 +70,15 @@ class CroogoView extends AppView
 
     public function loadHelpers(): void
     {
+        // Aliasuj Html/Form na wersje Croogo PRZED parent (inaczej parent ładuje
+        // bazowe Cake helpery i theme nie może ich nadpisać -> brak m.in. Html::icon()).
+        if (!$this->helpers()->has('Html')) {
+            $this->loadHelper('Html', ['className' => 'Croogo/Core.Html']);
+        }
+        if (!$this->helpers()->has('Form')) {
+            $this->loadHelper('Form', ['className' => 'Croogo/Core.Form']);
+        }
+
         parent::loadHelpers();
 
         $prefix = $this->getRequest()->getParam('prefix') ?: '';
