@@ -208,7 +208,7 @@ class SettingsSeed extends AbstractSeed
         ],
         [
             'key' => 'Hook.bootstraps',
-            'value' => 'Croogo/Settings,Croogo/Contacts,Croogo/Nodes,Croogo/Meta,Croogo/Menus,Croogo/Users,Croogo/Blocks,Croogo/Taxonomy,Croogo/FileManager,Croogo/Wysiwyg,Croogo/Dashboards',
+            'value' => 'Croogo/Settings,Croogo/Menus,Croogo/Users,Croogo/FileManager,Croogo/Dashboards',
             'title' => '',
             'description' => '',
             'input_type' => '',
