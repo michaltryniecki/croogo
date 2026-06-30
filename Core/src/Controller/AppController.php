@@ -62,6 +62,12 @@ class AppController extends \App\Controller\AppController implements HookableCom
     public function __construct(ServerRequest $request = null, Response $response = null, $name = null)
     {
         parent::__construct($request, $response, $name);
+        // Cake 4.5+: Controller ustawia $defaultTable z nazwy tylko gdy $modelClass === null.
+        // Croogo ustawia $modelClass w kontrolerach, więc $defaultTable zostawałby null
+        // (fetchTable()/Crud -> "must provide $alias or set $defaultTable"). Synchronizujemy.
+        if (empty($this->defaultTable) && !empty($this->modelClass)) {
+            $this->defaultTable = $this->modelClass;
+        }
         if ($request) {
             $request->addDetector('api', [
                 'callback' => ['Croogo\\Core\\Router', 'isApiRequest'],
