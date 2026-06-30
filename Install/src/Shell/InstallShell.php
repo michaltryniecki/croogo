@@ -28,7 +28,7 @@ use Exception;
 class InstallShell extends Shell
 {
 
-    public function startup()
+    public function startup(): void
     {
         $options = ['bootstrap' => true, 'routes' => true];
         $plugins = array_merge(PluginManager::$corePlugins, PluginManager::$bundledPlugins);
@@ -42,7 +42,7 @@ class InstallShell extends Shell
     /**
      * Display help/options
      */
-    public function getOptionParser()
+    public function getOptionParser(): \Cake\Console\ConsoleOptionParser
     {
         $drivers = ['Mysql', 'Postgres', 'Sqlite', 'Sqlserver'];
         $parser = parent::getOptionParser();

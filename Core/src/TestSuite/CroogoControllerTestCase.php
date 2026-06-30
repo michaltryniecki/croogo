@@ -26,13 +26,13 @@ use Croogo\Core\TestSuite\CroogoTestFixture;
 class CroogoControllerTestCase extends TestCase
 {
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::_restoreSettings();
         Configure::write('Config.language', 'eng');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::_restoreSettings();
         Configure::write('Config.language', Configure::read('Site.locale'));
@@ -51,7 +51,7 @@ class CroogoControllerTestCase extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -90,7 +90,7 @@ class CroogoControllerTestCase extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         if (\Cake\Http\Session::started()) {

@@ -19,7 +19,7 @@ class MenusHelperTest extends TestCase
     /**
      * setUp
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->ComponentRegistry = new ComponentRegistry();
@@ -36,7 +36,7 @@ class MenusHelperTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         Configure::write('App.encoding', $this->_appEncoding);
         Configure::write('Asset', $this->_asset);

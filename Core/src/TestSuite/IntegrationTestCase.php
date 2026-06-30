@@ -29,12 +29,12 @@ class IntegrationTestCase extends CakeIntegrationTestCase
 {
     protected $previousPlugins = [];
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         Configure::write('Config.language', 'eng');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         Configure::write('Config.language', Configure::read('Site.locale'));
     }
@@ -44,7 +44,7 @@ class IntegrationTestCase extends CakeIntegrationTestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -61,7 +61,7 @@ class IntegrationTestCase extends CakeIntegrationTestCase
         $this->previousPlugins = Plugin::loaded();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 

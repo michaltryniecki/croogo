@@ -29,7 +29,7 @@ class DateTimeWidget extends CakeDateTimeWidget
      * @return string A generated select box.
      * @throws \RuntimeException When option data is invalid.
      */
-    public function render(array $data, ContextInterface $context)
+    public function render(array $data, ContextInterface $context): string
     {
         $id = $data['id'];
         $name = $data['name'];
@@ -178,7 +178,7 @@ html;
      * @param array $data The data to render.
      * @return array Array of fields to secure.
      */
-    public function secureFields(array $data)
+    public function secureFields(array $data): array
     {
         if (!isset($data['name']) || $data['name'] === '') {
             return [];

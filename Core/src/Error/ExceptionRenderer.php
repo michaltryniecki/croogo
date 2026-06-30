@@ -16,7 +16,7 @@ use Exception;
  */
 class ExceptionRenderer extends CakeExceptionRenderer
 {
-    protected function _getController()
+    protected function _getController(): \Cake\Controller\Controller
     {
         if (!$request = Router::getRequest(true)) {
             $request = ServerRequestFactory::fromGlobals();

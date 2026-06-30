@@ -25,7 +25,7 @@ class SettingsController extends AppController
         $this->_setupPrg();
     }
 
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return parent::implementedEvents() + [
             'Crud.beforeRedirect' => 'beforeCrudRedirect',

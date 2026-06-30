@@ -35,7 +35,7 @@ class PluginsController extends AppController
      *
      * @return void
      */
-    public function beforeFilter(\Cake\Event\EventInterface $event)
+    public function beforeFilter(\Cake\Event\EventInterface $event): void
     {
         parent::beforeFilter($event);
 

@@ -8,7 +8,7 @@ use Cake\ORM\TableRegistry;
 class CollectShell extends Shell
 {
 
-    public function getOptionParser()
+    public function getOptionParser(): \Cake\Console\ConsoleOptionParser
     {
         return parent::getOptionParser()
             ->setDescription(__d('croogo', 'Scan directory and import record to database'))

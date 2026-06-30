@@ -38,7 +38,7 @@ class SettingsShell extends Shell
     /**
      * getOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): \Cake\Console\ConsoleOptionParser
     {
         return parent::getOptionParser()
             ->setDescription('Croogo Settings utility')

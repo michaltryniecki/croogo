@@ -64,7 +64,7 @@ class MenusTable extends CroogoTable
         ]);
     }
 
-    protected function _initializeSchema(TableSchema $table)
+    protected function _initializeSchema(TableSchema $table): \Cake\Database\Schema\TableSchemaInterface
     {
         $table->setColumnType('params', 'params');
 

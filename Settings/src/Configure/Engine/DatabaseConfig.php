@@ -20,12 +20,12 @@ class DatabaseConfig implements ConfigEngineInterface
      * @param string $key Key to read.
      * @return array An array of data to merge into the runtime configuration
      */
-    public function read($key)
+    public function read(string $key): array
     {
         timerStart('Loading settings from database');
 
         $values = Cache::remember('configure-settings-' . $key, function () use ($key) {
-            $settings = TableRegistry::get('Croogo/Settings.Settings')->find('list', [
+            $settings = TableRegistry::getTableLocator()->get('Croogo/Settings.Settings')->find('list', [
                 'keyField' => 'key',
                 'valueField' => function (Setting $setting) {
                     if ($setting->type === 'integer') {
@@ -53,7 +53,7 @@ class DatabaseConfig implements ConfigEngineInterface
      * @param array $data The data to dump.
      * @return bool True on success or false on failure.
      */
-    public function dump($key, array $data)
+    public function dump(string $key, array $data): bool
     {
         Log::debug($key);
         Log::debug($data);

@@ -12,7 +12,7 @@ class UserMailer extends Mailer
 
     public $layout = 'default';
 
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [
             'Users.registered' => 'onRegistration'

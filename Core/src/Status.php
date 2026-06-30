@@ -53,7 +53,7 @@ class Status implements ArrayAccess
         $event = Croogo::dispatchEvent('Croogo.Status.setup', null, $this);
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->_statuses[$offset]);
     }

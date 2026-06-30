@@ -72,7 +72,7 @@ class LinksTable extends CroogoTable
             ]);
     }
 
-    protected function _initializeSchema(TableSchema $table)
+    protected function _initializeSchema(TableSchema $table): \Cake\Database\Schema\TableSchemaInterface
     {
         $table->setColumnType('visibility_roles', 'encoded');
         $table->setColumnType('link', 'link');
