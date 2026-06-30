@@ -204,7 +204,7 @@ class FormHelper extends BaseFormHelper
     {
         if (!empty($options['fieldAccess'])) {
             $this->_fieldAccess = $this->_setupFieldAccess($options['fieldAccess']);
-            $this->_currentRoleId = $this->_View->getLayout()->getRoleId();
+            $this->_currentRoleId = $this->_View->Layout->getRoleId();
             unset($options['fieldAccess']);
         }
 
