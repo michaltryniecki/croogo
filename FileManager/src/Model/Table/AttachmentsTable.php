@@ -5,7 +5,7 @@ namespace Croogo\FileManager\Model\Table;
 use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
-use Cake\Filesystem\Folder;
+use Croogo\Core\Utility\FsUtils;
 use Cake\Log\LogTrait;
 use Cake\ORM\Query;
 use Cake\Utility\Hash;
@@ -486,11 +486,10 @@ class AttachmentsTable extends CroogoTable
             if (!is_dir($dir)) {
                 throw new InvalidArgumentException(__('{0} is not a directory', $dir));
             }
-            $folder = new Folder($dir, false, false);
             if ($options['recursive']) {
-                $files = $folder->findRecursive($regex, false);
+                $files = FsUtils::findRecursive($dir, $regex);
             } else {
-                $files = $folder->find($regex, false);
+                $files = FsUtils::find($dir, $regex);
                 $files = array_map(
                     function ($v) use ($dir) {
                         return APP . $dir . '/' . $v;

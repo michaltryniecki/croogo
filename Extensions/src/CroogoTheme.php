@@ -6,7 +6,7 @@ use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Folder;
+use Croogo\Core\Utility\FsUtils;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
@@ -254,7 +254,6 @@ class CroogoTheme
         $paths = array_map(function ($path) use ($alias) {
             return $path . $alias;
         }, $paths);
-        $folder = new Folder;
 
         foreach ($paths as $path) {
             if (!file_exists($path)) {
@@ -269,10 +268,10 @@ class CroogoTheme
             if (is_link($path)) {
                 return unlink($path);
             } elseif (is_dir($path)) {
-                if ($folder->delete($path)) {
+                if (FsUtils::deleteTree($path)) {
                     return true;
                 } else {
-                    return $folder->errors();
+                    return [__d('croogo', 'Could not delete %s', $path)];
                 }
             }
         }

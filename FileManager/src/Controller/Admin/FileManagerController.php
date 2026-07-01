@@ -4,8 +4,7 @@ namespace Croogo\FileManager\Controller\Admin;
 
 use Cake\Core\Configure;
 use Cake\Event\Event;
-use Cake\Filesystem\File;
-use Cake\Filesystem\Folder;
+use Croogo\Core\Utility\FsUtils;
 use Cake\Routing\Router;
 use Croogo\FileManager\Utility\FileManager;
 
@@ -71,8 +70,6 @@ class FileManagerController extends AppController
      */
     public function browse(): void
     {
-        $this->folder = new Folder;
-
         $path = $this->getRequest()->getQuery('path') ?: WWW_ROOT;
 
         $path = realpath($path) . DS;
@@ -89,9 +86,7 @@ class FileManagerController extends AppController
             $path = dirname($path);
         }
 
-        $this->folder->path = $path;
-
-        $content = $this->folder->read();
+        $content = FsUtils::read($path);
         $this->set(compact('content'));
         $this->set('path', $path);
     }
@@ -120,15 +115,18 @@ class FileManagerController extends AppController
         $n = count($pathE) - 1;
         unset($pathE[$n]);
         $path = implode(DS, $pathE);
-        $this->file = new File($absolutefilepath, true);
+        // Cake 5: File usunięty — natywne file_put_contents/file_get_contents.
+        if (!file_exists($absolutefilepath)) {
+            touch($absolutefilepath);
+        }
 
         if (!empty($this->getRequest()->getData())) {
-            if ($this->file->write($this->getRequest()->getData('content'))) {
+            if (file_put_contents($absolutefilepath, $this->getRequest()->getData('content')) !== false) {
                 $this->Flash->success(__d('croogo', 'File saved successfully'));
             }
         }
 
-        $content = $this->file->read();
+        $content = (string)file_get_contents($absolutefilepath);
 
         $this->set(compact('content', 'path', 'absolutefilepath'));
     }
@@ -220,8 +218,7 @@ class FileManagerController extends AppController
             return $this->redirect(['controller' => 'FileManager', 'action' => 'browse']);
         }
 
-        $folder = new Folder();
-        if (is_dir($path) && $folder->delete($path)) {
+        if (is_dir($path) && FsUtils::deleteTree($path)) {
             $this->Flash->success(__d('croogo', 'Directory deleted'));
         } else {
             $this->Flash->error(__d('croogo', 'An error occured'));
@@ -315,8 +312,7 @@ class FileManagerController extends AppController
         }
 
         if (!empty($this->getRequest()->data)) {
-            $this->folder = new Folder;
-            if ($this->folder->create($path . $this->getRequest()->data['name'])) {
+            if (mkdir($path . $this->getRequest()->data['name'], 0777, true)) {
                 $this->Flash->success(__d('croogo', 'Directory created successfully.'));
                 $redirectUrl = $this->_browsePathUrl($path);
 

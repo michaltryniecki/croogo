@@ -18,7 +18,6 @@ use Cake\Database\SchemaCache;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
-use Cake\Filesystem\Folder;
 use Cake\I18n\I18n;
 use Cake\I18n\MessagesFileLoader;
 use Cake\Log\Log;
@@ -152,7 +151,6 @@ class PluginManager extends Plugin
     {
         $plugins = [];
         $pluginPaths = [];
-        $this->folder = new Folder;
         $registered = Configure::read('plugins');
 
         $configuredPaths = Configure::read('App.paths.plugins');
@@ -167,8 +165,7 @@ class PluginManager extends Plugin
         $pluginPaths = Hash::merge($pluginPaths, $registered);
         unset($pluginPaths['Croogo']); //Otherwise we get croogo plugins twice!
         foreach ($pluginPaths as $pluginName => $pluginPath) {
-            $this->folder->path = $pluginPath;
-            if (!file_exists($this->folder->path)) {
+            if (!file_exists($pluginPath)) {
                 continue;
             }
             if ((
@@ -181,8 +178,14 @@ class PluginManager extends Plugin
                 continue;
             }
 
-            $pluginFolders = $this->folder->read();
-            foreach ($pluginFolders[0] as $pluginFolder) {
+            // Cake 5: Cake\Filesystem\Folder usunięty -> natywny scandir (tylko katalogi).
+            $pluginFolders = array_values(array_filter(
+                (array)scandir($pluginPath),
+                function ($entry) use ($pluginPath) {
+                    return is_dir($pluginPath . DIRECTORY_SEPARATOR . $entry);
+                }
+            ));
+            foreach ($pluginFolders as $pluginFolder) {
                 if (substr($pluginFolder, 0, 1) != '.') {
                     if ($type === 'plugin' && !$this->_isCroogoPlugin($pluginPath, $pluginFolder)) {
                         continue;
@@ -1028,10 +1031,22 @@ class PluginManager extends Plugin
         if (is_link($pluginPath)) {
             return unlink($pluginPath);
         }
-        $folder = new Folder();
-        $result = $folder->delete($pluginPath);
-        if ($result !== true) {
-            return $folder->errors();
+        // Cake 5: Cake\Filesystem\Folder usunięty -> rekursywne usuwanie natywnie.
+        if (!is_dir($pluginPath)) {
+            return true;
+        }
+        $it = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($pluginPath, \FilesystemIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::CHILD_FIRST
+        );
+        foreach ($it as $item) {
+            $ok = $item->isDir() ? rmdir($item->getPathname()) : unlink($item->getPathname());
+            if (!$ok) {
+                return [__d('croogo', 'Could not delete %s', $item->getPathname())];
+            }
+        }
+        if (!rmdir($pluginPath)) {
+            return [__d('croogo', 'Could not delete %s', $pluginPath)];
         }
 
         return true;

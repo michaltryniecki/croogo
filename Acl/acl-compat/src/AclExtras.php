@@ -21,7 +21,7 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Folder;
+use Croogo\Core\Utility\FsUtils;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
@@ -352,12 +352,10 @@ class AclExtras
     {
         if (!$plugin) {
             $path = App::classPath('Controller' . (empty($prefix) ? '' : DS . Inflector::camelize($prefix)));
-            $dir = new Folder($path[0]);
-            $controllers = $dir->find('.*Controller\.php');
+            $controllers = FsUtils::find($path[0], '.*Controller\.php');
         } else {
             $path = Plugin::classPath($plugin) . 'Controller' . DS. (empty($prefix) ? '' : DS . Inflector::camelize($prefix));
-            $dir = new Folder($path);
-            $controllers = $dir->find('.*Controller\.php');
+            $controllers = FsUtils::find($path, '.*Controller\.php');
         }
 
         return $controllers;
