@@ -180,7 +180,7 @@ class AppController extends \App\Controller\AppController implements HookableCom
                 )
             ) {
                 $this->viewBuilder()->setLayout('maintenance');
-                $this->response->statusCode(503);
+                $this->setResponse($this->getResponse()->withStatus(503));
                 $this->set('title_for_layout', __d('croogo', 'Site down for maintenance'));
                 $this->viewBuilder()->setTemplatePath('Maintenance');
                 $this->render('Croogo/Core.blank');
