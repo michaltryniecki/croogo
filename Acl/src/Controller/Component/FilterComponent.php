@@ -202,7 +202,7 @@ class FilterComponent extends Component
                 if (!is_string($value) && $isAdminRequest !== $isAdminRoute && $isAuthAction) {
                     continue;
                 }
-                $this->_controller->Auth->config($property, $value);
+                $this->_controller->Auth->setConfig($property, $value);
             }
         }
     }

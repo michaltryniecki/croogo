@@ -82,7 +82,7 @@ class AccessComponent extends Component
      */
     public function addAco($action, $allowRoles = []): void
     {
-        $actionPath = $this->_controller->Auth->config('authorize.all.actionPath');
+        $actionPath = $this->_controller->Auth->getConfig('authorize.all.actionPath');
         if (strpos($action, $actionPath) === false) {
             $action = str_replace('//', '/', $actionPath . '/' . $action);
         }

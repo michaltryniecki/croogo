@@ -16,7 +16,7 @@ class TreeBehavior extends CakeTree
 
     public function beforeFind(\Cake\Event\EventInterface $event, Query $query, $options)
     {
-        $scope = $this->config('scope');
+        $scope = $this->getConfig('scope');
         if ($scope) {
             $this->_scope($query);
         }
