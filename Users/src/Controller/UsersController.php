@@ -47,7 +47,7 @@ class UsersController extends AppController
     public function logout()
     {
         Croogo::dispatchEvent('Controller.Users.beforeLogout', $this);
-        $this->getRequest()->session()->delete('Croogo.redirect');
+        $this->getRequest()->getSession()->delete('Croogo.redirect');
 
         $this->Flash->success(__d('croogo', 'Log out successful.'), 'auth');
 

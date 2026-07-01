@@ -109,7 +109,7 @@ class AkismetComponent extends Component
 
         // Start to populate the comment data
         $this->comment['blog'] = $this->blogURL;
-        $this->comment['user_agent'] = $this->request->header('user-agent') ?: 'Unknown';
+        $this->comment['user_agent'] = $this->request->getHeaderLine('user-agent') ?: 'Unknown';
 
         if ($this->request->referer()) {
             $this->comment['referrer'] = $this->request->referer();

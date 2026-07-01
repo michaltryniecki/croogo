@@ -37,7 +37,7 @@ class AclEventHandler implements EventListenerInterface
             return;
         }
         $request = $event->data['request'];
-        $cookiePath = $request->base . '/' . $request->param('prefix');
+        $cookiePath = $request->getAttribute('base') . '/' . $request->getParam('prefix');
         ini_set('session.cookie_path', $cookiePath);
     }
 }

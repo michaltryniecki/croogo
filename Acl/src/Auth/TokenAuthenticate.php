@@ -100,7 +100,7 @@ class TokenAuthenticate extends BaseAuthenticate
     public function getUser(ServerRequest $request)
     {
         if (!empty($this->settings['header'])) {
-            $token = $request->header($this->settings['header']);
+            $token = $request->getHeaderLine($this->settings['header']);
             if ($token) {
                 return $this->_findUser($token, null);
             }
