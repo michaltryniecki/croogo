@@ -18,7 +18,7 @@ class LinkedAssetsBehavior extends Behavior
     /**
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'key' => 'linked_assets',
     ];
 
@@ -44,13 +44,13 @@ class LinkedAssetsBehavior extends Behavior
 
     /**
      * @param Event $event
-     * @param Query $query
+     * @param \Cake\ORM\Query\SelectQuery $query
      * @param ArrayObject $options
      * @param $primary
      *
-     * @return Query
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    public function beforeFind(\Cake\Event\EventInterface $event, Query $query, ArrayObject $options, $primary)
+    public function beforeFind(\Cake\Event\EventInterface $event, \Cake\ORM\Query\SelectQuery $query, ArrayObject $options, $primary)
     {
         //if ($model->findQueryType == 'list') {
             //return $query;

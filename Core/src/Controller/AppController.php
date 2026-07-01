@@ -39,7 +39,7 @@ class AppController extends \App\Controller\AppController implements HookableCom
     /**
      * Pagination
      */
-    public $paginate = [
+    public array $paginate = [
         'limit' => 10,
     ];
 

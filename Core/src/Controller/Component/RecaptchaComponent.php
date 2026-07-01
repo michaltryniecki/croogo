@@ -24,7 +24,7 @@ class RecaptchaComponent extends Component
     private $_publicKey = '';
     private $_privateKey = '';
 
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'actions' => []
     ];
 

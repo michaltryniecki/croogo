@@ -120,7 +120,7 @@ class LinksTable extends CroogoTable
     /**
      * Filters active links based on menu.alias
      */
-    public function findFilterByMenuAlias(Query $query, array $options = [])
+    public function findFilterByMenuAlias(\Cake\ORM\Query\SelectQuery $query, array $options = [])
     {
         return $query
             ->innerJoinWith('Menus')

@@ -24,7 +24,7 @@ use Croogo\Dashboards\CroogoDashboard;
 class DashboardsHelper extends Helper
 {
 
-    public $helpers = [
+    public array $helpers = [
         'Html' => ['className' => 'Croogo/Core.Html'],
         'Croogo/Core.Layout',
         'Croogo/Core.Theme',
@@ -72,7 +72,7 @@ class DashboardsHelper extends Helper
             CroogoDashboard::FULL => [],
         ];
         if (empty($this->Roles)) {
-            $this->Roles = TableRegistry::get('Croogo/Users.Roles');
+            $this->Roles = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Roles');
             $this->Roles->addBehavior('Croogo/Core.Aliasable');
         }
         $currentRole = $this->Roles->byId($this->Layout->getRoleId());

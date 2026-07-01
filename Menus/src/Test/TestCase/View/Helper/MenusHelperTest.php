@@ -10,7 +10,7 @@ use Menus\View\Helper\MenusHelper;
 class MenusHelperTest extends TestCase
 {
 
-    public $fixtures = [
+    public array $fixtures = [
         'plugin.Users',
         'plugin.Users',
         'plugin.Settings',
@@ -69,7 +69,7 @@ class MenusHelperTest extends TestCase
 class TheMenuTestController extends Controller
 {
 
-    public $name = 'TheTest';
+    public string $name = 'TheTest';
 
     public $uses = null;
 }

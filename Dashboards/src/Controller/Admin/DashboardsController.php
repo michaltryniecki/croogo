@@ -2,7 +2,7 @@
 
 namespace Croogo\Dashboards\Controller\Admin;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Event\Event;
 use Cake\Utility\Hash;
 
@@ -95,7 +95,7 @@ class DashboardsController extends AppController
     {
         $userId = $this->Auth->user('id');
         if (!$userId) {
-            throw new Exception('You must be logged in');
+            throw new CakeException('You must be logged in');
         }
         $data = Hash::insert($this->getRequest()->data['dashboard'], '{n}.user_id', $userId);
         $dashboardIds = array_filter(Hash::extract($data, '{n}.id'));
@@ -108,7 +108,7 @@ class DashboardsController extends AppController
         $this->Dashboards->connection()->getDriver()->enableAutoQuoting();
         $results = $this->Dashboards->saveMany($patched);
         $this->set(compact('results'));
-        $this->set('_serialize', 'results');
+        $this->viewBuilder()->setOption('serialize', 'results');
     }
 
     /**

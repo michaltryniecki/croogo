@@ -30,7 +30,7 @@ class AttachmentsController extends AppController
      * @var array
      * @access public
      */
-    public $paginate = [
+    public array $paginate = [
         'paramType' => 'querystring',
         'limit' => 5,
     ];
@@ -231,7 +231,7 @@ class AttachmentsController extends AppController
                 }
 
                 $this->set(compact('files', 'error'));
-                $this->set('_serialize', ['files', 'error']);
+                $this->viewBuilder()->setOption('serialize', ['files', 'error']);
 
                 return;
             } else {
@@ -391,7 +391,7 @@ class AttachmentsController extends AppController
         }
 
         $this->set(compact('result'));
-        $this->set('_serialize', 'result');
+        $this->viewBuilder()->setOption('serialize', 'result');
     }
 
     public function process()

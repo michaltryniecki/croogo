@@ -17,7 +17,7 @@ use Croogo\Extensions\CroogoTheme;
 class HtmlHelper extends BaseHtmlHelper
 {
 
-    public $helpers = [
+    public array $helpers = [
         'Url',
         'Croogo/Core.Theme',
     ];

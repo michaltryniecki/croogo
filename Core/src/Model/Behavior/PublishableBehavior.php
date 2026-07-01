@@ -27,7 +27,7 @@ use DateTime;
 class PublishableBehavior extends Behavior
 {
 
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'admin' => false,
         'fields' => [
             'publish_start' => 'publish_start',
@@ -65,7 +65,7 @@ class PublishableBehavior extends Behavior
      *
      * @return array Options passed to Model::find()
      */
-    public function beforeFind(\Cake\Event\EventInterface $event, Query $query, $options)
+    public function beforeFind(\Cake\Event\EventInterface $event, \Cake\ORM\Query\SelectQuery $query, $options)
     {
         $table = $this->_table;
         $config = $this->getConfig();

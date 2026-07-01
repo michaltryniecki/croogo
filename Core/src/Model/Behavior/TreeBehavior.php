@@ -14,7 +14,7 @@ use Cake\ORM\Query;
 class TreeBehavior extends CakeTree
 {
 
-    public function beforeFind(\Cake\Event\EventInterface $event, Query $query, $options)
+    public function beforeFind(\Cake\Event\EventInterface $event, \Cake\ORM\Query\SelectQuery $query, $options)
     {
         $scope = $this->getConfig('scope');
         if ($scope) {

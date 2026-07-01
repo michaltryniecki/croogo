@@ -88,7 +88,7 @@ class LocalesController extends AppController
 
         $result = $this->Settings->write('Site.locale', $locale);
         if ($result) {
-            Cache::clear(false, '_cake_core_');
+            Cache::clear(false, '_cake_translations_');
             Cache::clear(false, 'croogo_menus');
             $this->Flash->success(__d('croogo', "Locale '%s' set as default", $locale));
         } else {
@@ -113,7 +113,7 @@ class LocalesController extends AppController
         }
         $result = $this->Settings->write('Site.locale', '');
         if ($result) {
-            Cache::clear(false, '_cake_core_');
+            Cache::clear(false, '_cake_translations_');
             Cache::clear(false, 'croogo_menus');
             $this->Flash->success(__d('croogo', "Locale '%s' deactivated", $locale));
         } else {

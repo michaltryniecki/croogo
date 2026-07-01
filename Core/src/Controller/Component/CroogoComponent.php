@@ -47,32 +47,6 @@ class CroogoComponent extends Component
     protected $_controller = null;
 
     /**
-     * Method to lazy load classes
-     *
-     * @return mixed
-     */
-    public function __get($name)
-    {
-        switch ($name) {
-            case '_CroogoPlugin':
-            case '_CroogoTheme':
-                if (!isset($this->{$name})) {
-                    $class = 'Croogo\\Extensions\\' . substr($name, 1);
-                    $this->{$name} = new $class();
-                    if (method_exists($this->{$name}, 'setController')) {
-                        $this->{$name}->setController($this->_controller);
-                    }
-                }
-
-                return $this->{$name};
-            case 'roleId':
-                return $this->roleId();
-            default:
-                return parent::__get($name);
-        }
-    }
-
-    /**
      * Startup
      *
      * @param object $event instance of controller
@@ -124,7 +98,7 @@ class CroogoComponent extends Component
             return $roleId;
         }
 
-        return TableRegistry::get('Croogo/Users.Roles')->byAlias('public');
+        return \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Roles')->byAlias('public');
     }
 
     /**

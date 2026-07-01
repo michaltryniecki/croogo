@@ -21,7 +21,7 @@ class RecaptchaHelper extends Helper
     /**
      * helpers
      */
-    public $helpers = ['Html', 'Form', 'Js'];
+    public array $helpers = ['Html', 'Form', 'Js'];
 
     /**
      * beforeRender

@@ -2,14 +2,14 @@
 
 namespace Croogo\Core\Database\Type;
 
-use Cake\Database\DriverInterface;
+use Cake\Database\Driver;
 use Cake\Database\Type\BaseType;
 use Croogo\Core\Link;
 
 class LinkType extends BaseType
 {
 
-    public function toPHP($value, DriverInterface $driver)
+    public function toPHP(mixed $value, Driver $driver): mixed
     {
         if (stristr($value, 'controller:')) {
             return Link::createFromLinkString($value);
@@ -18,7 +18,7 @@ class LinkType extends BaseType
         }
     }
 
-    public function marshal($value)
+    public function marshal(mixed $value): mixed
     {
         if (is_null($value)) {
             return null;
@@ -42,7 +42,7 @@ class LinkType extends BaseType
         }
     }
 
-    public function toDatabase($value, DriverInterface $driver)
+    public function toDatabase(mixed $value, Driver $driver): mixed
     {
         return (string)$value;
     }

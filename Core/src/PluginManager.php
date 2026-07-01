@@ -10,7 +10,7 @@ use Cake\Core\App;
 use Cake\Core\BasePlugin;
 use Cake\Core\ClassLoader;
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
@@ -793,7 +793,7 @@ class PluginManager extends Plugin
             }
 
             Cache::clear('croogo_menus');
-            Cache::delete('file_map', '_cake_core_');
+            Cache::delete('file_map', '_cake_translations_');
 
             return true;
         }
@@ -842,7 +842,7 @@ class PluginManager extends Plugin
             static::clear($plugin);
 
             Cache::clear('croogo_menus');
-            Cache::delete('file_map', '_cake_core_');
+            Cache::delete('file_map', '_cake_translations_');
 
             return true;
         } else {

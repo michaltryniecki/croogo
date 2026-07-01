@@ -20,9 +20,9 @@ use Croogo\Core\Croogo;
 class UsersController extends AppController
 {
 
-    public $modelClass = 'Croogo/Users.Users';
+    public ?string $modelClass = 'Croogo/Users.Users';
 
-    public $paginate = [
+    public array $paginate = [
         'limit' => 10,
         'order' => [
             'id' => 'DESC',
@@ -293,7 +293,7 @@ class UsersController extends AppController
 
     public function beforeLookup(Event $event): void
     {
-        /** @var \Cake\ORM\Query $query */
+        /** @var \Cake\ORM\Query\SelectQuery $query */
         $query = $event->getSubject()->query;
 
         $query
@@ -322,7 +322,7 @@ class UsersController extends AppController
 
     public function beforePaginate(Event $event): void
     {
-        /** @var \Cake\ORM\Query $query */
+        /** @var \Cake\ORM\Query\SelectQuery $query */
         $query = $event->getSubject()->query;
 
         $multiRole = Configure::read('Access Control.multiRole');

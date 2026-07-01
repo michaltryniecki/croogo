@@ -77,7 +77,8 @@ class AppController extends Controller
         parent::initialize();
 
         $this->loadComponent('Croogo/Core.Auth', $this->setupAuthConfig());
-        $this->loadComponent('RequestHandler');
+        // Cake 5: RequestHandlerComponent usunięty — negocjacja treści JSON:API
+        // przechodzi przez Crud/CrudJsonApi i ViewBuilder.
 
         $this->loadComponent('Crud.Crud', [
             'actions' => [

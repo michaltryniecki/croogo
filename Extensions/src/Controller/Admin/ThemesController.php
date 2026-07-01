@@ -4,7 +4,7 @@ namespace Croogo\Extensions\Controller\Admin;
 
 use UnexpectedValueException;
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Exception\BadRequestException;
 use Croogo\Extensions\CroogoTheme;
 use Croogo\Extensions\Exception\MissingThemeException;
@@ -111,7 +111,7 @@ class ThemesController extends AppController
             try {
                 $Installer->extractTheme($file['tmp_name']);
                 $this->Flash->success(__d('croogo', 'Theme uploaded successfully.'));
-            } catch (Exception $e) {
+            } catch (CakeException $e) {
                 $this->Flash->error($e->getMessage());
             }
 

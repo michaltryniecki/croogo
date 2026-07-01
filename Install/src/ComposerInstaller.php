@@ -2,15 +2,17 @@
 
 namespace Croogo\Install;
 
-use Cake\Composer\Installer\PluginInstaller;
 use Composer\Composer;
 use Composer\Script\Event;
 use DirectoryIterator;
 
 /**
  * Class ComposerInstaller
+ *
+ * Cake 5 / plugin-installer 2.x: PluginInstaller usunięty, a postAutoloadDump
+ * i tak niczego nie dziedziczył — samodzielna klasa statyczna.
  */
-class ComposerInstaller extends PluginInstaller
+class ComposerInstaller
 {
 
     /**

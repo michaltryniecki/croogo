@@ -31,7 +31,7 @@ use InvalidArgumentException;
 class BulkProcessBehavior extends Behavior
 {
 
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'fields' => [
             'status' => 'status',
             'promote' => 'promote',

@@ -23,7 +23,7 @@ use Croogo\Core\Croogo;
 class BulkProcessComponent extends Component
 {
 
-    public $components = [
+    public array $components = [
         'Flash'
     ];
 

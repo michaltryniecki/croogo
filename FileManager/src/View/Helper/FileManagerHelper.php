@@ -25,7 +25,7 @@ class FileManagerHelper extends Helper
      * @var array
      * @access public
      */
-    public $helpers = ['Html', 'Form'];
+    public array $helpers = ['Html', 'Form'];
 
     private $__actionsAsButton = [
         'upload',

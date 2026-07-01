@@ -27,7 +27,7 @@ class MenusHelper extends Helper
 
     use LogTrait;
 
-    public $helpers = [
+    public array $helpers = [
         'Html',
         'Layout',
     ];

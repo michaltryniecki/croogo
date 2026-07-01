@@ -121,7 +121,7 @@ class AttachmentsTable extends CroogoTable
     /**
      * Find duplicates based on hash
      */
-    public function findDuplicate(Query $query, array $options)
+    public function findDuplicate(\Cake\ORM\Query\SelectQuery $query, array $options)
     {
         if (empty($options['hash'])) {
             return $query;
@@ -135,12 +135,12 @@ class AttachmentsTable extends CroogoTable
     }
 
     /**
-     * @param Query $query
+     * @param \Cake\ORM\Query\SelectQuery $query
      * @param array $options
      *
-     * @return Query
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    public function findModelAttachments(Query $query, array $options)
+    public function findModelAttachments(\Cake\ORM\Query\SelectQuery $query, array $options)
     {
         $model = $foreignKey = null;
         if (isset($options['model'])) {
@@ -208,12 +208,12 @@ class AttachmentsTable extends CroogoTable
     }
 
     /**
-     * @param Query $query
+     * @param \Cake\ORM\Query\SelectQuery $query
      * @param array $options
      *
-     * @return Query
+     * @return \Cake\ORM\Query\SelectQuery
      */
-    public function findVersions(Query $query, array $options)
+    public function findVersions(\Cake\ORM\Query\SelectQuery $query, array $options)
     {
         $assetId = $model = $foreignKey = null;
         if (isset($options['asset_id'])) {
@@ -324,7 +324,7 @@ class AttachmentsTable extends CroogoTable
         fclose($fp);
         $hash = sha1_file($file);
         $duplicate = isset($hash) ?
-            $this->find('duplicate', ['hash' => $hash])->toArray() :
+            $this->find('duplicate', hash: $hash)->toArray() :
             false;
         if ($duplicate) {
             $firstDupe = $duplicate[0]->id;
@@ -522,9 +522,7 @@ class AttachmentsTable extends CroogoTable
         }
         $this->recursive = -1;
 
-        $attachment = $this->get($id, [
-            'contain' => ['Assets'],
-        ]);
+        $attachment = $this->get($id, contain: ['Assets']);
         $asset =& $attachment->asset;
         $path = rtrim(WWW_ROOT, '/') . $asset->path;
 
@@ -581,9 +579,7 @@ class AttachmentsTable extends CroogoTable
         $options = Hash::merge([
             'uploadsDir' => 'assets',
         ], $options);
-        $attachment = $this->get($id, [
-            'contain' => ['Assets'],
-        ]);
+        $attachment = $this->get($id, contain: ['Assets']);
         $asset = $attachment->asset;
         $path = rtrim(WWW_ROOT, '/') . $asset->path;
 

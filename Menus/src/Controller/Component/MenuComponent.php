@@ -25,7 +25,7 @@ class MenuComponent extends Component
      * @var array
      * @access public
      */
-    public $components = [
+    public array $components = [
         'Croogo.Croogo',
     ];
 
@@ -49,7 +49,7 @@ class MenuComponent extends Component
         if (isset($this->controller->Link)) {
             $this->Links = $this->controller->Links;
         } else {
-            $this->Links = TableRegistry::get('Croogo/Menus.Links');
+            $this->Links = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Menus.Links');
         }
 
         $controller = $event->getSubject();

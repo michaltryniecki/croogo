@@ -3,7 +3,7 @@
 namespace Croogo\Install;
 
 use Cake\Cache\Cache;
-use Cake\Console\Shell;
+use Cake\Console\ConsoleIo;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Database\Exception\MissingConnectionException;
@@ -230,8 +230,8 @@ class InstallManager
      */
     public function createAdminUser($user)
     {
-        $Users = TableRegistry::get('Croogo/Users.Users');
-        $Roles = TableRegistry::get('Croogo/Users.Roles');
+        $Users = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Users');
+        $Roles = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Roles');
         $Roles->addBehavior('Croogo/Core.Aliasable');
 
         $user->name = $user['username'];
@@ -269,10 +269,10 @@ class InstallManager
             };
         }
 
-        $Roles = TableRegistry::get('Croogo/Users.Roles');
+        $Roles = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Roles');
         $Roles->addBehavior('Croogo/Core.Aliasable');
 
-        $Permission = TableRegistry::get('Croogo/Acl.Permissions');
+        $Permission = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Acl.Permissions');
         $admin = 'Role-admin';
         $public = 'Role-public';
         $registered = 'Role-registered';
@@ -328,12 +328,13 @@ class InstallManager
 }
 
 //phpcs:disable
-class DummyShell extends Shell
+// Cake 5: Shell usunięty -> adapter na ConsoleIo (AclExtras::setShell przyjmuje ConsoleIo).
+class DummyShell extends ConsoleIo
 {
     use LogTrait;
-    public function out($msg = null, $newlines = 1, $level = Shell::NORMAL): ?int
+    public function out(array|string $message = '', int $newlines = 1, int $level = ConsoleIo::NORMAL): ?int
     {
-        $msg = preg_replace('/\<\/?\w+\>/', '', (string)$msg);
+        $msg = preg_replace('/\<\/?\w+\>/', '', is_array($message) ? implode("\n", $message) : (string)$message);
         $this->log($msg);
 
         return null;

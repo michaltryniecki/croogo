@@ -84,15 +84,15 @@ class IntegrationTestCase extends CakeIntegrationTestCase
     }
 
     /**
-     * @param \Croogo\Users\Model\Entity\User|\Cake\ORM\Query|string $user
+     * @param \Croogo\Users\Model\Entity\User|\Cake\ORM\Query\SelectQuery|string $user
      */
     public function user($user): void
     {
         if (is_string($user)) {
-            $user = TableRegistry::get('Croogo/Users.Users')
+            $user = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Users')
                 ->findByUsername($user);
         }
-        if ($user instanceof Query) {
+        if ($user instanceof \Cake\ORM\Query\SelectQuery) {
             $user = $user->firstOrFail();
         }
 

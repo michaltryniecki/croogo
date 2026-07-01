@@ -53,7 +53,7 @@ class LinksController extends AppController
             ])
             ->toArray();
         $this->set(compact('linksTree', 'linksStatus', 'menu'));
-        $this->set('_serialize', ['linksTree', 'menu', 'linksStatus']);
+        $this->viewBuilder()->setOption('serialize', ['linksTree', 'menu', 'linksStatus']);
     }
 
     /**

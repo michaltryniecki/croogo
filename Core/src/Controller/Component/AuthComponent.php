@@ -177,7 +177,8 @@ class AuthComponent extends Component implements EventDispatcherInterface
      *
      * @var array
      */
-    protected array $components = ['RequestHandler', 'Flash'];
+    // Cake 5: RequestHandlerComponent usunięty.
+    protected array $components = ['Flash'];
 
     /**
      * Objects that will be used for authentication checks.

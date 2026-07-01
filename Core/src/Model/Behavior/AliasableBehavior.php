@@ -18,7 +18,7 @@ use Cake\ORM\Behavior;
 class AliasableBehavior extends Behavior
 {
 
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'id' => 'id',
         'alias' => 'alias',
     ];
@@ -50,10 +50,9 @@ class AliasableBehavior extends Behavior
     public function reload(): void
     {
         $this->_byIds = $this->_table
-            ->find('list', [
-                'keyField' => $this->getConfig('id'),
-                'valueField' => $this->getConfig('alias'),
-            ])
+            ->find('list',
+            keyField: $this->getConfig('id'),
+            valueField: $this->getConfig('alias'))
             ->where([
                 $this->_table->aliasField($this->getConfig('alias')) . ' !=' => '',
             ])

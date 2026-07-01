@@ -75,7 +75,7 @@ class AssetUsagesController extends AppController
             $result = $this->AssetUsages->save($entity);
         }
         $this->set(compact('result'));
-        $this->set('_serialize', 'result');
+        $this->viewBuilder()->setOption('serialize', 'result');
     }
 
     public function unregister(): void
@@ -87,6 +87,6 @@ class AssetUsagesController extends AppController
             $result = $this->AssetUsages->delete($assetUsage);
         }
         $this->set(compact('result'));
-        $this->set('_serialize', 'result');
+        $this->viewBuilder()->setOption('serialize', 'result');
     }
 }
