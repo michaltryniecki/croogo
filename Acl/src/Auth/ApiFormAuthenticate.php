@@ -2,7 +2,7 @@
 
 namespace Croogo\Acl\Auth;
 
-use Cake\Auth\FormAuthenticate;
+use Croogo\Core\Auth\FormAuthenticate;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Http\Exception\ForbiddenException;

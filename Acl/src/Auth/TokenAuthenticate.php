@@ -1,10 +1,10 @@
 <?php
 
-namespace Croogo\Acl\Controller\Component\Auth;
+namespace Croogo\Acl\Auth;
 
-use Cake\Auth\BaseAuthenticate;
+use Croogo\Core\Auth\BaseAuthenticate;
 use Cake\Controller\ComponentRegistry;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 
@@ -70,7 +70,7 @@ class TokenAuthenticate extends BaseAuthenticate
     {
         parent::__construct($collection, $settings);
         if (empty($this->settings['parameter']) && empty($this->settings['header'])) {
-            throw new Exception(__d('croogo', 'You need to specify token parameter and/or header'));
+            throw new CakeException(__d('croogo', 'You need to specify token parameter and/or header'));
         }
     }
 

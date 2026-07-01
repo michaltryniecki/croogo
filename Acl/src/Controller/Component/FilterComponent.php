@@ -3,7 +3,7 @@
 namespace Croogo\Acl\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\Component\AuthComponent;
+use Croogo\Core\Controller\Component\AuthComponent;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\ORM\TableRegistry;

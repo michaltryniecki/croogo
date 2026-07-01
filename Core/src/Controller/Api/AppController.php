@@ -2,7 +2,7 @@
 
 namespace Croogo\Core\Controller\Api;
 
-use Cake\Controller\Component\AuthComponent;
+use Croogo\Core\Controller\Component\AuthComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -76,7 +76,7 @@ class AppController extends Controller
     {
         parent::initialize();
 
-        $this->loadComponent('Auth', $this->setupAuthConfig());
+        $this->loadComponent('Croogo/Core.Auth', $this->setupAuthConfig());
         $this->loadComponent('RequestHandler');
 
         $this->loadComponent('Crud.Crud', [
