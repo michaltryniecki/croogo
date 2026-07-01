@@ -238,7 +238,7 @@ class LocalesController extends AppController
 
         if (!empty($this->getRequest()->data)) {
             // save
-            if ($file->write($this->getRequest()->data('content'))) {
+            if ($file->write($this->getRequest()->getData('content'))) {
                 $this->Flash->success(__d('croogo', 'Locale updated successfully'));
 
                 return $this->redirect(['action' => 'index']);
