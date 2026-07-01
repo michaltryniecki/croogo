@@ -274,6 +274,6 @@ class CroogoComponent extends Component
         if (!$controller->getRequest()->is('post')) {
             throw new \Cake\Http\Exception\MethodNotAllowedException();
         }
-        $controller->Security->setConfig('validatePost', false);
+        $controller->FormProtection->setConfig('validate', false);
     }
 }

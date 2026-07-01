@@ -41,7 +41,7 @@ class BulkProcessComponent extends Component
     {
         $this->_controller = $event->getSubject();
         if ($this->_controller->getRequest()->getParam('action') == 'process') {
-            $this->_controller->Security->setConfig('validatePost', false);
+            $this->_controller->FormProtection->setConfig('validate', false);
         }
     }
 

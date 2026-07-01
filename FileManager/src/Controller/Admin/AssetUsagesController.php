@@ -17,7 +17,7 @@ class AssetUsagesController extends AppController
             'changeType', 'unregister',
         ];
         if (in_array($this->getRequest()->getParam('action'), $excludeActions)) {
-            $this->Security->setConfig('validatePost', false);
+            $this->FormProtection->setConfig('validate', false);
         }
     }
 

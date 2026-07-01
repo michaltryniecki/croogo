@@ -37,8 +37,8 @@ class ErrorController extends \Cake\Controller\ErrorController implements Hookab
         if (isset($this->Auth)) {
             $eventManager->off($this->Auth);
         }
-        if (isset($this->Security)) {
-            $eventManager->off($this->Security);
+        if (isset($this->FormProtection)) {
+            $eventManager->off($this->FormProtection);
         }
 
         parent::initialize();

@@ -49,7 +49,7 @@ class RecaptchaComponent extends Component
         }
 
         if (in_array($this->getController()->getRequest()->getParam('action'), $this->getConfig('actions'))) {
-            $controller->Security->validatePost = false;
+            $controller->FormProtection->setConfig('validate', false);
         }
 
         $controller->viewBuilder()->setHelpers(['Croogo/Core.Recaptcha']);

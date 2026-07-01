@@ -66,7 +66,7 @@ class AttachmentsController extends AppController
         parent::beforeFilter($event);
 
         if ($this->getRequest()->getParam('action') == 'resize') {
-            $this->Security->setConfig('validatePost', false);
+            $this->FormProtection->setConfig('validate', false);
         }
     }
 

@@ -1345,11 +1345,10 @@ class PluginManager extends Plugin
             ]
         ]);
         Croogo::hookComponent('*', 'Croogo/Acl.Filter');
-        Croogo::hookComponent('*', [
-            'Security' => [
-                'blackHoleCallback' => '_securityError',
-            ],
-        ]);
+        // Cake 5: SecurityComponent usunięty -> FormProtectionComponent.
+        // blackHoleCallback -> validationFailureCallback (Closure) ustawiany
+        // per-request w AppController::beforeFilter (nie w statycznym hooku).
+        Croogo::hookComponent('*', 'FormProtection');
         Croogo::hookComponent('*', 'Acl.Acl');
         Croogo::hookComponent('*', 'Croogo/Core.Auth');
         Croogo::hookComponent('*', 'Flash');

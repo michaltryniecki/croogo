@@ -188,7 +188,10 @@ class AppController extends \App\Controller\AppController implements HookableCom
         }
 
         if (!$this->getRequest()->is('api')) {
-            $this->Security->blackHoleCallback = '_securityError';
+            // Cake 5: SecurityComponent::$blackHoleCallback -> FormProtection validationFailureCallback (Closure).
+            $this->FormProtection->setConfig('validationFailureCallback', function ($exception) {
+                return $this->_securityError('post', $exception);
+            });
             if ($this->getRequest()->getParam('action') == 'delete' && $this->getRequest()->getParam('prefix') == 'Admin') {
                 $this->getRequest()->allowMethod('post');
             }
@@ -237,7 +240,7 @@ class AppController extends \App\Controller\AppController implements HookableCom
         $response = $this->render($template);
         $response = $response->withStatus(400);
         $emitter = new ResponseEmitter();
-        $emitter->emit($this->response);
+        $emitter->emit($this->getResponse());
         exit(-1);
     }
 
