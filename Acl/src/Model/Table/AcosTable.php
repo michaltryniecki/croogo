@@ -26,7 +26,7 @@ class AcosTable extends \Acl\Model\Table\AcosTable
     public function getChildren($acoId, $fields = [])
     {
         $fields = Hash::merge(['id', 'parent_id', 'alias'], $fields);
-        $acos = $this->find('children', ['for' => $acoId])
+        $acos = $this->find('children', for: $acoId)
             ->find('threaded');
 
         return $acos;
@@ -86,19 +86,18 @@ class AcosTable extends \Acl\Model\Table\AcosTable
         // AROs
         $roles = [];
         if (count($allowRoles) > 0) {
-            $roles = TableRegistry::get('Croogo/Users.Roles')->find('list', [
-                'conditions' => [
-                    'Roles.alias IN' => $allowRoles,
-                ],
-                'fields' => [
-                    'Roles.id',
-                    'Roles.alias',
-                ],
+            $roles = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Roles')->find('list',
+            conditions: [
+                'Roles.alias IN' => $allowRoles,
+            ],
+            fields: [
+                'Roles.id',
+                'Roles.alias',
             ])->toArray();
         }
 
         $this->createFromPath($action);
-        $Permission = TableRegistry::get('Croogo/Acl.Permissions');
+        $Permission = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Acl.Permissions');
         foreach ($roles as $roleId => $roleAlias) {
             $Permission->allow(['model' => 'Roles', 'foreign_key' => $roleId], $action);
         }
@@ -128,12 +127,11 @@ class AcosTable extends \Acl\Model\Table\AcosTable
      */
     public function getPermissionRoots()
     {
-        $roots = $this->find('all', [
-            'fields' => ['id', 'alias'],
-            'conditions' => [
-                'parent_id IS' => null,
-                'alias IN' => ['controllers', 'api'],
-            ],
+        $roots = $this->find('all',
+        fields: ['id', 'alias'],
+        conditions: [
+            'parent_id IS' => null,
+            'alias IN' => ['controllers', 'api'],
         ])->toArray();
 
         $apiRoot = -1;
@@ -148,11 +146,10 @@ class AcosTable extends \Acl\Model\Table\AcosTable
             unset($roots[$apiIndex]);
         }
 
-        $versionRoots = $this->find('all', [
-            'fields' => ['id', 'alias'],
-            'conditions' => [
-                'parent_id' => $apiRoot,
-            ],
+        $versionRoots = $this->find('all',
+        fields: ['id', 'alias'],
+        conditions: [
+            'parent_id' => $apiRoot,
         ])->toArray();
 
         $apiCount = count($versionRoots);

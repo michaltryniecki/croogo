@@ -15,7 +15,7 @@
 namespace Acl;
 
 use Acl\Controller\Component\AclComponent;
-use Cake\Console\Shell;
+use Cake\Console\ConsoleIo;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\App;
@@ -94,7 +94,7 @@ class AclExtras
     /** @var \Cake\Controller\Controller */
     protected $controller;
 
-    /** @var \Cake\Console\Shell */
+    /** @var \Cake\Console\ConsoleIo */
     protected $Shell;
 
     /**
@@ -610,7 +610,7 @@ class AclExtras
     /**
      * Get the attached shell.
      *
-     * @return \Cake\Console\Shell
+     * @return \Cake\Console\ConsoleIo
      */
     public function getShell()
     {
@@ -620,10 +620,10 @@ class AclExtras
     /**
      * Attach a shell for output.
      *
-     * @param \Cake\Console\Shell $shell Shell to attach
+     * @param \Cake\Console\ConsoleIo $shell Shell to attach
      * @return void
      */
-    public function setShell(Shell $shell)
+    public function setShell(ConsoleIo $shell)
     {
         $this->Shell = $shell;
     }
