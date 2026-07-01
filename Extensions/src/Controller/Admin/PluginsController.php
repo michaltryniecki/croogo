@@ -93,7 +93,7 @@ class PluginsController extends AppController
      */
     public function delete($id)
     {
-        $plugin = $this->getRequest()->query('name');
+        $plugin = $this->getRequest()->getQuery('name');
         if (!$plugin) {
             $this->Flash->error(__d('croogo', 'Invalid plugin'));
 
@@ -167,7 +167,7 @@ class PluginsController extends AppController
      */
     public function migrate()
     {
-        $plugin = $this->getRequest()->query('name');
+        $plugin = $this->getRequest()->getQuery('name');
         if (!$plugin) {
             $this->Flash->error(__d('croogo', 'Invalid plugin'));
         } elseif ($this->_CroogoPlugin->migrate($plugin)) {
@@ -188,7 +188,7 @@ class PluginsController extends AppController
      */
     public function moveup()
     {
-        $plugin = $this->getRequest()->query('name');
+        $plugin = $this->getRequest()->getQuery('name');
         $this->getRequest()->allowMethod('post');
 
         if ($plugin === null) {
@@ -215,7 +215,7 @@ class PluginsController extends AppController
      */
     public function movedown()
     {
-        $plugin = $this->getRequest()->query('name');
+        $plugin = $this->getRequest()->getQuery('name');
         $this->getRequest()->allowMethod('post');
 
         if ($plugin === null) {

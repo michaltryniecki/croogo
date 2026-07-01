@@ -244,7 +244,7 @@ class FileManagerController extends AppController
      */
     public function rename()
     {
-        $path = $this->getRequest()->query('path');
+        $path = $this->getRequest()->getQuery('path');
         $pathFragments = array_filter(explode(DIRECTORY_SEPARATOR, $path));
 
         if (!$this->FileManager->isEditable($path)) {
