@@ -244,7 +244,7 @@ class FileManagerController extends AppController
      */
     public function rename()
     {
-        $path = $this->getRequest()->query('path');
+        $path = $this->getRequest()->getQuery('path');
         $pathFragments = array_filter(explode(DIRECTORY_SEPARATOR, $path));
 
         if (!$this->FileManager->isEditable($path)) {
@@ -254,7 +254,7 @@ class FileManagerController extends AppController
         }
 
         if ($this->getRequest()->is('post') || $this->getRequest()->is('put')) {
-            if (!is_null($this->getRequest()->data('name')) &&
+            if (!is_null($this->getRequest()->getData('name')) &&
                 !empty($this->getRequest()->data['name'])
             ) {
                 $newName = trim($this->getRequest()->data['name']);
@@ -289,7 +289,8 @@ class FileManagerController extends AppController
 
             return $this->redirect($redirectUrl);
         }
-        $this->getRequest()->data('name', array_pop($pathFragments));
+        // Cake 4: request immutable -> withData() + setRequest() (prefill pola 'name').
+        $this->setRequest($this->getRequest()->withData('name', array_pop($pathFragments)));
         $this->set('path', $path);
     }
 

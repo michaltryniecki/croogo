@@ -71,7 +71,12 @@ class FilterComponent extends Component
      */
     protected function _configure()
     {
-        if (!$this->_registry->has('Croogo/Acl.AutoLogin')) {
+        // CookieComponent usunięty w Cake 4 — AutoLogin (remember-me) na nim bazuje.
+        // Ładujemy tylko gdy CookieComponent dostępny; inaczej remember-me wyłączone
+        // (do reworku na CookieCollection).
+        if (class_exists('Cake\Controller\Component\CookieComponent')
+            && !$this->_registry->has('Croogo/Acl.AutoLogin')
+        ) {
             $this->_registry->load('Croogo/Acl.AutoLogin');
             if (!$this->_registry->has('Cookie')) {
                 $this->_registry->load('Cookie');
@@ -97,7 +102,7 @@ class FilterComponent extends Component
             if (!function_exists('mcrypt_encrypt') && !function_exists('openssl_encrypt')) {
                 $notice = __d('croogo', '"AutoLogin" (Remember Me) disabled since mcrypt_encrypt or openssl_encrypt is not available');
                 $this->log($notice, LOG_CRIT);
-                if ($this->_controller->request->getParam('prefix') == 'admin') {
+                if ($this->_controller->getRequest()->getParam('prefix') == 'Admin') {
                     $this->_controller->Flash->error($notice);
                 }
                 if (isset($this->_controller->Settings)) {
@@ -125,7 +130,7 @@ class FilterComponent extends Component
             ]
         ]);
 
-        if ($this->_controller->request->getParam('prefix') == 'admin' &&
+        if ($this->_controller->getRequest()->getParam('prefix') == 'Admin' &&
             !$this->_controller->Auth->user()) {
             $this->_controller->Auth->setConfig('authError', false);
         }
@@ -146,9 +151,9 @@ class FilterComponent extends Component
             'controller' => 'Users',
             'action' => 'login',
         ]);
-        if ($this->request->getParam('prefix') === 'admin') {
+        if ($this->getController()->getRequest()->getParam('prefix') === 'Admin') {
             $this->_controller->Auth->setConfig('loginAction', [
-                'prefix' => 'admin',
+                'prefix' => 'Admin',
                 'plugin' => 'Croogo/Users',
                 'controller' => 'Users',
                 'action' => 'login',
@@ -159,7 +164,7 @@ class FilterComponent extends Component
             'controller' => 'Users',
             'action' => 'login',
         ]);
-        if ($this->request->getParam('prefix') == 'admin') {
+        if ($this->getController()->getRequest()->getParam('prefix') == 'Admin') {
             $dashboardUrl = Configure::read('Site.dashboard_url');
             if (is_string($dashboardUrl)) {
                 $converter = new StringConverter();
@@ -172,7 +177,7 @@ class FilterComponent extends Component
             $this->_controller->Auth->setConfig('loginRedirect', $loginRedirect);
         }
 
-        if ($this->_controller->request->is('ajax')) {
+        if ($this->_controller->getRequest()->is('ajax')) {
             $this->_controller->Auth->setConfig('unauthorizedRedirect', false);
         } else {
             $this->_controller->Auth->setConfig('unauthorizedRedirect', [
@@ -184,7 +189,7 @@ class FilterComponent extends Component
 
         $config = Configure::read('Acl');
         if (!empty($config['Auth']) && is_array($config['Auth'])) {
-            $isAdminRequest = !empty($this->_controller->request->getParam('admin'));
+            $isAdminRequest = !empty($this->_controller->getRequest()->getParam('admin'));
             $authActions = [
                 'loginAction',
                 'loginRedirect',
@@ -197,7 +202,7 @@ class FilterComponent extends Component
                 if (!is_string($value) && $isAdminRequest !== $isAdminRoute && $isAuthAction) {
                     continue;
                 }
-                $this->_controller->Auth->config($property, $value);
+                $this->_controller->Auth->setConfig($property, $value);
             }
         }
     }
@@ -219,9 +224,9 @@ class FilterComponent extends Component
 
         $authorizer = $this->_controller->Auth->getAuthorize('Croogo/Acl.AclCached');
 
-        if ($this->_controller->Acl->check('Role-public', $authorizer->action($this->_controller->request))) {
+        if ($this->_controller->Acl->check('Role-public', $authorizer->action($this->_controller->getRequest()))) {
             $this->_controller->Auth->allow(
-                $this->_controller->request->getParam('action')
+                $this->_controller->getRequest()->getParam('action')
             );
         }
     }

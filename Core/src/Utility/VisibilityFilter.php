@@ -122,7 +122,7 @@ class VisibilityFilter
             $url['named'] = $named;
         }
 
-        $intersect = array_intersect_key($this->_request->params, $url);
+        $intersect = array_intersect_key($this->_request->getAttribute('params'), $url);
         $matched = $intersect == $url;
 
         if ($matched && isset($queryString)) {

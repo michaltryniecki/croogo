@@ -183,7 +183,7 @@ class AclCachedAuthorize extends BaseAuthorize
                 }
             }
 
-            $id = $request->param('pass.0');
+            $id = $request->getParam('pass.0');
             if ($id) {
                 $ids[] = $id;
             }
@@ -214,7 +214,7 @@ class AclCachedAuthorize extends BaseAuthorize
      */
     protected function _authorizeByContent($user, ServerRequest $request, $id)
     {
-        if (!isset($this->getConfig('actionMap')[$request->params['action']])) {
+        if (!isset($this->getConfig('actionMap')[$request->getParam('action')])) {
             $message = __d(
                 'croogo',
                 '_authorizeByContent() - Access of un-mapped action "%1$s" in controller "%2$s"',
@@ -231,7 +231,7 @@ class AclCachedAuthorize extends BaseAuthorize
             'foreign_key' => $id,
         ];
         $alias = sprintf('%s.%s', $acoNode['model'], $acoNode['foreign_key']);
-        $action = $this->getConfig('actionMap')[$request->param('action')];
+        $action = $this->getConfig('actionMap')[$request->getParam('action')];
 
         $cacheName = 'permissions_content_' . strval($user['id']);
         if (($permissions = Cache::read($cacheName, 'permissions')) === false) {

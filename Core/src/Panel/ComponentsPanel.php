@@ -27,7 +27,7 @@ class ComponentsPanel extends DebugPanel
 
         foreach ($loadedComponents as $name) {
             $component = $componentRegistry->get($name);
-            $this->_loadedComponents[$this->_classNameConvert(get_class($component))] = json_decode(json_encode($component->config()), true);
+            $this->_loadedComponents[$this->_classNameConvert(get_class($component))] = json_decode(json_encode($component->getConfig()), true);
         }
     }
 

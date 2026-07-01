@@ -74,14 +74,17 @@ class PermissionsController extends AppController
         $this->set(compact('acos', 'roles', 'level'));
 
         $aros = $this->Aros->getRoles($roles);
-        if ($root && $this->RequestHandler->ext == 'json') {
+        // Cake 4: RequestHandler->ext (rozszerzenie URL) usunięte; $.getJSON wysyła
+        // Accept: application/json bez sufiksu .json -> wykrywamy po nagłówku Accept.
+        $isJson = strpos($this->getRequest()->getHeaderLine('Accept'), 'application/json') !== false;
+        if ($root && $isJson) {
             $options = array_intersect_key(
                 $this->getRequest()->getQuery(),
                 ['perms' => null, 'urls' => null]
             );
             $cacheName = 'permissions_aco_' . $root->id;
             $permissions = Cache::read($cacheName, 'permissions');
-            if ($permissions === false) {
+            if ($permissions === null) {
                 $permissions = $this->Permissions->format($acos, $aros, $options);
                 Cache::write($cacheName, $permissions, 'permissions');
             }
@@ -93,6 +96,12 @@ class PermissionsController extends AppController
 
         if ($this->getRequest()->is('ajax') && isset($query)) {
             $this->render('Croogo/Acl.acl_permissions_table');
+        } elseif ($isJson) {
+            // _ext=json ustawia subDir 'json' -> render('index') trafia w
+            // Admin/Permissions/json/index.php (echo json_encode). Bez layoutu.
+            $this->viewBuilder()->disableAutoLayout();
+            $this->setResponse($this->getResponse()->withType('application/json'));
+            $this->render('index');
         } else {
             $this->_setPermissionRoots();
         }
@@ -145,6 +154,6 @@ class PermissionsController extends AppController
 
         $this->viewBuilder()->enableAutoLayout(false);
 
-        $this->set(compact('acoId', 'aroId', 'data', 'success', 'permitted'));
+        $this->set(compact('acoId', 'aroId', 'success', 'permitted'));
     }
 }

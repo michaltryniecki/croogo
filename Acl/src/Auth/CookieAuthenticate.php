@@ -97,7 +97,9 @@ class CookieAuthenticate extends BaseAuthenticate
     public function getUser(ServerRequest $request)
     {
         if (!$this->_registry->has('Cookie')) {
-            throw new Exception('CookieComponent is not loaded');
+            // CookieComponent usunięty w Cake 4 — auto-login z cookie wyłączony
+            // do czasu reworku na CookieCollection. Brak cookie -> brak usera.
+            return false;
         }
 
         $config = $this->getConfig();

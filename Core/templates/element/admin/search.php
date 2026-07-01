@@ -17,7 +17,6 @@ if (!empty($searchFields)) :
         ],
     ]);
     $this->Form->setTemplates([
-        'label' => false,
         'submitContainer' => '{{content}}',
     ]);
     if ($this->getRequest()->getQuery('chooser')) :
@@ -27,7 +26,7 @@ if (!empty($searchFields)) :
         ]);
     endif;
     foreach ($searchFields as $field => $fieldOptions) {
-        $options = ['empty' => true, 'required' => false];
+        $options = ['empty' => true, 'required' => false, 'label' => false];
         if (is_numeric($field) && is_string($fieldOptions)) {
             $field = $fieldOptions;
             $fieldOptions = [];

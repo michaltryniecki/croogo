@@ -23,7 +23,7 @@ class DashboardsController extends AppController
     {
         parent::beforeFilter($event);
 
-        if ($event->getSubject()->request->getParam('action') === 'save') {
+        if ($event->getSubject()->getRequest()->getParam('action') === 'save') {
             $this->components()->unload('Security');
         }
     }

@@ -62,6 +62,12 @@ class AppController extends \App\Controller\AppController implements HookableCom
     public function __construct(ServerRequest $request = null, Response $response = null, $name = null)
     {
         parent::__construct($request, $response, $name);
+        // Cake 4.5+: Controller ustawia $defaultTable z nazwy tylko gdy $modelClass === null.
+        // Croogo ustawia $modelClass w kontrolerach, więc $defaultTable zostawałby null
+        // (fetchTable()/Crud -> "must provide $alias or set $defaultTable"). Synchronizujemy.
+        if (empty($this->defaultTable) && !empty($this->modelClass)) {
+            $this->defaultTable = $this->modelClass;
+        }
         if ($request) {
             $request->addDetector('api', [
                 'callback' => ['Croogo\\Core\\Router', 'isApiRequest'],
@@ -103,7 +109,7 @@ class AppController extends \App\Controller\AppController implements HookableCom
      */
     public function render($view = null, $layout = null): \Cake\Http\Response
     {
-        if ($this->getRequest()->getParam('prefix') === 'admin') {
+        if ($this->getRequest()->getParam('prefix') === 'Admin') {
             Croogo::dispatchEvent('Croogo.setupAdminData', $this);
         }
 
@@ -169,12 +175,12 @@ class AppController extends \App\Controller\AppController implements HookableCom
         ) {
             if (!$this->getRequest()->is('whitelisted') &&
                 !(
-                    $this->getRequest()->getParam('prefix') == 'admin' &&
+                    $this->getRequest()->getParam('prefix') == 'Admin' &&
                     $this->getRequest()->getParam('action') === 'login'
                 )
             ) {
                 $this->viewBuilder()->setLayout('maintenance');
-                $this->response->statusCode(503);
+                $this->setResponse($this->getResponse()->withStatus(503));
                 $this->set('title_for_layout', __d('croogo', 'Site down for maintenance'));
                 $this->viewBuilder()->setTemplatePath('Maintenance');
                 $this->render('Croogo/Core.blank');
@@ -183,7 +189,7 @@ class AppController extends \App\Controller\AppController implements HookableCom
 
         if (!$this->getRequest()->is('api')) {
             $this->Security->blackHoleCallback = '_securityError';
-            if ($this->getRequest()->getParam('action') == 'delete' && $this->getRequest()->getParam('prefix') == 'admin') {
+            if ($this->getRequest()->getParam('action') == 'delete' && $this->getRequest()->getParam('prefix') == 'Admin') {
                 $this->getRequest()->allowMethod('post');
             }
         }
@@ -222,7 +228,7 @@ class AppController extends \App\Controller\AppController implements HookableCom
         }
         $message = $exception ? $exception->getMessage() : null;
         $this->set(compact('type', 'message'));
-        if ($this->getRequest()->getParam('prefix') == 'admin') {
+        if ($this->getRequest()->getParam('prefix') == 'Admin') {
             $theme = Configure::read('Site.admin_theme');
         } else {
             $theme = Configure::read('Site.theme');
@@ -257,7 +263,8 @@ class AppController extends \App\Controller\AppController implements HookableCom
      */
     protected function _setupPrg()
     {
-        $this->loadComponent('Search.Prg', [
+        // Search 6: PrgComponent scalony w SearchComponent (Search.Search).
+        $this->loadComponent('Search.Search', [
             'queryStringWhitelist' => ['sort', 'direction', 'limit', 'chooser'],
             'actions' => ['index']
         ]);

@@ -81,7 +81,7 @@ class MenusTable extends CroogoTable
             'scope' => [$this->Links->getAlias() . '.menu_id' => $entity->id],
         ];
         if ($this->Links->hasBehavior('Tree')) {
-            $this->Links->behaviors()->get('Tree')->config($settings);
+            $this->Links->behaviors()->get('Tree')->setConfig($settings);
         } else {
             $this->Links->addBehavior('Tree', $settings);
         }

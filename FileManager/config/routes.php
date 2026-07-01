@@ -9,7 +9,7 @@ Router::plugin('Croogo/FileManager', ['path' => '/'], function (RouteBuilder $ro
         $route->applyMiddleware('csrf');
 
         $route->scope('/file-manager', [], function (RouteBuilder $route) {
-            $route->fallbacks();
+            $route->fallbacks('Croogo/Core.InflectedRoute');
         });
     });
 });

@@ -7,7 +7,7 @@ use Croogo\Core\Nav;
 Nav::add('sidebar', 'users.children.permissions', [
     'title' => __d('croogo', 'Permissions'),
     'url' => [
-        'prefix' => 'admin',
+        'prefix' => 'Admin',
         'plugin' => 'Croogo/Acl',
         'controller' => 'Permissions',
         'action' => 'index',

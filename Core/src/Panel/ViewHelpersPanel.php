@@ -25,7 +25,7 @@ class ViewHelpersPanel extends DebugPanel
         $viewHelperNames = $helperRegistry->loaded();
 
         foreach ($viewHelperNames as $name) {
-            $this->_loadedViewHelpers[$name] = $helperRegistry->get($name)->config();
+            $this->_loadedViewHelpers[$name] = $helperRegistry->get($name)->getConfig();
         }
     }
 

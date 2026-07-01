@@ -18,6 +18,19 @@ class SettingsSeed extends AbstractSeed
             'params' => ''
         ],
         [
+            // Wymagane przez Croogo/Acl: Acl/config/bootstrap.php hookuje
+            // komponenty Filter/Access tylko gdy Site.acl_plugin == 'Croogo/Acl'.
+            'key' => 'Site.acl_plugin',
+            'value' => 'Croogo/Acl',
+            'title' => '',
+            'description' => '',
+            'input_type' => '',
+            'editable' => '0',
+            'weight' => '1',
+            'created_by' => 1,
+            'params' => ''
+        ],
+        [
             'key' => 'Site.tagline',
             'value' => 'A CakePHP powered Content Management System.',
             'title' => '',
@@ -195,7 +208,7 @@ class SettingsSeed extends AbstractSeed
         ],
         [
             'key' => 'Hook.bootstraps',
-            'value' => 'Croogo/Settings,Croogo/Contacts,Croogo/Nodes,Croogo/Meta,Croogo/Menus,Croogo/Users,Croogo/Blocks,Croogo/Taxonomy,Croogo/FileManager,Croogo/Wysiwyg,Croogo/Dashboards',
+            'value' => 'Croogo/Settings,Croogo/Menus,Croogo/Users,Croogo/FileManager,Croogo/Dashboards',
             'title' => '',
             'description' => '',
             'input_type' => '',

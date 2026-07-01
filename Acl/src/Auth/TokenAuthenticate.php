@@ -84,8 +84,8 @@ class TokenAuthenticate extends BaseAuthenticate
     {
         $user = $this->getUser($request);
         if (!$user) {
-            $response->statusCode(401);
-            $response->send();
+            // Cake 4: Response::statusCode()/send() usunięte; 401 przez wyjątek.
+            throw new \Cake\Http\Exception\UnauthorizedException();
         }
 
         return $user;
@@ -100,7 +100,7 @@ class TokenAuthenticate extends BaseAuthenticate
     public function getUser(ServerRequest $request)
     {
         if (!empty($this->settings['header'])) {
-            $token = $request->header($this->settings['header']);
+            $token = $request->getHeaderLine($this->settings['header']);
             if ($token) {
                 return $this->_findUser($token, null);
             }

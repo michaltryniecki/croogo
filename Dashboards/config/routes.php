@@ -9,7 +9,7 @@ Router::plugin('Croogo/Dashboards', ['path' => '/'], function (RouteBuilder $rou
         $route->applyMiddleware('csrf');
 
         $route->scope('/dashboards', [], function (RouteBuilder $route) {
-            $route->fallbacks();
+            $route->fallbacks('Croogo/Core.InflectedRoute');
         });
     });
 });
