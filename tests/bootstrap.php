@@ -3,8 +3,6 @@
 
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
-use Cake\Routing\DispatcherFactory;
-use Cake\Filesystem\Folder;
 use Croogo\Core\PluginManager;
 use Croogo\Core\Test\Fixture\SettingsFixture;
 
@@ -35,6 +33,12 @@ require dirname(__DIR__) . DS . 'tests' . DS . 'test_app' . DS . 'config' . DS .
 // Use composer to load the autoloader.
 require VENDOR . 'autoload.php';
 
+// Cake 5: globalne funkcje (env/h/__d/collection/urlArray) są OPT-IN
+require VENDOR . 'cakephp' . DS . 'cakephp' . DS . 'src' . DS . 'Core' . DS . 'functions_global.php';
+require VENDOR . 'cakephp' . DS . 'cakephp' . DS . 'src' . DS . 'I18n' . DS . 'functions_global.php';
+require VENDOR . 'cakephp' . DS . 'cakephp' . DS . 'src' . DS . 'Routing' . DS . 'functions_global.php';
+require VENDOR . 'cakephp' . DS . 'cakephp' . DS . 'src' . DS . 'Collection' . DS . 'functions_global.php';
+
 /**
  * Bootstrap CakePHP.
  *
@@ -50,6 +54,7 @@ date_default_timezone_set('UTC');
 
 Configure::write('App', [
     'namespace' => 'App',
+    'encoding' => 'UTF-8',
     'paths' => [
         'plugins' => [ROOT . DS . 'plugins' . DS],
         'templates' => [APP . 'Template' . DS],
@@ -58,19 +63,21 @@ Configure::write('App', [
 ]);
 Configure::write('debug', true);
 
-$tmpDirectory = new Folder(TMP);
-$tmpDirectory->delete(TMP . 'cache');
-$tmpDirectory->create(TMP . 'cache/models', 0777);
-$tmpDirectory->create(TMP . 'cache/persistent', 0777);
-$tmpDirectory->create(TMP . 'cache/views', 0777);
+// Cake 5: Cake\Filesystem\Folder usunięte -> natywne operacje
+\Croogo\Core\Utility\FsUtils::deleteTree(TMP . 'cache');
+foreach (['cache/models', 'cache/persistent', 'cache/views'] as $dir) {
+    if (!is_dir(TMP . $dir)) {
+        mkdir(TMP . $dir, 0777, true);
+    }
+}
 
 $cache = [
     'default' => [
         'engine' => 'File'
     ],
-    '_cake_core_' => [
+    '_cake_translations_' => [
         'className' => 'File',
-        'prefix' => 'croogo_core_myapp_cake_core_',
+        'prefix' => 'croogo_core_myapp_cake_translations_',
         'path' => CACHE . 'persistent/',
         'serialize' => true,
         'duration' => '+10 seconds'
@@ -114,6 +121,21 @@ Configure::write('Acl.database', 'default');
 $settingsFixture->create(ConnectionManager::get('default'));
 $settingsFixture->insert(ConnectionManager::get('default'));
 
+// Cake 5: PluginCollection::findPath wymaga mapy nazwa->sciezka (Configure 'plugins')
+$repoRoot = dirname(__DIR__) . DS;
+Configure::write('plugins', [
+    'Croogo/Core' => $repoRoot . 'Core' . DS,
+    'Croogo/Settings' => $repoRoot . 'Settings' . DS,
+    'Croogo/Acl' => $repoRoot . 'Acl' . DS,
+    'Croogo/Users' => $repoRoot . 'Users' . DS,
+    'Croogo/Extensions' => $repoRoot . 'Extensions' . DS,
+    'Croogo/Menus' => $repoRoot . 'Menus' . DS,
+    'Croogo/Dashboards' => $repoRoot . 'Dashboards' . DS,
+    'Croogo/FileManager' => $repoRoot . 'FileManager' . DS,
+    'Croogo/Install' => $repoRoot . 'Install' . DS,
+    'Acl' => $repoRoot . 'Acl' . DS . 'acl-compat' . DS,
+]);
+
 PluginManager::load('Croogo/Core', ['bootstrap' => true, 'routes' => true]);
 PluginManager::load('Croogo/Settings', ['bootstrap' => true, 'routes' => true]);
 
@@ -122,10 +144,8 @@ PluginManager::load('Croogo/Settings', ['bootstrap' => true, 'routes' => true]);
 \Cake\Database\TypeFactory::map('encoded', 'Croogo\Core\Database\Type\EncodedType');
 \Cake\Database\TypeFactory::map('link', 'Croogo\Core\Database\Type\LinkType');
 
-// DispatcherFactory zostało usunięte w CakePHP 4 (dispatch przez middleware/Application).
-if (class_exists(DispatcherFactory::class)) {
-    DispatcherFactory::add('Routing');
-    DispatcherFactory::add('ControllerFactory');
-}
+// Dane settings byly potrzebne tylko podczas bootstrapu pluginow (Configure
+// zaladowane). Czyscimy tabele, zeby fixtury testow nie kolidowaly (UNIQUE id).
+ConnectionManager::get('default')->execute('DELETE FROM settings');
 
 class_alias('Croogo\Core\TestSuite\TestCase', 'Croogo\Core\TestSuite\CroogoTestCase');

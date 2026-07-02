@@ -4,20 +4,22 @@
         processIsolation="false"
         stopOnFailure="false"
         bootstrap="./tests/bootstrap.php"
-        convertDeprecationsToExceptions="false"
-        convertNoticesToExceptions="false"
-        convertWarningsToExceptions="false"
         >
     <php>
         <ini name="memory_limit" value="-1"/>
         <ini name="apc.enable_cli" value="1"/>
     </php>
 
+    <!-- Cake 5 / PHPUnit 10: FixtureInjector (listener) zastąpiony rozszerzeniem -->
+    <extensions>
+        <bootstrap class="Cake\TestSuite\Fixture\Extension\PHPUnitExtension"/>
+    </extensions>
+
     <!--
-        Baseline migracyjny CakePHP 3.8.
+        Baseline migracyjny CakePHP 3.8 -> 5.
         Tylko żywe testy. Pliki odwołujące się do USUNIĘTEGO kodu/pluginów
         (Blocks, Nodes, Taxonomy, klasy 2.x) są wykluczone (quarantine) i będą
-        wskrzeszane stopniowo podczas migracji 3->4->5.
+        wskrzeszane stopniowo podczas migracji.
     -->
     <testsuites>
         <testsuite name="Core">
@@ -35,7 +37,7 @@
             <exclude>./Core/tests/TestCase/CroogoTest.php</exclude>
             <exclude>./Core/tests/TestCase/Utility/StringConverterTest.php</exclude>
             <exclude>./Core/tests/TestCase/View/Helper/CroogoAppHelperTest.php</exclude>
-            <!-- TODO modernizacja testów pod Cake 4 (kod produkcyjny OK):
+            <!-- TODO modernizacja testów pod Cake 5 (kod produkcyjny OK):
                  - VisibilityFilterTest: immutable request, addParams() usunięte -> withAttribute/ServerRequest
                  - BulkProcessComponentTest: mock kontrolera bez request (getParam on null)
                  - UrlBehaviorTest: brak fixtury dla tabeli 'things' (Cannot describe, 0 columns) -->
@@ -50,18 +52,9 @@
         </testsuite>
     </testsuites>
 
-    <!-- Setup a listener for fixtures -->
-    <listeners>
-        <listener class="\Cake\TestSuite\Fixture\FixtureInjector">
-            <arguments>
-                <object class="\Cake\TestSuite\Fixture\FixtureManager"/>
-            </arguments>
-        </listener>
-    </listeners>
-
-    <filter>
-        <whitelist>
+    <source>
+        <include>
             <directory suffix=".php">./Core/src/</directory>
-        </whitelist>
-    </filter>
+        </include>
+    </source>
 </phpunit>

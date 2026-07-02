@@ -7,7 +7,7 @@ use Croogo\Core\TestSuite\IntegrationTestCase;
 
 class LanguagesControllerTest extends IntegrationTestCase
 {
-    public $fixtures = [
+    protected array $fixtures = [
         'plugin.Croogo/Blocks',
         'plugin.Croogo/Comments',
         'plugin.Croogo/Core',

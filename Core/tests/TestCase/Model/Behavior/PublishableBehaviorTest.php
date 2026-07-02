@@ -7,7 +7,7 @@ use Croogo\Core\TestSuite\CroogoTestCase;
 class PublishableBehaviorTest extends CroogoTestCase
 {
 
-    public $fixtures = [
+    protected array $fixtures = [
 //      'plugin.Croogo/Settings.Setting',
 //      'plugin.Croogo/Core.OrderRecord',
     ];

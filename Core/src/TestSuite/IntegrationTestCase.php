@@ -8,11 +8,12 @@ use Cake\Datasource\EntityInterface;
 use Cake\Http\ServerRequest as Request;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
-use Cake\TestSuite\IntegrationTestCase as CakeIntegrationTestCase;
+use Cake\TestSuite\IntegrationTestTrait;
+use Cake\TestSuite\TestCase as CakeTestCase;
 use Croogo\Core\Event\EventManager;
 use Croogo\Core\PluginManager;
 use Croogo\Core\TestSuite\Constraint\EntityHasProperty;
-use PHPUnit_Util_InvalidArgumentHelper;
+use InvalidArgumentException;
 
 /**
  * CroogoTestCase class
@@ -25,8 +26,11 @@ use PHPUnit_Util_InvalidArgumentHelper;
  * @license  http://www.opensource.org/licenses/mit-license.php The MIT License
  * @link     http://www.croogo.org
  */
-class IntegrationTestCase extends CakeIntegrationTestCase
+// Cake 5: klasa IntegrationTestCase usunięta -> TestCase + IntegrationTestTrait
+class IntegrationTestCase extends CakeTestCase
 {
+    use IntegrationTestTrait;
+
     protected $previousPlugins = [];
 
     public static function setUpBeforeClass(): void
@@ -52,7 +56,9 @@ class IntegrationTestCase extends CakeIntegrationTestCase
         Configure::write('EventHandlers', []);
 
         PluginManager::clear('Croogo/Install');
-        PluginManager::load('Croogo/Example', ['autoload' => true, 'path' => '../Example/']);
+        if (!Plugin::isLoaded('Croogo/Example')) {
+            PluginManager::load('Croogo/Example', ['autoload' => true, 'path' => '../Example/']);
+        }
         Configure::write('Acl.database', 'test');
 
         PluginManager::events();
@@ -74,13 +80,11 @@ class IntegrationTestCase extends CakeIntegrationTestCase
      */
     protected function _apiRequest($params)
     {
-        $request = new Request();
-        $request->addParams($params);
-        $request->addDetector('api', [
+        Request::addDetector('api', [
             'callback' => ['Croogo\\Core\\Router', 'isApiRequest'],
         ]);
 
-        return $request;
+        return new Request(['params' => $params]);
     }
 
     /**
@@ -123,11 +127,11 @@ class IntegrationTestCase extends CakeIntegrationTestCase
     public function assertEntityHasProperty($propertyName, EntityInterface $entity, $message = '')
     {
         if (!is_string($propertyName)) {
-            throw PHPUnit_Util_InvalidArgumentHelper::factory(1, 'string');
+            throw new InvalidArgumentException('Argument 1 must be of type string.');
         }
 
         if (!preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/', $propertyName)) {
-            throw PHPUnit_Util_InvalidArgumentHelper::factory(1, 'valid property name');
+            throw new InvalidArgumentException('Argument 1 must be a valid property name.');
         }
 
         $constraint = new EntityHasProperty(

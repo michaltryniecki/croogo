@@ -9,6 +9,11 @@ use Croogo\Core\TestSuite\CroogoTestCase;
 
 class CroogoStatusTest extends CroogoTestCase implements EventListenerInterface
 {
+    /**
+     * @var \Croogo\Core\Status
+     */
+    protected $CroogoStatus;
+
     public function implementedEvents(): array
     {
         return [

@@ -32,7 +32,7 @@ use Croogo\TestSuite\CroogoTestCase;
 class MultiColumnAuthenticateTest extends CroogoTestCase
 {
 
-    public $fixtures = ['plugin.acl.multi_user'];
+    protected array $fixtures = ['plugin.acl.multi_user'];
 
     /**
      * setup

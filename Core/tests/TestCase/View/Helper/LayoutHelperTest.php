@@ -13,7 +13,17 @@ use Croogo\Core\View\Helper\LayoutHelper;
 class LayoutHelperTest extends CroogoTestCase
 {
 
-    public $fixtures = [
+    protected $Layout;
+
+    protected $Html;
+
+    protected $_appEncoding;
+
+    protected $_asset;
+
+    protected $_debug;
+
+    protected array $fixtures = [
 //      'plugin.Croogo/Users.User',
 //      'plugin.Croogo/Users.Role',
 //      'plugin.Croogo/Settings.Setting',

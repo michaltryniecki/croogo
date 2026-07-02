@@ -6,7 +6,7 @@ use Croogo\Core\TestSuite\CroogoControllerTestCase;
 class RolesControllerTest extends CroogoControllerTestCase
 {
 
-    public $fixtures = [
+    protected array $fixtures = [
         'plugin.Croogo/Users',
         'plugin.Croogo/Users',
         'plugin.Croogo/Users',

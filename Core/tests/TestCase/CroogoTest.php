@@ -13,7 +13,7 @@ use Croogo\Core\TestSuite\TestCase;
 class CroogoTest extends TestCase
 {
 
-    public $fixtures = [
+    protected array $fixtures = [
 //      'plugin.Croogo/Settings.Setting',
     ];
 

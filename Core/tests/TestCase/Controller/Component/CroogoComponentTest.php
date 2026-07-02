@@ -22,7 +22,7 @@ class MockCroogoComponent extends CroogoComponent
 class CroogoComponentTest extends TestCase
 {
 
-    public $fixtures = [
+    protected array $fixtures = [
 //      'plugin.Croogo/Users.Aco',
 //      'plugin.Croogo/Users.Aro',
 //      'plugin.Croogo/Users.ArosAco',
@@ -44,9 +44,10 @@ class CroogoComponentTest extends TestCase
         parent::setUp();
 
         // Setup our component and fake test controller
+        // PHPUnit 10: setMethods usunięte; Cake 5: Controller(request) bez response
         $this->controller = $this->getMockBuilder(Controller::class)
-            ->setMethods(['redirect'])
-            ->setConstructorArgs([new Request, new Response])
+            ->onlyMethods(['redirect'])
+            ->setConstructorArgs([new Request])
             ->getMock();
 
         $registry = new ComponentRegistry($this->controller);

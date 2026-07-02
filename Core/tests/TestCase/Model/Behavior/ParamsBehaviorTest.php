@@ -7,7 +7,7 @@ use Taxonomy\Model\Type;
 class ParamsBehaviorTest extends CroogoTestCase
 {
 
-    public $fixtures = [
+    protected array $fixtures = [
 //      'plugin.Croogo/Users.Aco',
 //      'plugin.Croogo/Users.Aro',
 //      'plugin.Croogo/Users.ArosAco',

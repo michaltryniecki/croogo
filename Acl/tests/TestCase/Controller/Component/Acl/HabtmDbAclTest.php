@@ -33,7 +33,7 @@ class HabtmDbAclTest extends CakeTestCase
      *
      * @var array
      */
-    public $fixtures = [
+    protected array $fixtures = [
         'plugin.Acl', 'plugin.Acl', 'plugin.Acl',
         'plugin.Acl', 'plugin.Acl', 'plugin.Acl'];
 

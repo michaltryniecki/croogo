@@ -31,7 +31,7 @@ use Cake\Http\ServerRequest as Request;
 class TokenAuthenticateTest extends CakeTestCase
 {
 
-    public $fixtures = ['plugin.Acl'];
+    protected array $fixtures = ['plugin.Acl'];
 
     /**
      * setup

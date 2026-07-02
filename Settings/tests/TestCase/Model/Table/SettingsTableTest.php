@@ -9,9 +9,14 @@ use Croogo\Core\TestSuite\TestCase;
  */
 class SettingsTableTest extends TestCase
 {
-    public $fixtures = [
+    protected array $fixtures = [
         'plugin.Croogo/Core.Settings',
     ];
+
+    /**
+     * @var \Croogo\Settings\Model\Table\SettingsTable
+     */
+    protected $Settings;
 
     public function setUp(): void
     {
