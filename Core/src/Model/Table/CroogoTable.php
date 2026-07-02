@@ -19,6 +19,7 @@ use Croogo\Core\PropertyHookTrait;
  * @license  http://www.opensource.org/licenses/mit-license.php The MIT License
  * @link     http://www.croogo.org
  */
+#[\AllowDynamicProperties]
 class CroogoTable extends Table
 {
 
@@ -61,6 +62,8 @@ class CroogoTable extends Table
      */
     public function __construct(array $config)
     {
+        // applyHookProperties ustawia skonfigurowane właściwości dynamicznie
+        // (Hook.table_properties) - stąd atrybut AllowDynamicProperties na klasie.
         Croogo::applyHookProperties('Hook.table_properties', $this);
 
         parent::__construct($config);

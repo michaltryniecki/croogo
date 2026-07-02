@@ -15,7 +15,13 @@ use Croogo\Extensions\CroogoTheme;
 class CroogoHelperTest extends CroogoTestCase
 {
 
-    public $fixtures = [
+    protected $menus;
+
+    protected $ComponentRegistry;
+
+    protected $Croogo;
+
+    protected array $fixtures = [
 //      'plugin.Croogo/Users.Aco',
 //      'plugin.Croogo/Users.Aro',
 //      'plugin.Croogo/Users.ArosAco',

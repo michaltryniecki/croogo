@@ -8,7 +8,7 @@ use Users\Model\User;
 class InstallTest extends CroogoTestCase
 {
 
-    public $fixtures = [
+    protected array $fixtures = [
         'plugin.Croogo/Users',
         'plugin.Croogo/Install',
         'plugin.Croogo/Install',

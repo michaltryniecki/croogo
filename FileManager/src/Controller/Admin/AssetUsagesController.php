@@ -59,11 +59,12 @@ class AssetUsagesController extends AppController
     {
         $this->viewBuilder()->setClassName('Json');
         $result = true;
+        // Cake 5: legacy properties $request->data/query nie istnieja -> getData()/getQuery()
         $data = ['pk' => null, 'value' => null];
-        if (isset($this->getRequest()->data['pk'])) {
-            $data = $this->getRequest()->data;
-        } elseif (isset($this->getRequest()->query['pk'])) {
-            $data = $this->getRequest()->query;
+        if ($this->getRequest()->getData('pk') !== null) {
+            $data = $this->getRequest()->getData();
+        } elseif ($this->getRequest()->getQuery('pk') !== null) {
+            $data = $this->getRequest()->getQuery();
         }
 
         $id = $data['pk'];

@@ -98,9 +98,7 @@ class RowLevelAclComponent extends Component
         $controller = $this->getController();
         $Permission = $controller->Acl->adapter()->Permission;
         $Role = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Roles');
-        $roles = $Role->find('list', [
-            'cache' => ['name' => 'roles', 'config' => 'permissions'],
-        ]);
+        $roles = $Role->find('list', cache: ['name' => 'roles', 'config' => 'permissions']);
         $modelClass = $controller->getName();
         $aco = ['model' => $modelClass, 'foreign_key' => $id];
         foreach ($roles as $roleId => $role) {

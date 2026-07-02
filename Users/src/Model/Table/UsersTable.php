@@ -52,7 +52,8 @@ class UsersTable extends CroogoTable
             $this->belongsTo('Croogo/Users.Roles');
         }
 
-        $this->addBehavior('Acl.Acl', [
+        // alias 'Acl' (przy className alias = pelna nazwa, wiec bez prefiksu pluginu)
+        $this->addBehavior('Acl', [
             'className' => 'Croogo/Core.CroogoAcl',
             'type' => 'requester'
         ]);
@@ -65,7 +66,7 @@ class UsersTable extends CroogoTable
 
         $this->getEventManager()->on($this->getMailer('Croogo/Users.User'));
 
-        $this->searchManager()
+        $this->getBehavior('Search')->searchManager()
             ->add('name', 'Search.Like', [
                 'fields' => ['Users.name', 'Users.username', 'Users.email'],
                 'before' => true,
@@ -73,12 +74,12 @@ class UsersTable extends CroogoTable
             ]);
 
         if ($multiRole) {
-            $this->searchManager()
+            $this->getBehavior('Search')->searchManager()
                 ->add('role_id', 'Search.Finder', [
                     'finder' => 'filterMultiRoles',
                 ]);
         } else {
-            $this->searchManager()
+            $this->getBehavior('Search')->searchManager()
                 ->value('role_id');
         }
     }
@@ -103,7 +104,7 @@ class UsersTable extends CroogoTable
         ]);
 
         $user->patch([
-            'role_id' => $this->Roles->byAlias('registered'),
+            'role_id' => $this->Roles->getBehavior('Aliasable')->byAlias('registered'),
             'activation_key' => $this->generateActivationKey(),
         ]);
 
@@ -273,7 +274,7 @@ class UsersTable extends CroogoTable
                     'last' => true
                 ]
             ])
-            ->allowEmpty('website')
+            ->allowEmptyString('website')
             ->add('website', [
                 'url' => [
                     'rule' => 'url',
@@ -288,10 +289,10 @@ class UsersTable extends CroogoTable
         $roleId = isset($options['role_id']) ? $options['role_id'] : false;
         $query
             ->where([
-                $this->aliasField('role_id') => $roleId,
-            ])
-            ->orWhere([
-                $this->Roles->aliasField('id') => $roleId,
+                'OR' => [
+                    $this->aliasField('role_id') => $roleId,
+                    $this->Roles->aliasField('id') => $roleId,
+                ],
             ]);
 
         return $query;

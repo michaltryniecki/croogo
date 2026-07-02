@@ -31,7 +31,6 @@ class AttachmentsController extends AppController
      * @access public
      */
     public array $paginate = [
-        'paramType' => 'querystring',
         'limit' => 5,
     ];
 
@@ -118,7 +117,7 @@ class AttachmentsController extends AppController
             unset($httpQuery['foreign_key']);
 
             if (!$this->getRequest()->getQuery('sort')) {
-                $query->order([
+                $query->orderBy([
                     $this->Attachments->aliasField('id') => 'desc',
                 ]);
             }
@@ -136,7 +135,7 @@ class AttachmentsController extends AppController
         }
 
         if (!$this->getRequest()->getQuery('sort')) {
-            $query->order(['Attachments.created' => 'DESC']);
+            $query->orderBy(['Attachments.created' => 'DESC']);
         }
 
         if ($isChooser) {
@@ -159,7 +158,8 @@ class AttachmentsController extends AppController
             $query->find($finder);
         }
 
-        $query->formatResults([$this->Attachments, 'getVideoPoster']);
+        // Cake 5: formatResults przyjmuje tylko Closure
+        $query->formatResults($this->Attachments->getVideoPoster(...));
 
         $this->set('attachments', $this->paginate($query));
 

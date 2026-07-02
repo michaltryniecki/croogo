@@ -30,6 +30,11 @@ use Exception;
  */
 class InstallController extends Controller
 {
+    /**
+     * @var \Croogo\Users\Model\Table\UsersTable
+     */
+    protected $Users;
+
 
     const STEPS = [
         'Welcome', 'Database', 'Admin user', 'Completed'
@@ -177,7 +182,7 @@ class InstallController extends Controller
         }
 
         $install = new InstallManager();
-        set_time_limit(10 * MINUTE);
+        set_time_limit(10 * 60);
         $result = $install->setupDatabase();
 
         if ($result !== true) {

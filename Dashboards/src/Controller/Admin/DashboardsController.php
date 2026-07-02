@@ -53,7 +53,7 @@ class DashboardsController extends AppController
             ->where([
                 'user_id' => $this->Auth->user('id')
             ])
-            ->order(['column' => 'asc', 'weight' => 'asc']);
+            ->orderBy(['column' => 'asc', 'weight' => 'asc']);
         $dashboards = $this->paginate($query);
 
         $this->set(compact('dashboards'));
@@ -79,7 +79,7 @@ class DashboardsController extends AppController
             'weight',
         ])->where([
             'user_id' => $this->Auth->user('id'),
-        ])->order([
+        ])->orderBy([
             'weight',
         ]);
         $this->set('boxes_for_dashboard', $boxesForDashboard);
@@ -97,7 +97,8 @@ class DashboardsController extends AppController
         if (!$userId) {
             throw new CakeException('You must be logged in');
         }
-        $data = Hash::insert($this->getRequest()->data['dashboard'], '{n}.user_id', $userId);
+        // Cake 5: legacy property $request->data nie istnieje -> getData()
+        $data = Hash::insert((array)$this->getRequest()->getData('dashboard'), '{n}.user_id', $userId);
         $dashboardIds = array_filter(Hash::extract($data, '{n}.id'));
         $query = $this->Dashboards->find();
         if ($dashboardIds) {

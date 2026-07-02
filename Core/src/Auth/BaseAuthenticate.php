@@ -173,7 +173,8 @@ abstract class BaseAuthenticate implements EventListenerInterface
 
         $options['username'] = $options['username'] ?? $username;
 
-        return $table->find($finder, $options);
+        // Cake 5: tablica opcji do find() deprecated -> spread jako named arguments
+        return $table->find($finder, ...$options);
     }
 
     /**

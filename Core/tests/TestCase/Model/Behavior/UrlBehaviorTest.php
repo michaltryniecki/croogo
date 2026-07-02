@@ -9,7 +9,7 @@ use Croogo\Core\TestSuite\CroogoTestCase;
 class UrlBehaviorTest extends CroogoTestCase
 {
 
-    public $fixtures = [];
+    protected array $fixtures = [];
 
     /**
      * setUp

@@ -17,7 +17,7 @@ class UserTest extends CroogoTestCase
      *
      * @var array
      */
-    public $fixtures = [
+    protected array $fixtures = [
         'plugin.Croogo/Users',
         'plugin.Croogo/Users',
         'plugin.Croogo/Users',

@@ -55,6 +55,13 @@ class AclCachedAuthorize extends BaseAuthorize
     }
 
     /**
+     * Cached superadmin role id
+     *
+     * @var int|null
+     */
+    protected $_adminRole;
+
+    /**
      * Checks whether $user is an administrator
      *
      * @param bool True if user has administrative role
@@ -70,7 +77,7 @@ class AclCachedAuthorize extends BaseAuthorize
                 $Role = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Roles');
                 $Role->addBehavior('Croogo/Core.Aliasable');
             }
-            $this->_adminRole = $Role->byAlias('superadmin');
+            $this->_adminRole = $Role->getBehavior('Aliasable')->byAlias('superadmin');
         }
 
         return $user['role_id'] == $this->_adminRole;

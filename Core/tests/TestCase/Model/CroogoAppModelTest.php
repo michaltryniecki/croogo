@@ -29,7 +29,7 @@ class CroogoAppModelTest extends CroogoTestCase
      *
      * @var array
      */
-    public $fixtures = [
+    protected array $fixtures = [
 //      'plugin.Croogo/Users.Aco',
 //      'plugin.Croogo/Users.Aro',
 //      'plugin.Croogo/Users.ArosAco',

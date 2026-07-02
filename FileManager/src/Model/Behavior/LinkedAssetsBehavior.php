@@ -131,7 +131,7 @@ class LinkedAssetsBehavior extends Behavior
                             'Assets.parent_asset_id' => $seedId,
                         ])
                         ->cache('linked_assets_' . $assetUsage->asset->id, 'nodes')
-                        ->order(['width' => 'DESC']);
+                        ->orderBy(['width' => 'DESC']);
                     if (!$assetUsage->versions) {
                         $versions = [];
                     }

@@ -8,7 +8,7 @@ use Croogo\TestSuite\CroogoTestCase;
 class AclPermissionTest extends CroogoTestCase
 {
 
-    public $fixtures = [
+    protected array $fixtures = [
         'plugin.Croogo/Users',
         'plugin.Croogo/Users',
         'plugin.Croogo/Users',

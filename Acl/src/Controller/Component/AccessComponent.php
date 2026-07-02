@@ -64,7 +64,10 @@ class AccessComponent extends Component
         if (!empty($this->_controller->getRequest()->getParam('pass')[0])) {
             $id = $this->_controller->getRequest()->getParam('pass')[0];
         }
-        $this->_controller->set('parents', $this->_controller->Roles->allowedParents($id));
+        $this->_controller->set(
+            'parents',
+            $this->_controller->Roles->getBehavior('RoleAro')->allowedParents($id)
+        );
     }
 
     /**

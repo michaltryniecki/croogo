@@ -150,12 +150,13 @@ class FileManagerController extends AppController
             return $this->redirect($this->referer());
         }
 
+        // Cake 5: upload to obiekt UploadedFileInterface, nie tablica tmp_name
         $postFile = $this->getRequest()->getData('file');
-        if (isset($postFile['tmp_name']) &&
-            is_uploaded_file($postFile['tmp_name'])
+        if ($postFile instanceof \Psr\Http\Message\UploadedFileInterface &&
+            $postFile->getError() === UPLOAD_ERR_OK
         ) {
-            $destination = $path . $postFile['name'];
-            move_uploaded_file($postFile['tmp_name'], $destination);
+            $destination = $path . $postFile->getClientFilename();
+            $postFile->moveTo($destination);
             $this->Flash->success(__d('croogo', 'File uploaded successfully.'));
             $redirectUrl = $this->_browsePathUrl($path);
 
@@ -171,8 +172,9 @@ class FileManagerController extends AppController
      */
     public function deleteFile()
     {
-        if (!empty($this->getRequest()->data['path'])) {
-            $path = $this->getRequest()->data['path'];
+        // Cake 5: legacy property $request->data nie istnieje -> getData()
+        if (!empty($this->getRequest()->getData('path'))) {
+            $path = $this->getRequest()->getData('path');
         } else {
             return $this->redirect(['controller' => 'FileManager', 'action' => 'browse']);
         }
@@ -206,8 +208,9 @@ class FileManagerController extends AppController
      */
     public function deleteDirectory()
     {
-        if (!empty($this->getRequest()->data['path'])) {
-            $path = $this->getRequest()->data['path'];
+        // Cake 5: legacy property $request->data nie istnieje -> getData()
+        if (!empty($this->getRequest()->getData('path'))) {
+            $path = $this->getRequest()->getData('path');
         } else {
             return $this->redirect(['controller' => 'FileManager', 'action' => 'browse']);
         }
@@ -241,7 +244,8 @@ class FileManagerController extends AppController
      */
     public function rename()
     {
-        $path = $this->getRequest()->getQuery('path');
+        // PHP 8.1+: null do explode() deprecated (brak ?path= w URL)
+        $path = (string)$this->getRequest()->getQuery('path');
         $pathFragments = array_filter(explode(DIRECTORY_SEPARATOR, $path));
 
         if (!$this->FileManager->isEditable($path)) {
@@ -251,15 +255,15 @@ class FileManagerController extends AppController
         }
 
         if ($this->getRequest()->is('post') || $this->getRequest()->is('put')) {
+            // Cake 5: legacy property $request->data nie istnieje -> getData()
             if (!is_null($this->getRequest()->getData('name')) &&
-                !empty($this->getRequest()->data['name'])
+                !empty($this->getRequest()->getData('name'))
             ) {
-                $newName = trim($this->getRequest()->data['name']);
+                $newName = trim($this->getRequest()->getData('name'));
                 $oldName = array_pop($pathFragments);
-                $newPath = DIRECTORY_SEPARATOR .
-                    implode(DIRECTORY_SEPARATOR, $pathFragments) .
-                    DIRECTORY_SEPARATOR .
-                    $newName;
+                // dirname() zamiast DS.implode(DS,...) - tamto psulo sciezki
+                // Windows (wiodacy \ przed litera dysku, np. \C:\...)
+                $newPath = dirname($path) . DIRECTORY_SEPARATOR . $newName;
 
                 $fileExists = file_exists($newPath);
                 if ($oldName !== $newName) {
@@ -299,8 +303,9 @@ class FileManagerController extends AppController
      */
     public function createDirectory()
     {
-        if (isset($this->getRequest()->query['path'])) {
-            $path = $this->getRequest()->query['path'];
+        // Cake 5: legacy property $request->query nie istnieje -> getQuery()
+        if ($this->getRequest()->getQuery('path') !== null) {
+            $path = $this->getRequest()->getQuery('path');
         } else {
             return $this->redirect(['controller' => 'FileManager', 'action' => 'browse']);
         }
@@ -311,8 +316,8 @@ class FileManagerController extends AppController
             return $this->redirect($this->referer());
         }
 
-        if (!empty($this->getRequest()->data)) {
-            if (mkdir($path . $this->getRequest()->data['name'], 0777, true)) {
+        if (!empty($this->getRequest()->getData())) {
+            if (mkdir($path . $this->getRequest()->getData('name'), 0777, true)) {
                 $this->Flash->success(__d('croogo', 'Directory created successfully.'));
                 $redirectUrl = $this->_browsePathUrl($path);
 
@@ -333,8 +338,9 @@ class FileManagerController extends AppController
      */
     public function createFile()
     {
-        if (isset($this->getRequest()->query['path'])) {
-            $path = $this->getRequest()->query['path'];
+        // Cake 5: legacy property $request->query nie istnieje -> getQuery()
+        if ($this->getRequest()->getQuery('path') !== null) {
+            $path = $this->getRequest()->getQuery('path');
         } else {
             return $this->redirect(['controller' => 'FileManager', 'action' => 'browse']);
         }
@@ -345,8 +351,8 @@ class FileManagerController extends AppController
             return $this->redirect($this->referer());
         }
 
-        if (!empty($this->getRequest()->data)) {
-            if (file_put_contents($path . $this->getRequest()->data['name'], $this->getRequest()->data['content'])) {
+        if (!empty($this->getRequest()->getData())) {
+            if (file_put_contents($path . $this->getRequest()->getData('name'), $this->getRequest()->getData('content'))) {
                 $this->Flash->success(__d('croogo', 'File created successfully.'));
                 $redirectUrl = $this->_browsePathUrl($path);
 

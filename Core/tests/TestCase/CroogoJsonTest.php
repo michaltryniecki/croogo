@@ -7,7 +7,7 @@ use Croogo\Core\TestSuite\CroogoTestCase;
 class CroogoJsonTest extends CroogoTestCase
 {
 
-    public $fixtures = [
+    protected array $fixtures = [
 //      'plugin.Croogo/Settings.Setting',
     ];
 

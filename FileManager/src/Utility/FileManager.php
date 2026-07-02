@@ -247,10 +247,11 @@ class FileManager
      */
     protected function _isWithinPath($referencePath, $pathToCheck)
     {
-        $path = realpath($pathToCheck);
-        $regex = '/^' . preg_quote(realpath($referencePath), '/') . '/';
+        // PHP 8.1+: null do realpath()/preg_match() deprecated
+        $path = realpath((string)$pathToCheck);
+        $regex = '/^' . preg_quote((string)realpath((string)$referencePath), '/') . '/';
 
-        return preg_match($regex, $path) > 0;
+        return preg_match($regex, (string)$path) > 0;
     }
 
     public function filename2mime($filename) {

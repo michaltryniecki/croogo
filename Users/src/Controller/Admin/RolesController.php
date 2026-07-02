@@ -46,7 +46,7 @@ class RolesController extends AppController
         $this->Crud->on('beforePaginate', function (Event $event): void {
             $event->getSubject()->query
                 ->find('roleHierarchy')
-                ->order(['ParentAro.lft' => 'DESC']);
+                ->orderBy(['ParentAro.lft' => 'DESC']);
         });
 
         return $this->Crud->execute();

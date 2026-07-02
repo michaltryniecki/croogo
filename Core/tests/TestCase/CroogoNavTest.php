@@ -65,11 +65,10 @@ class CroogoNavTest extends CroogoTestCase
         $this->assertEquals($saved, Nav::items());
     }
 
-    /**
-     * @expectedException UnexpectedValueException
-     */
     public function testNavClearWithException(): void
     {
+        // PHPUnit 10: adnotacja @expectedException usunięta
+        $this->expectException(\UnexpectedValueException::class);
         Nav::clear('bogus');
     }
 

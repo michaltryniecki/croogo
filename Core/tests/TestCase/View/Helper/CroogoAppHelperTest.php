@@ -31,7 +31,7 @@ class CroogoAppHelperTest extends CroogoTestCase
      */
     public $AppHelper;
 
-    public $fixtures = [
+    protected array $fixtures = [
 //      'plugin.Croogo/Settings.Setting',
 //      'plugin.Croogo/Taxonomy.Type',
 //      'plugin.Croogo/Taxonomy.Vocabulary',

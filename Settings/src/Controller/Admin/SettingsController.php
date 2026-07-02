@@ -93,13 +93,12 @@ success:
             return $this->redirect(['action' => 'prefix', $prefix]);
         }
 
-        $settings = $this->Settings->find('all', [
-            'order' => 'Settings.weight ASC',
-            'conditions' => [
+        $settings = $this->Settings->find()
+            ->where([
                 'Settings.key LIKE' => $prefix . '.%',
                 'Settings.editable' => 1,
-            ],
-        ]);
+            ])
+            ->orderByAsc('Settings.weight');
 
         if ($settings->count() == 0) {
             $this->Flash->error(__d('croogo', 'Invalid Setting key'));

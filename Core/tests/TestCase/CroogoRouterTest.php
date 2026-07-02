@@ -12,7 +12,7 @@ use Croogo\Core\TestSuite\TestCase;
 class CroogoRouterTest extends TestCase
 {
 
-    public $fixtures = [
+    protected array $fixtures = [
 //      'plugin.Croogo/Settings.Setting',
 //      'plugin.Croogo/Taxonomy.Vocabulary',
         'plugin.Croogo/Taxonomy',

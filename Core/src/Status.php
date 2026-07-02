@@ -58,7 +58,7 @@ class Status implements ArrayAccess
         return isset($this->_statuses[$offset]);
     }
 
-    public function &offsetGet($offset)
+    public function &offsetGet($offset): mixed
     {
         $result = null;
         if (isset($this->_statuses[$offset])) {

@@ -133,14 +133,16 @@ class ActionsController extends AppController
     {
         $aco = $this->Acos->get($id);
 
+        // Cake 5.3: metody behaviora na instancji tabeli deprecated
+        $tree = $this->Acos->getBehavior('Tree');
         if ($direction == 'up') {
-            if ($this->Acos->moveUp($aco)) {
+            if ($tree->moveUp($aco)) {
                 $this->Flash->success(__d('croogo', 'Action moved up'));
 
                 return $this->redirect(['action' => 'index']);
             }
         } else {
-            if ($this->Acos->moveDown($aco)) {
+            if ($tree->moveDown($aco)) {
                 $this->Flash->success(__d('croogo', 'Action moved down'));
 
                 return $this->redirect(['action' => 'index']);

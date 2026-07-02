@@ -132,6 +132,11 @@ class PluginManager extends Plugin
     }
 
     /**
+     * @var \Croogo\Core\Controller\AppController|null
+     */
+    protected $_Controller;
+
+    /**
      * AppController setter
      *
      * @return void
@@ -459,6 +464,10 @@ class PluginManager extends Plugin
     public function getDependencies($plugin)
     {
         $pluginData = $this->getData($plugin);
+        // PHP 8.5: automatyczna konwersja false -> array deprecated (getData zwraca false)
+        if (!is_array($pluginData)) {
+            $pluginData = [];
+        }
         if (!isset($pluginData['dependencies']['plugins'])) {
             $pluginData['dependencies']['plugins'] = [];
         }
@@ -813,7 +822,7 @@ class PluginManager extends Plugin
         if (empty($deps['usedBy'][$plugin])) {
             return false;
         }
-        $usedBy = array_filter($deps['usedBy'][$plugin], ['Croogo\\Core\\Plugin', 'loaded']);
+        $usedBy = array_filter($deps['usedBy'][$plugin], [\Cake\Core\Plugin::class, 'isLoaded']);
         if (!empty($usedBy)) {
             return $usedBy;
         }
@@ -945,7 +954,13 @@ class PluginManager extends Plugin
         if (!isset($config['configPath'])) {
             $config['configPath'] = $config['path'] . 'config' . DIRECTORY_SEPARATOR;
         }
-        $pluginClass = str_replace('/', '\\', $plugin) . '\\Plugin';
+        // Cake 5.3: konwencja <Nazwa>Plugin (klasa `Plugin` deprecated)
+        $namespace = str_replace('/', '\\', $plugin);
+        $shortName = ($pos = strrpos($plugin, '/')) !== false ? substr($plugin, $pos + 1) : $plugin;
+        $pluginClass = $namespace . '\\' . $shortName . 'Plugin';
+        if (!class_exists($pluginClass)) {
+            $pluginClass = $namespace . '\\Plugin';
+        }
         if (class_exists($pluginClass)) {
             $instance = new $pluginClass($config);
         } else {

@@ -58,7 +58,7 @@ class LinksTable extends CroogoTable
         $this->addBehavior('Croogo/Core.Visibility');
         $this->addBehavior('Search.Search');
 
-        $this->searchManager()
+        $this->getBehavior('Search')->searchManager()
             ->add('menu_id', 'Search.Value', [
                 'fields' => 'menu_id'
             ])
@@ -110,10 +110,11 @@ class LinksTable extends CroogoTable
             return;
         }
         if ($entity->isDirty('menu_id')) {
+            // Cake 5.3: metody behaviora na instancji tabeli deprecated
             $this->setTreeScope($entity->menu_id);
-            $this->recover();
+            $this->getBehavior('Tree')->recover();
             $this->setTreeScope($entity->getOriginal('menu_id'));
-            $this->recover();
+            $this->getBehavior('Tree')->recover();
         }
     }
 

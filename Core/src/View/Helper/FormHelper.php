@@ -25,6 +25,16 @@ class FormHelper extends BaseFormHelper
     ];
 
     /**
+     * @var array
+     */
+    protected $_fieldAccess = [];
+
+    /**
+     * @var int|null
+     */
+    protected $_currentRoleId;
+
+    /**
      * Constructor
      */
     public function __construct(View $View, $settings = [])
@@ -322,7 +332,8 @@ class FormHelper extends BaseFormHelper
             'default' => $default,
             'autocomplete' => 'off',
         ]);
-        $out .= $this->input("autocomplete_${field}", $autocomplete);
+        // PHP 8.2+: interpolacja ${var} deprecated (emisja przy KOMPILACJI klasy!)
+        $out .= $this->input("autocomplete_{$field}", $autocomplete);
 
         return $out;
     }

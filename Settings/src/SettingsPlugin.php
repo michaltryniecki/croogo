@@ -4,6 +4,6 @@ namespace Croogo\Settings;
 
 use Cake\Core\BasePlugin;
 
-class Plugin extends BasePlugin
+class SettingsPlugin extends BasePlugin
 {
 }

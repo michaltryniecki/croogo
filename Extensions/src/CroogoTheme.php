@@ -296,7 +296,8 @@ class CroogoTheme
             $data = $croogoTheme->getData($theme);
             $request = Router::getRequest();
             if ($request) {
-                $prefix = $request->getParam('prefix');
+                // PHP 8.5: null jako offset tablicy deprecated (prefix pusty na froncie/instalatorze)
+                $prefix = $request->getParam('prefix') ?? '';
                 if (isset($data['settings']['prefixes'][$prefix]['css'])) {
                     $data['settings']['css'] = Hash::merge(
                         $data['settings']['prefixes'][$prefix]['css'],

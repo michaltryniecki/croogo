@@ -98,7 +98,8 @@ class CroogoComponent extends Component
             return $roleId;
         }
 
-        return \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Roles')->byAlias('public');
+        return \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Roles')
+            ->getBehavior('Aliasable')->byAlias('public');
     }
 
     /**

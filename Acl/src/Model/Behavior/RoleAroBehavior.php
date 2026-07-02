@@ -69,7 +69,8 @@ class RoleAroBehavior extends Behavior
     {
         $model = $event->getSubject();
         $ref = ['model' => $model->getAlias(), 'foreign_key' => $entity->id];
-        $aro = $model->node($ref)->firstOrFail();
+        // Cake 5.3: metody behaviora na instancji tabeli deprecated
+        $aro = $model->getBehavior('Acl')->node($ref)->firstOrFail();
         if (!empty($entity->alias)) {
             $aro->alias = sprintf(
                 'Role-%s',
@@ -112,7 +113,7 @@ class RoleAroBehavior extends Behavior
                         $result->setDirty('parent_id', false);
                         $result->setDirty('lft', false);
                         $result->setDirty('rght', false);
-                        $result->unsetProperty('parent_aro');
+                        $result->unset('parent_aro');
                     }
                 }
 
@@ -145,13 +146,14 @@ class RoleAroBehavior extends Behavior
      */
     public function allowedParents($id = null)
     {
-        if (!$this->_table->behaviors()->has('Croogo/Core.Aliasable')) {
+        if (!$this->_table->behaviors()->has('Aliasable')) {
             $this->_table->addBehavior('Croogo/Core.Aliasable');
         }
-        if ($id == $this->_table->byAlias('public')) {
+        $aliasable = $this->_table->getBehavior('Aliasable');
+        if ($id == $aliasable->byAlias('public')) {
             return [];
         }
-        $adminRoleId = $this->_table->byAlias('superadmin');
+        $adminRoleId = $aliasable->byAlias('superadmin');
         $excludes = Hash::filter(array_values([$adminRoleId, $id]));
         $conditions = [
             'NOT' => [$this->_table->aliasField('id') . ' IN' => $excludes],

@@ -10,7 +10,7 @@ use Croogo\Core\View\Helper\CroogoPaginatorHelper;
 class CroogoPaginatorHelperTest extends CroogoTestCase
 {
 
-    public $fixtures = [
+    protected array $fixtures = [
 //      'plugin.Croogo/Taxonomy.Type',
     ];
 

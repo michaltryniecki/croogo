@@ -7,7 +7,7 @@ class FileManagerTest extends CroogoTestCase
 
     public $FileManager;
 
-    public $fixtures = [
+    protected array $fixtures = [
         'plugin.Settings'
     ];
 

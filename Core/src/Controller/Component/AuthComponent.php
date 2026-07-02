@@ -241,12 +241,32 @@ class AuthComponent extends Component implements EventDispatcherInterface
     /**
      * Callback for Controller.startup event.
      *
+     * Cake 5.2: zwracanie wartosci z listenera deprecated -> setResult()
+     *
      * @param \Cake\Event\EventInterface $event Event instance.
-     * @return \Cake\Http\Response|null
+     * @return void
      */
-    public function startup(EventInterface $event): ?Response
+    public function startup(EventInterface $event): void
     {
-        return $this->authCheck($event);
+        $result = $this->authCheck($event);
+        if ($result !== null) {
+            $event->setResult($result);
+        }
+    }
+
+    /**
+     * Callback for Controller.initialize event (auth check we wczesniejszej fazie,
+     * gdy skonfigurowano `checkAuthIn` = Controller.initialize).
+     *
+     * @param \Cake\Event\EventInterface $event Event instance.
+     * @return void
+     */
+    public function handleInitialize(EventInterface $event): void
+    {
+        $result = $this->authCheck($event);
+        if ($result !== null) {
+            $event->setResult($result);
+        }
     }
 
     /**
@@ -315,7 +335,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
     public function implementedEvents(): array
     {
         return [
-            'Controller.initialize' => 'authCheck',
+            'Controller.initialize' => 'handleInitialize',
             'Controller.startup' => 'startup',
         ];
     }

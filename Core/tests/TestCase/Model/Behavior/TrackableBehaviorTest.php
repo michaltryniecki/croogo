@@ -22,7 +22,7 @@ use Croogo\Users\Model\User;
 class TrackableBehaviorTest extends CroogoTestCase
 {
 
-    public $fixtures = [
+    protected array $fixtures = [
 //      'plugin.Croogo/Core.Trackable',
 //      'plugin.Croogo/Users.User',
 //      'plugin.Croogo/Users.Role',

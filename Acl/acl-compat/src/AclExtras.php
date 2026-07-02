@@ -43,6 +43,13 @@ class AclExtras
     public $Acl;
 
     /**
+     * Acos table (PHP 8.2+: deklaracja zamiast dynamic property)
+     *
+     * @var \Croogo\Acl\Model\Table\AcosTable
+     */
+    public $Aco;
+
+    /**
      * Contains arguments parsed from the command line.
      *
      * @var array
@@ -446,7 +453,8 @@ class AclExtras
     protected function _checkMethods($className, $controllerName, $node, $pluginPath = null, $prefixPath = null)
     {
         $excludes = $this->_getCallbacks($className, $pluginPath, $prefixPath);
-        $baseMethods = get_class_methods(new Controller());
+        // Cake 5: Controller wymaga ServerRequest w konstruktorze - nazwa klasy wystarcza
+        $baseMethods = get_class_methods(Controller::class);
         $namespace = $this->_getNamespace($className, $pluginPath, $prefixPath);
         $methods = get_class_methods($namespace);
         if ($methods == null) {
@@ -486,7 +494,8 @@ class AclExtras
     public function recover()
     {
         $type = Inflector::camelize($this->args[0]);
-        $this->Acl->{$type}->recover();
+        // Cake 5.3: metody behaviora na instancji tabeli deprecated
+        $this->Acl->{$type}->getBehavior('Tree')->recover();
         $this->out(__('Tree has been recovered, or tree did not need recovery.'));
     }
 
@@ -562,7 +571,7 @@ class AclExtras
         }
         foreach ($nodes as $node) {
             if (!isset($methodFlip[$node->alias])) {
-                $crumbs = $this->Aco->find('path', ['for' => $node->id, 'order' => 'lft']);
+                $crumbs = $this->Aco->find('path', for: $node->id)->orderByAsc('lft');
                 $path = null;
                 foreach ($crumbs as $crumb) {
                     $path .= '/' . $crumb->alias;

@@ -11,7 +11,7 @@ use Croogo\Core\View\Helper\HtmlHelper;
 class HtmlHelperTest extends CroogoTestCase
 {
 
-    public $fixtures = [
+    protected array $fixtures = [
 //      'plugin.Croogo/Taxonomy.Type',
     ];
 

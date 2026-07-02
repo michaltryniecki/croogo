@@ -42,7 +42,7 @@ class AssetUsagesTable extends CroogoTable
     {
         if (!empty($entity->featured_image)) {
             $entity->type = 'FeaturedImage';
-            $entity->unsetProperty('featured_image');
+            $entity->unset('featured_image');
         }
 
         return true;

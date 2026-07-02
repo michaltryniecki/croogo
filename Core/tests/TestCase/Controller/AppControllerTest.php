@@ -4,9 +4,8 @@ namespace Croogo\Core\Test\TestCase\Controller;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Filesystem\File;
 use Cake\Http\ServerRequest as Request;
-use Cake\TestSuite\IntegrationTestCase;
+use Croogo\Core\TestSuite\IntegrationTestCase;
 use Cake\Utility\Hash;
 use Croogo\Core\Controller\AppController;
 use Croogo\Core\Croogo;
@@ -38,7 +37,7 @@ class TestAppController extends AppController
 class CroogoAppControllerTest extends IntegrationTestCase
 {
 
-    public $fixtures = [
+    protected array $fixtures = [
 //      'plugin.Croogo/Settings.Setting',
 //      'plugin.Croogo/Taxonomy.Type',
 //      'plugin.Croogo/Nodes.Node',

@@ -27,7 +27,7 @@ class TestNodesEventController extends NodesController
 class EventManagerTest extends TestCase
 {
 
-    public $fixtures = [
+    protected array $fixtures = [
         'plugin.Croogo/Core',
     ];
 
