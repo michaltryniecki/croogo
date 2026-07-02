@@ -23,10 +23,10 @@ class PermissionsController extends AppController
     {
         parent::initialize();
 
-        $this->loadModel('Croogo/Acl.Acos');
-        $this->loadModel('Croogo/Acl.Aros');
-        $this->loadModel('Croogo/Users.Roles');
-        $this->loadModel('Croogo/Acl.Permissions');
+        $this->Acos = $this->fetchTable('Croogo/Acl.Acos');
+        $this->Aros = $this->fetchTable('Croogo/Acl.Aros');
+        $this->Roles = $this->fetchTable('Croogo/Users.Roles');
+        $this->Permissions = $this->fetchTable('Croogo/Acl.Permissions');
     }
 
     /**

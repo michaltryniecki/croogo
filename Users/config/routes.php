@@ -1,10 +1,10 @@
 <?php
-
+/** @var \Cake\Routing\RouteBuilder $routes */
 use Cake\Routing\RouteBuilder;
 use Croogo\Core\Router;
 
-Router::plugin('Croogo/Users', ['path' => '/'], function (RouteBuilder $route) {
-    $route->prefix('admin', function (RouteBuilder $route) {
+$routes->plugin('Croogo/Users', ['path' => '/'], function (RouteBuilder $route) {
+    $route->prefix('Admin', function (RouteBuilder $route) {
         $route->setExtensions(['json']);
         $route->applyMiddleware('csrf');
 
@@ -22,9 +22,9 @@ Router::plugin('Croogo/Users', ['path' => '/'], function (RouteBuilder $route) {
 //    Router::build($route, '/users/:action/*', ['controller' => 'Users']);
 });
 
-Router::plugin('Croogo/Users', ['path' => '/'], function (RouteBuilder $route) {
-    $route->prefix('api', function (RouteBuilder $route) {
-        $route->prefix('v10', ['path' => '/v1.0'], function (RouteBuilder $route) {
+$routes->plugin('Croogo/Users', ['path' => '/'], function (RouteBuilder $route) {
+    $route->prefix('Api', function (RouteBuilder $route) {
+        $route->prefix('V10', ['path' => '/v1.0'], function (RouteBuilder $route) {
             $route->setExtensions(['json']);
 
             $route->resources('Roles');

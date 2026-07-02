@@ -31,6 +31,14 @@ class ComposerInstaller
         ];
 
         $plugins = [];
+        // Shim ACL (plugin `Acl`) — zvendorowany cakephp/acl w Acl/acl-compat.
+        $plugins[] = "\t\t'Acl' => \$baseDir . '" .
+            DIRECTORY_SEPARATOR . "vendor" .
+            DIRECTORY_SEPARATOR . "croogo" .
+            DIRECTORY_SEPARATOR . "croogo" .
+            DIRECTORY_SEPARATOR . "Acl" .
+            DIRECTORY_SEPARATOR . "acl-compat" .
+            DIRECTORY_SEPARATOR . "',";
         foreach ($corePlugins as $plugin) {
             $plugins[] = "\t\t'Croogo/" . $plugin . "' => \$baseDir . '" .
                 DIRECTORY_SEPARATOR . "vendor" .

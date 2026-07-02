@@ -52,7 +52,7 @@ class AttachmentsController extends AppController
         ]);
 
         $this->_loadCroogoComponents(['BulkProcess']);
-        $this->loadModel('Croogo/FileManager.Attachments');
+        $this->Attachments = $this->fetchTable('Croogo/FileManager.Attachments');
     }
 
     /**

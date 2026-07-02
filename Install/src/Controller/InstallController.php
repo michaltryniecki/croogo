@@ -223,7 +223,7 @@ class InstallController extends Controller
         if (!Plugin::isLoaded('Croogo/Users')) {
             Plugin::load('Croogo/Users');
         }
-        $this->loadModel('Croogo/Users.Users');
+        $this->Users = $this->fetchTable('Croogo/Users.Users');
 
         $user = $this->Users->get(1);
 

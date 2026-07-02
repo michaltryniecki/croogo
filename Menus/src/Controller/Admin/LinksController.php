@@ -29,7 +29,7 @@ class LinksController extends AppController
         parent::initialize();
 
         $this->loadComponent('Croogo/Core.BulkProcess');
-        $this->loadModel('Croogo/Users.Roles');
+        $this->Roles = $this->fetchTable('Croogo/Users.Roles');
 
         if ($this->getRequest()->getParam('action') == 'toggle') {
             $this->Croogo->protectToggleAction();

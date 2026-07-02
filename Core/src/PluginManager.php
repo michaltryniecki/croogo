@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace Croogo\Core;
 
 use App\Controller\AppController;
-use Aura\Intl\Package;
+use Cake\I18n\Package;
 use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\BasePlugin;
-use Cake\Core\ClassLoader;
+use Croogo\Core\ClassLoader;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Exception\MissingPluginException;
@@ -1273,8 +1273,10 @@ class PluginManager extends Plugin
         try {
             /** @var \Cake\Database\Connection $defaultConnection*/
             $defaultConnection = ConnectionManager::get('default');
-            $dbConfigExists = $defaultConnection->connect();
-        } catch (\Cake\Core\Exception\CakeException $e) {
+            // Cake 5: Connection::connect() usunięty — łączymy przez driver.
+            $defaultConnection->getDriver()->connect();
+            $dbConfigExists = true;
+        } catch (\Exception $e) {
             $dbConfigExists = false;
         }
 

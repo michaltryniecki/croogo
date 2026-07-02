@@ -44,7 +44,9 @@ class PasswordHasherFactory
             unset($config['className']);
         }
 
-        $className = App::className($class, 'Auth', 'PasswordHasher');
+        // Hashery zvendorowane w Croogo/Core (Cake 5 usunął Cake\Auth).
+        $className = App::className($class, 'Auth', 'PasswordHasher')
+            ?? App::className('Croogo/Core.' . $class, 'Auth', 'PasswordHasher');
         if ($className === null) {
             throw new RuntimeException(sprintf('Password hasher class "%s" was not found.', $class));
         }

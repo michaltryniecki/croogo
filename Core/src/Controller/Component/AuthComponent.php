@@ -536,7 +536,9 @@ class AuthComponent extends Component implements EventDispatcherInterface
             } else {
                 $class = $alias;
             }
-            $className = App::className($class, 'Auth', 'Authorize');
+            // Klasy bazowe auth zvendorowane w Croogo/Core (Cake 5 usunął Cake\Auth).
+            $className = App::className($class, 'Auth', 'Authorize')
+                ?? App::className('Croogo/Core.' . $class, 'Auth', 'Authorize');
             if ($className === null) {
                 throw new CakeException(sprintf('Authorization adapter "%s" was not found.', $class));
             }
@@ -831,7 +833,9 @@ class AuthComponent extends Component implements EventDispatcherInterface
             } else {
                 $class = $alias;
             }
-            $className = App::className($class, 'Auth', 'Authenticate');
+            // Klasy bazowe auth zvendorowane w Croogo/Core (Cake 5 usunął Cake\Auth).
+            $className = App::className($class, 'Auth', 'Authenticate')
+                ?? App::className('Croogo/Core.' . $class, 'Auth', 'Authenticate');
             if ($className === null) {
                 throw new CakeException(sprintf('Authentication adapter "%s" was not found.', $class));
             }
@@ -873,7 +877,9 @@ class AuthComponent extends Component implements EventDispatcherInterface
             $class = $config['className'];
             unset($config['className']);
         }
-        $className = App::className($class, 'Auth/Storage', 'Storage');
+        // Klasy bazowe auth zvendorowane w Croogo/Core (Cake 5 usunął Cake\Auth).
+        $className = App::className($class, 'Auth/Storage', 'Storage')
+            ?? App::className('Croogo/Core.' . $class, 'Auth/Storage', 'Storage');
         if ($className === null) {
             throw new CakeException(sprintf('Auth storage adapter "%s" was not found.', $class));
         }
