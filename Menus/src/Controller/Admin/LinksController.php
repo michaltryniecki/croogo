@@ -102,7 +102,8 @@ class LinksController extends AppController
         }
 
         $this->Links->setTreeScope($link->menu_id);
-        if ($this->Links->moveUp($link, $step)) {
+        // Cake 5.3: metody behaviora na instancji tabeli deprecated
+        if ($this->Links->getBehavior('Tree')->moveUp($link, $step)) {
             Cache::clearGroup('menus', 'croogo_menus');
             $this->Flash->success(__d('croogo', 'Moved up successfully'));
         } else {
@@ -139,7 +140,8 @@ class LinksController extends AppController
         }
 
         $this->Links->setTreeScope($link->menu_id);
-        if ($this->Links->moveDown($link, $step)) {
+        // Cake 5.3: metody behaviora na instancji tabeli deprecated
+        if ($this->Links->getBehavior('Tree')->moveDown($link, $step)) {
             Cache::clearGroup('menus', 'croogo_menus');
             $this->Flash->success(__d('croogo', 'Moved down successfully'));
         } else {

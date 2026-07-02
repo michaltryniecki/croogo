@@ -241,7 +241,8 @@ class FileManagerController extends AppController
      */
     public function rename()
     {
-        $path = $this->getRequest()->getQuery('path');
+        // PHP 8.1+: null do explode() deprecated (brak ?path= w URL)
+        $path = (string)$this->getRequest()->getQuery('path');
         $pathFragments = array_filter(explode(DIRECTORY_SEPARATOR, $path));
 
         if (!$this->FileManager->isEditable($path)) {

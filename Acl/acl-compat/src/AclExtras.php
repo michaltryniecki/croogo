@@ -494,7 +494,8 @@ class AclExtras
     public function recover()
     {
         $type = Inflector::camelize($this->args[0]);
-        $this->Acl->{$type}->recover();
+        // Cake 5.3: metody behaviora na instancji tabeli deprecated
+        $this->Acl->{$type}->getBehavior('Tree')->recover();
         $this->out(__('Tree has been recovered, or tree did not need recovery.'));
     }
 

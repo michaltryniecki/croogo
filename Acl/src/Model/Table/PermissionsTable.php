@@ -50,7 +50,8 @@ class PermissionsTable extends \Acl\Model\Table\PermissionsTable
             $path = $this->Acos->find('path', for: $acoId);
             $path = join('/', collection($path)->extract('alias')->toArray());
             $data = [
-                'children' => $this->Acos->childCount($aco, true),
+                // Cake 5.3: metody behaviora na instancji tabeli deprecated
+                'children' => $this->Acos->getBehavior('Tree')->childCount($aco, true),
                 'depth' => substr_count($path, '/'),
             ];
 

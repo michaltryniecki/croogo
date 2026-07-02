@@ -136,7 +136,8 @@ class FileManagerHelper extends Helper
      */
     public function breadcrumb($path)
     {
-        $pathE = explode(DS, $path);
+        // PHP 8.1+: null do explode() deprecated
+        $pathE = explode(DS, (string)$path);
 
         $output = [];
         if (DS == '/') {
