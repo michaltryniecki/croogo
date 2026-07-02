@@ -563,7 +563,7 @@ class AclExtras
         }
         foreach ($nodes as $node) {
             if (!isset($methodFlip[$node->alias])) {
-                $crumbs = $this->Aco->find('path', ['for' => $node->id, 'order' => 'lft']);
+                $crumbs = $this->Aco->find('path', for: $node->id)->orderByAsc('lft');
                 $path = null;
                 foreach ($crumbs as $crumb) {
                     $path .= '/' . $crumb->alias;

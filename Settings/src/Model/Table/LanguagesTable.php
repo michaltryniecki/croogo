@@ -36,7 +36,7 @@ class LanguagesTable extends CroogoTable
             'before' => true,
             'after' => true,
         ];
-        $this->searchManager()
+        $this->getBehavior('Search')->searchManager()
             ->add('title', 'Search.Like', $likeOptions)
             ->add('alias', 'Search.Like', $likeOptions)
             ->add('locale', 'Search.Like', $likeOptions);

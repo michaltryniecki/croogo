@@ -6,7 +6,7 @@ use Cake\Core\BasePlugin;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Core\Plugin as CakePlugin;
 
-class Plugin extends BasePlugin
+class ExtensionsPlugin extends BasePlugin
 {
 
     public function bootstrap(PluginApplicationInterface $app): void

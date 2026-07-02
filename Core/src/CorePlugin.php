@@ -9,7 +9,7 @@ use Cake\Core\PluginApplicationInterface;
 use Cake\Routing\RouteBuilder;
 use Cake\Utility\Security;
 
-class Plugin extends BasePlugin
+class CorePlugin extends BasePlugin
 {
 
     public function bootstrap(PluginApplicationInterface $app): void

@@ -65,7 +65,7 @@ class MenuComponent extends Component
         // menus
         $menus = $this->Links->Menus
             ->find('all')
-            ->order([
+            ->orderBy([
                 $this->Links->Menus->aliasField('id') => 'ASC',
             ]);
         $this->controller->set('menus_for_admin_layout', $menus);
@@ -104,11 +104,10 @@ class MenuComponent extends Component
         $roleId = $this->controller->Croogo->roleId();
         $status = $this->Links->status();
         foreach ($menus as $menuAlias) {
-            $menu = $this->Links->Menus->find('all', [
-                'cache' => [
-                    'name' => $menuAlias,
-                    'config' => 'croogo_menus',
-                ],
+            // Cake 5: opcje findera przez named arguments (positional array deprecated)
+            $menu = $this->Links->Menus->find('all', cache: [
+                'name' => $menuAlias,
+                'config' => 'croogo_menus',
             ])->where([
                 'Menus.status IN' => $status,
                 'Menus.alias' => $menuAlias,
@@ -116,17 +115,13 @@ class MenuComponent extends Component
             ])->first();
             if ($menu) {
                 $this->menusForLayout[$menuAlias] = $menu;
-                $links = $this->Links->find('threaded', [
-                    'cache' => [
-                        'name' => $menu->alias . '_links_' . $roleId,
-                        'config' => 'croogo_menus',
-                    ]
-                ])->find('byAccess', ['roleId' => $roleId])->where([
+                $links = $this->Links->find('threaded', cache: [
+                    'name' => $menu->alias . '_links_' . $roleId,
+                    'config' => 'croogo_menus',
+                ])->find('byAccess', roleId: $roleId)->where([
                     'Links.menu_id' => $menu->id,
                     'Links.status IN' => $status,
-                ])->order([
-                    'Links.lft' => 'ASC',
-                ]);
+                ])->orderByAsc('Links.lft');
                 $this->menusForLayout[$menuAlias]['threaded'] = $links;
             }
         }

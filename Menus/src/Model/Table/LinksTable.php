@@ -58,7 +58,7 @@ class LinksTable extends CroogoTable
         $this->addBehavior('Croogo/Core.Visibility');
         $this->addBehavior('Search.Search');
 
-        $this->searchManager()
+        $this->getBehavior('Search')->searchManager()
             ->add('menu_id', 'Search.Value', [
                 'fields' => 'menu_id'
             ])

@@ -97,7 +97,7 @@ class UsersController extends AppController
             if ($event->getSubject()->name == 'Roles') {
                 $event->getSubject()->query = $this->Users->Roles
                     ->find('roleHierarchy')
-                    ->order([
+                    ->orderBy([
                         'ParentAro.lft' => 'DESC',
                     ])
                     ->find('list');
@@ -115,22 +115,21 @@ class UsersController extends AppController
      *
      * @return bool
      */
-    public function onBeforeAdminLogin()
+    public function onBeforeAdminLogin(Event $event): void
     {
+        // Cake 5.2: zwracanie wartosci z listenera deprecated -> setResult()
         $field = $this->Auth->getConfig('authenticate.all.fields.username');
         $data = $this->getRequest()->getData();
         if (empty($data)) {
-            return true;
+            return;
         }
         $cacheName = 'auth_failed_' . $data[$field];
         $cacheValue = Cache::read($cacheName, 'users_login');
         if ($cacheValue >= Configure::read('User.failed_login_limit')) {
             $this->Flash->error(__d('croogo', 'You have reached maximum limit for failed login attempts. Please try again after a few minutes.'));
 
-            return $this->redirect(['action' => $this->getRequest()->getParam('action')]);
+            $event->setResult($this->redirect(['action' => $this->getRequest()->getParam('action')]));
         }
-
-        return true;
     }
 
     /**
@@ -139,17 +138,15 @@ class UsersController extends AppController
      * @return bool
      * @access public
      */
-    public function onAdminLoginFailure()
+    public function onAdminLoginFailure(): void
     {
         $field = $this->Auth->getConfig('authenticate.all.fields.username');
         if (empty($this->getRequest()->getData())) {
-            return true;
+            return;
         }
         $cacheName = 'auth_failed_' . $this->getRequest()->getData($field);
         $cacheValue = Cache::read($cacheName, 'users_login');
         Cache::write($cacheName, (int)$cacheValue + 1, 'users_login');
-
-        return true;
     }
 
     /**
@@ -337,7 +334,7 @@ class UsersController extends AppController
 
         $roles = $this->Users->Roles
             ->find('roleHierarchy')
-            ->order([
+            ->orderBy([
                 'ParentAro.lft' => 'DESC',
             ])
             ->find('list');

@@ -103,7 +103,14 @@ class AclNodesTable extends Table
                     ],
                 ];
             }
-            $query = $this->find('all', $queryData);
+            // Cake 5: pozycyjna tablica opcji do find() deprecated -> named args
+            $query = $this->find(
+                'all',
+                conditions: $queryData['conditions'],
+                fields: $queryData['fields'],
+                join: $queryData['join'],
+                order: $queryData['order']
+            );
             $result = $query->toArray();
             $path = array_values($path);
 
@@ -182,7 +189,13 @@ class AclNodesTable extends Table
                 ],
                 'order' => ["{$type}.lft" => 'DESC'],
             ];
-            $query = $this->find('all', $queryData);
+            $query = $this->find(
+                'all',
+                conditions: $queryData['conditions'],
+                fields: $queryData['fields'],
+                join: $queryData['join'],
+                order: $queryData['order']
+            );
 
             if ($query->count() == 0) {
                 throw new CakeException(__d('cake_dev', "AclNode::node() - Couldn't find %s node identified by \"%s\"", [$type, print_r($ref, true)]));

@@ -33,6 +33,11 @@ class MenusHelper extends Helper
     ];
 
     /**
+     * @var \Croogo\Core\Utility\StringConverter
+     */
+    protected $_converter;
+
+    /**
      * constructor
      */
     public function __construct(View $view, $settings = [])

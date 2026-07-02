@@ -239,7 +239,7 @@ class InstallManager
         $user->name = $user['username'];
         $user->email = '';
         $user->timezone = 'UTC';
-        $user->role_id = $Roles->byAlias('superadmin');
+        $user->role_id = $Roles->getBehavior('Aliasable')->byAlias('superadmin');
         $user->status = true;
         $user->activation_key = md5(uniqid());
         if ($user->getErrors()) {

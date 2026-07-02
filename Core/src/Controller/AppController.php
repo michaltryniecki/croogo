@@ -23,6 +23,7 @@ use Croogo\Core\Croogo;
  * @license  http://www.opensource.org/licenses/mit-license.php The MIT License
  * @link     http://www.croogo.org
  */
+#[\AllowDynamicProperties]
 class AppController extends \App\Controller\AppController implements HookableComponentInterface
 {
 
@@ -59,9 +60,10 @@ class AppController extends \App\Controller\AppController implements HookableCom
      * @param Response $response
      * @param null $name
      */
-    public function __construct(ServerRequest $request = null, Response $response = null, $name = null)
+    public function __construct(?ServerRequest $request = null, ?Response $response = null, ?string $name = null)
     {
-        parent::__construct($request, $response, $name);
+        // Cake 5: Controller::__construct(request, name, ...) - $response wypadl z sygnatury
+        parent::__construct($request ?? new ServerRequest(), $name);
         // Cake 4.5+: Controller ustawia $defaultTable z nazwy tylko gdy $modelClass === null.
         // Croogo ustawia $modelClass w kontrolerach, więc $defaultTable zostawałby null
         // (fetchTable()/Crud -> "must provide $alias or set $defaultTable"). Synchronizujemy.

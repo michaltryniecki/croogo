@@ -31,6 +31,16 @@ class DashboardsHelper extends Helper
     ];
 
     /**
+     * @var array
+     */
+    protected $settings = [];
+
+    /**
+     * @var \Croogo\Users\Model\Table\RolesTable
+     */
+    protected $Roles;
+
+    /**
      * Constructor
      */
     public function __construct(View $View, $settings = [])
@@ -75,7 +85,7 @@ class DashboardsHelper extends Helper
             $this->Roles = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Roles');
             $this->Roles->addBehavior('Croogo/Core.Aliasable');
         }
-        $currentRole = $this->Roles->byId($this->Layout->getRoleId());
+        $currentRole = $this->Roles->getBehavior('Aliasable')->byId($this->Layout->getRoleId());
 
         $cssSetting = $this->Theme->settings('css');
 

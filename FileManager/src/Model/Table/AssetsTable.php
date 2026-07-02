@@ -53,7 +53,7 @@ class AssetsTable extends CroogoTable
         return $validator;
     }
 
-    public function beforeSave(\Cake\Event\EventInterface $event, EntityInterface $entity, ArrayObject $options = null)
+    public function beforeSave(\Cake\Event\EventInterface $event, EntityInterface $entity, ?ArrayObject $options = null)
     {
         $adapter = $entity->get('adapter');
         if (!$entity->filename) {
@@ -73,7 +73,7 @@ class AssetsTable extends CroogoTable
         return true;
     }
 
-    public function beforeDelete(\Cake\Event\EventInterface $event, EntityInterface $entity, ArrayObject $options = null)
+    public function beforeDelete(\Cake\Event\EventInterface $event, EntityInterface $entity, ?ArrayObject $options = null)
     {
         $Event = Croogo::dispatchEvent('FileStorage.beforeDelete', $this, [
             'record' => $entity,

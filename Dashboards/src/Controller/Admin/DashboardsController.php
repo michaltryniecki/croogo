@@ -53,7 +53,7 @@ class DashboardsController extends AppController
             ->where([
                 'user_id' => $this->Auth->user('id')
             ])
-            ->order(['column' => 'asc', 'weight' => 'asc']);
+            ->orderBy(['column' => 'asc', 'weight' => 'asc']);
         $dashboards = $this->paginate($query);
 
         $this->set(compact('dashboards'));
@@ -79,7 +79,7 @@ class DashboardsController extends AppController
             'weight',
         ])->where([
             'user_id' => $this->Auth->user('id'),
-        ])->order([
+        ])->orderBy([
             'weight',
         ]);
         $this->set('boxes_for_dashboard', $boxesForDashboard);

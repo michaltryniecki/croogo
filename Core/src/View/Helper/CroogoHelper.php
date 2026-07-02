@@ -50,6 +50,32 @@ class CroogoHelper extends Helper
     protected $_ParamsType;
 
     /**
+     * Status instance
+     *
+     * @var \Croogo\Core\Status
+     */
+    protected $_CroogoStatus;
+
+    /**
+     * @var \Croogo\Users\Model\Table\RolesTable
+     */
+    protected $Role;
+
+    /**
+     * Czy wyrenderowano zakładki admina (ustawiane w adminTabs())
+     *
+     * @var bool|null
+     */
+    protected $adminTabs;
+
+    /**
+     * Boxy już wyrenderowane na stronie
+     *
+     * @var array|null
+     */
+    protected $boxAlreadyPrinted;
+
+    /**
      * Default Constructor
      *
      * @param View $View The View this helper is being attached to.
@@ -123,7 +149,7 @@ class CroogoHelper extends Helper
             $this->Role = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Roles');
             $this->Role->addBehavior('Croogo/Core.Aliasable');
         }
-        $currentRole = $this->Role->byId($this->Layout->getRoleId());
+        $currentRole = $this->Role->getBehavior('Aliasable')->byId($this->Layout->getRoleId());
 
         foreach ($sorted as $menu) {
             if (isset($menu['separator'])) {

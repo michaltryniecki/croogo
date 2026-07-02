@@ -45,9 +45,7 @@ class LinksController extends AppController
             ->where([
                 'Links.menu_id' => $menuId,
             ]);
-        $linksStatus = $this->Links->find('list', [
-            'valueField' => 'status',
-        ])
+        $linksStatus = $this->Links->find('list', valueField: 'status')
             ->where([
                 'Links.menu_id' => $menuId,
             ])

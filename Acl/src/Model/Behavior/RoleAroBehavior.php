@@ -145,13 +145,14 @@ class RoleAroBehavior extends Behavior
      */
     public function allowedParents($id = null)
     {
-        if (!$this->_table->behaviors()->has('Croogo/Core.Aliasable')) {
+        if (!$this->_table->behaviors()->has('Aliasable')) {
             $this->_table->addBehavior('Croogo/Core.Aliasable');
         }
-        if ($id == $this->_table->byAlias('public')) {
+        $aliasable = $this->_table->getBehavior('Aliasable');
+        if ($id == $aliasable->byAlias('public')) {
             return [];
         }
-        $adminRoleId = $this->_table->byAlias('superadmin');
+        $adminRoleId = $aliasable->byAlias('superadmin');
         $excludes = Hash::filter(array_values([$adminRoleId, $id]));
         $conditions = [
             'NOT' => [$this->_table->aliasField('id') . ' IN' => $excludes],

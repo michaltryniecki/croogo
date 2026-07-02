@@ -65,7 +65,7 @@ class UsersTable extends CroogoTable
 
         $this->getEventManager()->on($this->getMailer('Croogo/Users.User'));
 
-        $this->searchManager()
+        $this->getBehavior('Search')->searchManager()
             ->add('name', 'Search.Like', [
                 'fields' => ['Users.name', 'Users.username', 'Users.email'],
                 'before' => true,
@@ -73,12 +73,12 @@ class UsersTable extends CroogoTable
             ]);
 
         if ($multiRole) {
-            $this->searchManager()
+            $this->getBehavior('Search')->searchManager()
                 ->add('role_id', 'Search.Finder', [
                     'finder' => 'filterMultiRoles',
                 ]);
         } else {
-            $this->searchManager()
+            $this->getBehavior('Search')->searchManager()
                 ->value('role_id');
         }
     }
@@ -103,7 +103,7 @@ class UsersTable extends CroogoTable
         ]);
 
         $user->patch([
-            'role_id' => $this->Roles->byAlias('registered'),
+            'role_id' => $this->Roles->getBehavior('Aliasable')->byAlias('registered'),
             'activation_key' => $this->generateActivationKey(),
         ]);
 

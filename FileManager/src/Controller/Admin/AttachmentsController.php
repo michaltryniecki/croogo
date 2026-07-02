@@ -117,7 +117,7 @@ class AttachmentsController extends AppController
             unset($httpQuery['foreign_key']);
 
             if (!$this->getRequest()->getQuery('sort')) {
-                $query->order([
+                $query->orderBy([
                     $this->Attachments->aliasField('id') => 'desc',
                 ]);
             }
@@ -135,7 +135,7 @@ class AttachmentsController extends AppController
         }
 
         if (!$this->getRequest()->getQuery('sort')) {
-            $query->order(['Attachments.created' => 'DESC']);
+            $query->orderBy(['Attachments.created' => 'DESC']);
         }
 
         if ($isChooser) {

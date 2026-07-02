@@ -140,7 +140,7 @@ class PermissionsController extends AppController
 
         // see if acoId and aroId combination exists
         $aro = $this->Aros->get($aroId);
-        $path = $this->Acos->find('path', ['for' => $acoId]);
+        $path = $this->Acos->find('path', for: $acoId);
         $path = join('/', collection($path)->extract('alias')->toArray());
 
         $permitted = !$this->Permissions->check(['model' => $aro->model, 'foreign_key' => $aro->foreign_key], $path);

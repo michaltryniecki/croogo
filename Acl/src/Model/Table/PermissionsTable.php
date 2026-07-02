@@ -47,7 +47,7 @@ class PermissionsTable extends \Acl\Model\Table\PermissionsTable
             $acoId = $aco->id;
             $acoAlias = $aco->alias;
 
-            $path = $this->Acos->find('path', ['for' => $acoId]);
+            $path = $this->Acos->find('path', for: $acoId);
             $path = join('/', collection($path)->extract('alias')->toArray());
             $data = [
                 'children' => $this->Acos->childCount($aco, true),

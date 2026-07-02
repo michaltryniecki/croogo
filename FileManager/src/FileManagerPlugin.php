@@ -4,6 +4,6 @@ namespace Croogo\FileManager;
 
 use Cake\Core\BasePlugin;
 
-class Plugin extends BasePlugin
+class FileManagerPlugin extends BasePlugin
 {
 }

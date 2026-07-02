@@ -7,7 +7,7 @@ use Cake\Core\PluginApplicationInterface;
 use Cake\Http\MiddlewareQueue;
 use Croogo\Install\Middleware\InstallMiddleware;
 
-class Plugin extends BasePlugin
+class InstallPlugin extends BasePlugin
 {
 
     public function middleware(MiddlewareQueue $middleware): MiddlewareQueue

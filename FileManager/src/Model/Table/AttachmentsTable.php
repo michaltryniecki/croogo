@@ -60,7 +60,7 @@ class AttachmentsTable extends CroogoTable
         $this->addBehavior('Search.Search');
         //$this->addBehavior('Burzum/Imagine.Imagine');
 
-        $this->searchManager()
+        $this->getBehavior('Search')->searchManager()
             ->add('title', 'Search.Like', [
                 'fields' => $this->Assets->aliasField('filename'),
                 'before' => true,
@@ -282,7 +282,7 @@ class AttachmentsTable extends CroogoTable
      *
      * @return bool|string
      */
-    public function beforeSave(\Cake\Event\EventInterface $event, EntityInterface $entity, ArrayObject $options = null)
+    public function beforeSave(\Cake\Event\EventInterface $event, EntityInterface $entity, ?ArrayObject $options = null)
     {
         if (!empty($entity->asset->file['name'])) {
             $file = $entity->asset->file;

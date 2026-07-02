@@ -25,6 +25,16 @@ class FormHelper extends BaseFormHelper
     ];
 
     /**
+     * @var array
+     */
+    protected $_fieldAccess = [];
+
+    /**
+     * @var int|null
+     */
+    protected $_currentRoleId;
+
+    /**
      * Constructor
      */
     public function __construct(View $View, $settings = [])
