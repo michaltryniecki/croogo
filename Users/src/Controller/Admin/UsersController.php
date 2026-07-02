@@ -247,10 +247,11 @@ class UsersController extends AppController
 
                 if (!$this->Access->isUrlAuthorized($user, $redirectUrl)) {
                     Croogo::dispatchEvent('Controller.Users.adminLoginFailure', $this);
-                    $this->Auth->authError = __d('croogo', 'Authorization error');
-                    $this->Flash->error($this->Auth->authError, ['key' => 'auth']);
+                    // PHP 8.2+: authError to konfiguracja komponentu, nie property
+                    $this->Auth->setConfig('authError', __d('croogo', 'Authorization error'));
+                    $this->Flash->error($this->Auth->getConfig('authError'), ['key' => 'auth']);
 
-                    return $this->redirect($this->Auth->loginAction);
+                    return $this->redirect($this->Auth->getConfig('loginAction'));
                 }
 
                 $this->Auth->setUser($user);
@@ -266,8 +267,8 @@ class UsersController extends AppController
                 return $this->redirect($redirectUrl);
             } else {
                 Croogo::dispatchEvent('Controller.Users.adminLoginFailure', $this);
-                $this->Auth->authError = __d('croogo', 'Incorrect username or password');
-                $this->Flash->error($this->Auth->authError, ['key' => 'auth']);
+                $this->Auth->setConfig('authError', __d('croogo', 'Incorrect username or password'));
+                $this->Flash->error($this->Auth->getConfig('authError'), ['key' => 'auth']);
 
                 return $this->redirect($this->Auth->getConfig('loginAction'));
             }
