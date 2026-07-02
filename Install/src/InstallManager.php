@@ -128,7 +128,9 @@ class InstallManager
      */
     public function installCompleted()
     {
-        PluginManager::load('Croogo/Settings', ['routes' => true]);
+        if (!Plugin::isLoaded('Croogo/Settings')) {
+            PluginManager::load('Croogo/Settings', ['routes' => true]);
+        }
         $Setting = TableRegistry::getTableLocator()->get('Croogo/Settings.Settings');
         $Setting->removeBehavior('Cached');
         if (!function_exists('mcrypt_decrypt') && !function_exists('openssl_decrypt')) {
@@ -278,37 +280,19 @@ class InstallManager
         $registered = 'Role-registered';
         $publisher = 'Role-publisher';
 
+        // Tylko pluginy/akcje obecne w tym forku (pełny Croogo miał też Nodes/
+        // Contacts/Blocks/Comments, a frontowy UsersController więcej akcji —
+        // nieistniejące ACO -> DbAcl::allow() "Invalid node").
         $setup = [
-            //            'controllers/Croogo\Comments/Comments/index' => [$public],
-            //            'controllers/Croogo\Comments/Comments/add' => [$public],
-            //            'controllers/Croogo\Comments/Comments/delete' => [$registered],
-            'controllers/Croogo\Contacts/Contacts/view' => [$public],
-            'controllers/Croogo\Nodes/Nodes/index' => [$public],
-            'controllers/Croogo\Nodes/Nodes/feed' => [$public],
-            'controllers/Croogo\Nodes/Nodes/term' => [$public],
-            'controllers/Croogo\Nodes/Nodes/promoted' => [$public],
-            'controllers/Croogo\Nodes/Nodes/search' => [$public],
-            'controllers/Croogo\Nodes/Nodes/view' => [$public],
-            'controllers/Croogo\Users/Users/index' => [$registered],
-            'controllers/Croogo\Users/Users/add' => [$public],
-            'controllers/Croogo\Users/Users/activate' => [$public],
-            'controllers/Croogo\Users/Users/edit' => [$registered],
-            'controllers/Croogo\Users/Users/forgot' => [$public],
-            'controllers/Croogo\Users/Users/reset' => [$public],
             'controllers/Croogo\Users/Users/login' => [$public],
             'controllers/Croogo\Users/Users/logout' => [$registered],
             'controllers/Croogo\Users/Admin/Users/logout' => [$registered],
-            'controllers/Croogo\Users/Users/view' => [$registered],
 
             'controllers/Croogo\Dashboards/Admin/Dashboards' => [$admin],
-            'controllers/Croogo\Nodes/Admin/Nodes' => [$publisher],
             'controllers/Croogo\Menus/Admin/Menus' => [$publisher],
             'controllers/Croogo\Menus/Admin/Links' => [$publisher],
-            'controllers/Croogo\Blocks/Admin/Blocks' => [$publisher],
             'controllers/Croogo\FileManager/Admin/Attachments' => [$publisher],
             'controllers/Croogo\FileManager/Admin/FileManager' => [$publisher],
-            'controllers/Croogo\Contacts/Admin/Contacts' => [$publisher],
-            'controllers/Croogo\Contacts/Admin/Messages' => [$publisher],
             'controllers/Croogo\Users/Admin/Users/view' => [$admin],
         ];
 

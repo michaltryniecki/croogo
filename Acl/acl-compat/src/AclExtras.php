@@ -446,7 +446,8 @@ class AclExtras
     protected function _checkMethods($className, $controllerName, $node, $pluginPath = null, $prefixPath = null)
     {
         $excludes = $this->_getCallbacks($className, $pluginPath, $prefixPath);
-        $baseMethods = get_class_methods(new Controller());
+        // Cake 5: Controller wymaga ServerRequest w konstruktorze - nazwa klasy wystarcza
+        $baseMethods = get_class_methods(Controller::class);
         $namespace = $this->_getNamespace($className, $pluginPath, $prefixPath);
         $methods = get_class_methods($namespace);
         if ($methods == null) {

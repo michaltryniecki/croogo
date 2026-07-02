@@ -112,7 +112,7 @@ class AttachmentsTable extends CroogoTable
             ];
             $query
                 ->contain('Assets')
-                ->orWhere($conditions);
+                ->where($conditions);
         }
 
         return $query;
@@ -269,7 +269,7 @@ class AttachmentsTable extends CroogoTable
                     $this->Assets->aliasField('parent_asset_id') => $assetId,
                 ],
             ];
-            $query->orWhere($conditions);
+            $query->where($conditions);
         }
 
         return $query;

@@ -273,7 +273,7 @@ class UsersTable extends CroogoTable
                     'last' => true
                 ]
             ])
-            ->allowEmpty('website')
+            ->allowEmptyString('website')
             ->add('website', [
                 'url' => [
                     'rule' => 'url',
@@ -288,10 +288,10 @@ class UsersTable extends CroogoTable
         $roleId = isset($options['role_id']) ? $options['role_id'] : false;
         $query
             ->where([
-                $this->aliasField('role_id') => $roleId,
-            ])
-            ->orWhere([
-                $this->Roles->aliasField('id') => $roleId,
+                'OR' => [
+                    $this->aliasField('role_id') => $roleId,
+                    $this->Roles->aliasField('id') => $roleId,
+                ],
             ]);
 
         return $query;

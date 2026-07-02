@@ -21,22 +21,16 @@ use Croogo\Core\Router; ?>
 
 <p>
     <?php
+    // Fork bez pluginu Nodes — link "create a blog post" usunięty (MissingRouteException).
     echo __d(
         'croogo',
-        'You can start with %s or jump in and %s.',
+        'You can start with %s.',
         $this->Html->link(__d('croogo', 'configuring your site'), [
             'plugin' => 'Croogo/Settings',
             'prefix' => 'Admin',
             'controller' => 'Settings',
             'action' => 'prefix',
             'Site',
-        ]),
-        $this->Html->link(__d('croogo', 'create a blog post'), [
-            'plugin' => 'Croogo/Nodes',
-            'prefix' => 'Admin',
-            'controller' => 'Nodes',
-            'action' => 'add',
-            'blog',
         ])
     );
     ?>
