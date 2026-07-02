@@ -19,7 +19,8 @@ class RolesTable extends CroogoTable
 
     public function initialize(array $config): void
     {
-        $this->addBehavior('Acl.Acl', [
+        // alias 'Acl' (przy className alias = pelna nazwa, wiec bez prefiksu pluginu)
+        $this->addBehavior('Acl', [
             'className' => 'Croogo/Core.CroogoAcl',
             'type' => 'requester'
         ]);

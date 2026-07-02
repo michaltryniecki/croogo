@@ -464,6 +464,10 @@ class PluginManager extends Plugin
     public function getDependencies($plugin)
     {
         $pluginData = $this->getData($plugin);
+        // PHP 8.5: automatyczna konwersja false -> array deprecated (getData zwraca false)
+        if (!is_array($pluginData)) {
+            $pluginData = [];
+        }
         if (!isset($pluginData['dependencies']['plugins'])) {
             $pluginData['dependencies']['plugins'] = [];
         }

@@ -52,7 +52,8 @@ class UsersTable extends CroogoTable
             $this->belongsTo('Croogo/Users.Roles');
         }
 
-        $this->addBehavior('Acl.Acl', [
+        // alias 'Acl' (przy className alias = pelna nazwa, wiec bez prefiksu pluginu)
+        $this->addBehavior('Acl', [
             'className' => 'Croogo/Core.CroogoAcl',
             'type' => 'requester'
         ]);

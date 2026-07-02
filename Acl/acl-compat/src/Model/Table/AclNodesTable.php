@@ -27,7 +27,10 @@ use Cake\ORM\TableRegistry;
 /**
  * ACL Nodes
  *
+ * PHP 8.2+: kod legacy (Cake 2-style) ustawia dynamiczne właściwości
+ * (np. $this->id w PermissionsTable) - stąd AllowDynamicProperties.
  */
+#[\AllowDynamicProperties]
 class AclNodesTable extends Table
 {
 

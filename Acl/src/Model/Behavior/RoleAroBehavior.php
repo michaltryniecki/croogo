@@ -69,7 +69,8 @@ class RoleAroBehavior extends Behavior
     {
         $model = $event->getSubject();
         $ref = ['model' => $model->getAlias(), 'foreign_key' => $entity->id];
-        $aro = $model->node($ref)->firstOrFail();
+        // Cake 5.3: metody behaviora na instancji tabeli deprecated
+        $aro = $model->getBehavior('Acl')->node($ref)->firstOrFail();
         if (!empty($entity->alias)) {
             $aro->alias = sprintf(
                 'Role-%s',

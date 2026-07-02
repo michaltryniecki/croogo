@@ -60,7 +60,8 @@ class UserAroBehavior extends Behavior
             $arosTable = \Cake\ORM\TableRegistry::getTableLocator()->get('Aros');
 
             $ref = ['model' => $model->getAlias(), 'foreign_key' => $entity->id];
-            $node = $model->node($ref);
+            // Cake 5.3: metody behaviora na instancji tabeli deprecated
+            $node = $model->getBehavior('Acl')->node($ref);
             $aro = $node->firstOrFail();
 
             $aro->alias = $entity->username;

@@ -55,6 +55,13 @@ class InstallManager
      */
     protected $_croogoPlugin;
 
+    /**
+     * Kontroler (ustawiany przez InstallController przy setupAcos)
+     *
+     * @var \Cake\Controller\Controller|null
+     */
+    public $controller;
+
     public function __construct()
     {
         Configure::write('Trackable.Auth.User.id', 1);

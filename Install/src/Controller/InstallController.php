@@ -30,6 +30,11 @@ use Exception;
  */
 class InstallController extends Controller
 {
+    /**
+     * @var \Croogo\Users\Model\Table\UsersTable
+     */
+    protected $Users;
+
 
     const STEPS = [
         'Welcome', 'Database', 'Admin user', 'Completed'

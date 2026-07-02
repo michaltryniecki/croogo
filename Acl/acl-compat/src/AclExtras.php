@@ -43,6 +43,13 @@ class AclExtras
     public $Acl;
 
     /**
+     * Acos table (PHP 8.2+: deklaracja zamiast dynamic property)
+     *
+     * @var \Croogo\Acl\Model\Table\AcosTable
+     */
+    public $Aco;
+
+    /**
      * Contains arguments parsed from the command line.
      *
      * @var array

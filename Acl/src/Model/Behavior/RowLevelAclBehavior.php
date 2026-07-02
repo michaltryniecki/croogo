@@ -30,7 +30,8 @@ class RowLevelAclBehavior extends Behavior
         }
         $Table = $event->getSubject();
         $alias = $Table->getAlias();
-        $aco = $Table->node($entity)->firstOrFail();
+        // Cake 5.3: metody behaviora na instancji tabeli deprecated
+        $aco = $Table->getBehavior('Acl')->node($entity)->firstOrFail();
         $aco->alias = sprintf('%s.%s', $alias, $entity->id);
         $saved = $Table->Aco->save($aco);
 
