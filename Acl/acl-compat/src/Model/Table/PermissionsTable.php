@@ -17,7 +17,7 @@ namespace Acl\Model\Table;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\ORM\Table;
 use Cake\Utility\Hash;
 use Acl\Model\Table\ArosTable;
@@ -114,14 +114,13 @@ class PermissionsTable extends AclNodesTable
         for ($i = 0; $i < $count; $i++) {
             $permAlias = $this->getAlias();
 
-            $perms = $this->find('all', [
-                'conditions' => [
-                    "{$permAlias}.aro_id" => $aroPaths[$i]->id,
-                    "{$permAlias}.aco_id IN" => $acoIDs,
-                ],
-                'order' => [$this->Aco->getAlias() . '.lft' => 'desc'],
-                'contain' => $this->Aco->getAlias(),
-            ]);
+            $perms = $this->find('all',
+            conditions: [
+                "{$permAlias}.aro_id" => $aroPaths[$i]->id,
+                "{$permAlias}.aco_id IN" => $acoIDs,
+            ],
+            order: [$this->Aco->getAlias() . '.lft' => 'desc'],
+            contain: $this->Aco->getAlias());
 
             if ($perms->count() == 0) {
                 continue;
@@ -199,7 +198,7 @@ class PermissionsTable extends AclNodesTable
                     $action = '_' . $action;
                 }
                 if (!in_array($action, $permKeys, true)) {
-                    throw new Exception(__d('cake_dev', 'Invalid permission key "{0}"', [$action]));
+                    throw new CakeException(__d('cake_dev', 'Invalid permission key "{0}"', [$action]));
                 }
                 $save[$action] = $value;
             }
@@ -244,11 +243,9 @@ class PermissionsTable extends AclNodesTable
             'aro' => $aro,
             'aco' => $aco,
             'link' => [
-                $alias => $this->find('all', [
-                    'conditions' => [
-                        $alias . '.aro_id' => $aro,
-                        $alias . '.aco_id' => $aco,
-                    ],
+                $alias => $this->find('all', conditions: [
+                    $alias . '.aro_id' => $aro,
+                    $alias . '.aco_id' => $aco,
                 ])->enableHydration(false)->toArray(),
             ],
         ];

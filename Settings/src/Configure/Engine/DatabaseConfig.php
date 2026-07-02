@@ -25,16 +25,15 @@ class DatabaseConfig implements ConfigEngineInterface
         timerStart('Loading settings from database');
 
         $values = Cache::remember('configure-settings-' . $key, function () use ($key) {
-            $settings = TableRegistry::getTableLocator()->get('Croogo/Settings.Settings')->find('list', [
-                'keyField' => 'key',
-                'valueField' => function (Setting $setting) {
-                    if ($setting->type === 'integer') {
-                        return (int)$setting->value;
-                    }
-
-                    return $setting->value;
+            $settings = TableRegistry::getTableLocator()->get('Croogo/Settings.Settings')->find('list',
+            keyField: 'key',
+            valueField: function (Setting $setting) {
+                if ($setting->type === 'integer') {
+                    return (int)$setting->value;
                 }
-            ])->cache('configure-settings-query-' . $key, 'cached_settings')->toArray();
+
+                return $setting->value;
+            })->cache('configure-settings-query-' . $key, 'cached_settings')->toArray();
 
             $settings = Hash::expand($settings);
 

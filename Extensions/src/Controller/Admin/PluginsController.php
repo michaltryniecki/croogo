@@ -2,7 +2,7 @@
 
 namespace Croogo\Extensions\Controller\Admin;
 
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Event\Event;
 use Croogo\Core\PluginManager;
 use Croogo\Extensions\ExtensionsInstaller;
@@ -23,7 +23,7 @@ class PluginsController extends AppController
     /**
      * BC compatibility
      */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         if ($name == 'corePlugins') {
             return Plugin::$corePlugins;
@@ -76,7 +76,7 @@ class PluginsController extends AppController
             $Installer = new ExtensionsInstaller;
             try {
                 $Installer->extractPlugin($file['tmp_name']);
-            } catch (Exception $e) {
+            } catch (CakeException $e) {
                 $this->Flash->error($e->getMessage());
 
                 return $this->redirect(['action' => 'add']);
@@ -192,7 +192,7 @@ class PluginsController extends AppController
         $this->getRequest()->allowMethod('post');
 
         if ($plugin === null) {
-            throw new Exception(__d('croogo', 'Invalid plugin'));
+            throw new CakeException(__d('croogo', 'Invalid plugin'));
         }
 
         $class = 'success';
@@ -219,7 +219,7 @@ class PluginsController extends AppController
         $this->getRequest()->allowMethod('post');
 
         if ($plugin === null) {
-            throw new Exception(__d('croogo', 'Invalid plugin'));
+            throw new CakeException(__d('croogo', 'Invalid plugin'));
         }
 
         $element = 'success';

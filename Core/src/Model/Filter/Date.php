@@ -14,7 +14,7 @@ class Date extends Base
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'mode' => 'AND'
     ];
 

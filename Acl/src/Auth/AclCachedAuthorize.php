@@ -67,7 +67,7 @@ class AclCachedAuthorize extends BaseAuthorize
         }
         if (empty($this->_adminRole)) {
             if (empty($Role)) {
-                $Role = TableRegistry::get('Croogo/Users.Roles');
+                $Role = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Roles');
                 $Role->addBehavior('Croogo/Core.Aliasable');
             }
             $this->_adminRole = $Role->byAlias('superadmin');

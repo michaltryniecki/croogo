@@ -3,7 +3,7 @@
 namespace Croogo\Core;
 
 use ArrayAccess;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Log\Log;
 use Cake\ORM\TableRegistry;
 
@@ -121,10 +121,10 @@ class Status implements ArrayAccess
         $allow = false;
 
         if ($roleId && $roleId !== 1) {
-            $Permission = TableRegistry::get('Acl.Permissions');
+            $Permission = \Cake\ORM\TableRegistry::getTableLocator()->get('Acl.Permissions');
             try {
                 $allow = $Permission->check(['model' => 'Roles', 'foreign_key' => $roleId], 'controllers/Croogo\Nodes/Admin/Nodes/edit');
-            } catch (Exception $e) {
+            } catch (CakeException $e) {
                 Log::error($e->getMessage());
             }
         }

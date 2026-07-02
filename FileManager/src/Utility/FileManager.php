@@ -3,7 +3,6 @@
 namespace Croogo\FileManager\Utility;
 
 use Cake\Core\Configure;
-use Cake\Filesystem\Folder;
 use Cake\Log\Log;
 
 /**
@@ -235,13 +234,8 @@ class FileManager
      */
     public function rename($oldPath, $newPath)
     {
-        if (is_dir($oldPath)) {
-            $Folder = new Folder($oldPath);
-
-            return $Folder->move(['from' => $oldPath, 'to' => $newPath]);
-        } else {
-            return rename($oldPath, $newPath);
-        }
+        // Cake 5: Folder usunięty — rename() obsługuje też katalogi.
+        return rename($oldPath, $newPath);
     }
 
     /**

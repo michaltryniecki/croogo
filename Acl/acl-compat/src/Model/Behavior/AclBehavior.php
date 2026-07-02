@@ -16,7 +16,7 @@
 namespace Acl\Model\Behavior;
 
 use Cake\Core\App;
-use Cake\Core\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
@@ -33,11 +33,6 @@ use Cake\Utility\Inflector;
  */
 class AclBehavior extends Behavior
 {
-
-    /**
-     * Table instance
-     */
-    protected $_table = null;
 
     /**
      * Maps ACL type options to ACL models
@@ -95,7 +90,7 @@ class AclBehavior extends Behavior
      *
      * @param string|array|Model $ref Array with 'model' and 'foreign_key', model object, or string value
      * @param string $type Only needed when Acl is set up as 'both', specify 'Aro' or 'Aco' to get the correct node
-     * @return \Cake\ORM\Query
+     * @return \Cake\ORM\Query\SelectQuery
      * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/acl.html#node
      * @throws \Cake\Core\Exception\Exception
      */
@@ -110,7 +105,7 @@ class AclBehavior extends Behavior
             }
         }
         if (empty($ref)) {
-            throw new Exception\Exception(__d('cake_dev', 'ref parameter must be a string or an Entity'));
+            throw new CakeException(__d('cake_dev', 'ref parameter must be a string or an Entity'));
         }
 
         return $this->_table->{$type}->node($ref);

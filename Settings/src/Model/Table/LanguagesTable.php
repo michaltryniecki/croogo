@@ -68,7 +68,7 @@ class LanguagesTable extends CroogoTable
         return $rules;
     }
 
-    public function findActive(Query $query)
+    public function findActive(\Cake\ORM\Query\SelectQuery $query)
     {
         $query
             ->select(['id', 'alias', 'locale'])

@@ -7,7 +7,7 @@ use Exception;
 
 class ToggleAction extends BaseAction
 {
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'enabled' => true,
         'field' => 'status'
     ];

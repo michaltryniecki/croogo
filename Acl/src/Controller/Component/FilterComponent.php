@@ -3,7 +3,7 @@
 namespace Croogo\Acl\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\Component\AuthComponent;
+use Croogo\Core\Controller\Component\AuthComponent;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
@@ -108,7 +108,7 @@ class FilterComponent extends Component
                 if (isset($this->_controller->Settings)) {
                     $Setting = $this->_controller->Settings;
                 } else {
-                    $Setting = TableRegistry::get('Croogo/Settings.Settings');
+                    $Setting = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Settings.Settings');
                 }
                 $Setting->write('Access Control.autoLoginDuration', '');
             }

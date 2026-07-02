@@ -30,7 +30,7 @@ class AttachmentsController extends AppController
      * @var array
      * @access public
      */
-    public $paginate = [
+    public array $paginate = [
         'paramType' => 'querystring',
         'limit' => 5,
     ];
@@ -52,7 +52,7 @@ class AttachmentsController extends AppController
         ]);
 
         $this->_loadCroogoComponents(['BulkProcess']);
-        $this->loadModel('Croogo/FileManager.Attachments');
+        $this->Attachments = $this->fetchTable('Croogo/FileManager.Attachments');
     }
 
     /**
@@ -66,7 +66,7 @@ class AttachmentsController extends AppController
         parent::beforeFilter($event);
 
         if ($this->getRequest()->getParam('action') == 'resize') {
-            $this->Security->setConfig('validatePost', false);
+            $this->FormProtection->setConfig('validate', false);
         }
     }
 
@@ -231,7 +231,7 @@ class AttachmentsController extends AppController
                 }
 
                 $this->set(compact('files', 'error'));
-                $this->set('_serialize', ['files', 'error']);
+                $this->viewBuilder()->setOption('serialize', ['files', 'error']);
 
                 return;
             } else {
@@ -391,7 +391,7 @@ class AttachmentsController extends AppController
         }
 
         $this->set(compact('result'));
-        $this->set('_serialize', 'result');
+        $this->viewBuilder()->setOption('serialize', 'result');
     }
 
     public function process()

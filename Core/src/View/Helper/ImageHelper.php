@@ -14,7 +14,7 @@ use Cake\View\Helper\HtmlHelper;
 class ImageHelper extends HtmlHelper
 {
 
-    public $helpers = [
+    public array $helpers = [
         'Html',
         'Theme',
         'Url',

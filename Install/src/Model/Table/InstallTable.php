@@ -37,9 +37,9 @@ class InstallTable extends Table
      */
     public function addAdminUser($user)
     {
-        $Users = TableRegistry::get('Croogo/Users.Users');
+        $Users = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Users');
         $Users->removeBehavior('Cached');
-        $Roles = TableRegistry::get('Croogo/Users.Roles');
+        $Roles = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Roles');
         $Roles->addBehavior('Croogo/Core.Aliasable');
         $Users->getValidator('default')->remove('email')->remove('password');
         $user['name'] = $user['username'];

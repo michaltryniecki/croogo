@@ -19,7 +19,7 @@ use Croogo\Settings\Model\Entity\Setting;
 class SettingsFormHelper extends Helper
 {
 
-    public $helpers = [
+    public array $helpers = [
         'Form' => [
             'className' => 'Croogo/Core.Form'
         ],

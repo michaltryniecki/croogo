@@ -4,8 +4,7 @@ namespace Croogo\Extensions\Controller\Admin;
 
 use Cake\Cache\Cache;
 use Cake\Core\App;
-use Cake\Filesystem\File;
-use Cake\Filesystem\Folder;
+use Croogo\Core\Utility\FsUtils;
 use Cake\I18n\I18n;
 use Locale;
 
@@ -43,13 +42,11 @@ class LocalesController extends AppController
         $this->set('title_for_layout', __d('croogo', 'Locales'));
 
         $locales = [];
-        $folder = new Folder;
         $paths = App::path('Locale');
         $currentLocale = I18n::getLocale();
         foreach ($paths as $path) {
-            $folder->path = $path;
-            $content = $folder->read();
-            foreach ($content['0'] as $locale) {
+            $content = FsUtils::read($path);
+            foreach ($content[0] as $locale) {
                 if (strstr($locale, '.') !== false) {
                     continue;
                 }
@@ -88,7 +85,7 @@ class LocalesController extends AppController
 
         $result = $this->Settings->write('Site.locale', $locale);
         if ($result) {
-            Cache::clear(false, '_cake_core_');
+            Cache::clear(false, '_cake_translations_');
             Cache::clear(false, 'croogo_menus');
             $this->Flash->success(__d('croogo', "Locale '%s' set as default", $locale));
         } else {
@@ -113,7 +110,7 @@ class LocalesController extends AppController
         }
         $result = $this->Settings->write('Site.locale', '');
         if ($result) {
-            Cache::clear(false, '_cake_core_');
+            Cache::clear(false, '_cake_translations_');
             Cache::clear(false, 'croogo_menus');
             $this->Flash->success(__d('croogo', "Locale '%s' deactivated", $locale));
         } else {
@@ -227,8 +224,11 @@ class LocalesController extends AppController
             return $this->redirect(['action' => 'index']);
         }
 
-        $file = new File($poFile, true);
-        $content = $file->read();
+        // Cake 5: File usunięty — natywne operacje plikowe.
+        if (!file_exists($poFile)) {
+            touch($poFile);
+        }
+        $content = (string)file_get_contents($poFile);
 
         $locale = [
             'locale' => $locale,
@@ -238,7 +238,7 @@ class LocalesController extends AppController
 
         if (!empty($this->getRequest()->data)) {
             // save
-            if ($file->write($this->getRequest()->getData('content'))) {
+            if (file_put_contents($poFile, $this->getRequest()->getData('content')) !== false) {
                 $this->Flash->success(__d('croogo', 'Locale updated successfully'));
 
                 return $this->redirect(['action' => 'index']);
@@ -264,8 +264,7 @@ class LocalesController extends AppController
             return $this->redirect(['action' => 'index']);
         }
 
-        $file = new File($poFile, true);
-        if ($file->delete()) {
+        if (file_exists($poFile) && unlink($poFile)) {
             $this->Flash->success(__d('croogo', 'Locale deleted successfully.'));
         } else {
             $this->Flash->error(__d('croogo', 'Local could not be deleted.'));

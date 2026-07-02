@@ -19,6 +19,7 @@ use Acl\AclInterface;
 use Cake\Cache\Cache;
 use Cake\Controller\Component;
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Text;
@@ -110,7 +111,7 @@ class CachedDbAcl extends DbAcl implements AclInterface
             }
 
             if (empty($entity)) {
-                throw new Exception\Exception(
+                throw new CakeException(
                     __d(
                         'cake_dev',
                         "Entity class {0} not found in CachedDbAcl::_getNodeCacheKey() when trying to bind {1} object",

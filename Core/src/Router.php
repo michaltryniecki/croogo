@@ -166,11 +166,9 @@ class Router extends CakeRouter
     public static function routableContentTypes($routeBuilder): void
     {
         try {
-            $types = TableRegistry::get('Croogo/Taxonomy.Types')->find('all', [
-                'cache' => [
-                    'name' => 'types',
-                    'config' => 'croogo_types',
-                ],
+            $types = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Taxonomy.Types')->find('all', cache: [
+                'name' => 'types',
+                'config' => 'croogo_types',
             ]);
             $aliases = [];
             foreach ($types as $type) {

@@ -158,7 +158,7 @@ class TrackableBehavior extends Behavior
     {
         $config = $this->getConfig();
 
-        $User = TableRegistry::get($config['userModel']);
+        $User = \Cake\ORM\TableRegistry::getTableLocator()->get($config['userModel']);
         $userAlias = $User->getAlias();
         $userPk = $User->getPrimaryKey();
 

@@ -2,7 +2,7 @@
 
 namespace Croogo\Acl\Auth;
 
-use Cake\Auth\BaseAuthenticate;
+use Croogo\Core\Auth\BaseAuthenticate;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Http\Response;
@@ -157,7 +157,7 @@ class CookieAuthenticate extends BaseAuthenticate
             $conditions = array_merge($conditions, $this->settings['scope']);
         }
 
-        $query = TableRegistry::get($userModel)->find()
+        $query = \Cake\ORM\TableRegistry::getTableLocator()->get($userModel)->find()
             ->where($conditions);
 
         if (!empty($config['contain'])) {

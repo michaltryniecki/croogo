@@ -15,13 +15,13 @@
 namespace Acl;
 
 use Acl\Controller\Component\AclComponent;
-use Cake\Console\Shell;
+use Cake\Console\ConsoleIo;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Folder;
+use Croogo\Core\Utility\FsUtils;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
@@ -94,7 +94,7 @@ class AclExtras
     /** @var \Cake\Controller\Controller */
     protected $controller;
 
-    /** @var \Cake\Console\Shell */
+    /** @var \Cake\Console\ConsoleIo */
     protected $Shell;
 
     /**
@@ -352,12 +352,10 @@ class AclExtras
     {
         if (!$plugin) {
             $path = App::classPath('Controller' . (empty($prefix) ? '' : DS . Inflector::camelize($prefix)));
-            $dir = new Folder($path[0]);
-            $controllers = $dir->find('.*Controller\.php');
+            $controllers = FsUtils::find($path[0], '.*Controller\.php');
         } else {
             $path = Plugin::classPath($plugin) . 'Controller' . DS. (empty($prefix) ? '' : DS . Inflector::camelize($prefix));
-            $dir = new Folder($path);
-            $controllers = $dir->find('.*Controller\.php');
+            $controllers = FsUtils::find($path, '.*Controller\.php');
         }
 
         return $controllers;
@@ -610,7 +608,7 @@ class AclExtras
     /**
      * Get the attached shell.
      *
-     * @return \Cake\Console\Shell
+     * @return \Cake\Console\ConsoleIo
      */
     public function getShell()
     {
@@ -620,10 +618,10 @@ class AclExtras
     /**
      * Attach a shell for output.
      *
-     * @param \Cake\Console\Shell $shell Shell to attach
+     * @param \Cake\Console\ConsoleIo $shell Shell to attach
      * @return void
      */
-    public function setShell(Shell $shell)
+    public function setShell(ConsoleIo $shell)
     {
         $this->Shell = $shell;
     }

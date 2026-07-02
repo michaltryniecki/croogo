@@ -19,7 +19,7 @@ use InvalidArgumentException;
  */
 class CachedBehavior extends Behavior
 {
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'groups' => []
     ];
 

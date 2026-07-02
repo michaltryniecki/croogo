@@ -2,7 +2,7 @@
 
 namespace Croogo\Core\Controller\Api;
 
-use Cake\Controller\Component\AuthComponent;
+use Croogo\Core\Controller\Component\AuthComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -76,8 +76,9 @@ class AppController extends Controller
     {
         parent::initialize();
 
-        $this->loadComponent('Auth', $this->setupAuthConfig());
-        $this->loadComponent('RequestHandler');
+        $this->loadComponent('Croogo/Core.Auth', $this->setupAuthConfig());
+        // Cake 5: RequestHandlerComponent usunięty — negocjacja treści JSON:API
+        // przechodzi przez Crud/CrudJsonApi i ViewBuilder.
 
         $this->loadComponent('Crud.Crud', [
             'actions' => [

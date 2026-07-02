@@ -23,7 +23,7 @@ use Cake\Utility\Text;
 class RoleAroBehavior extends Behavior
 {
 
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'implementedFinders' => [
             'roleHierarchy' => 'findRoleHierarchy',
         ],
@@ -88,7 +88,7 @@ class RoleAroBehavior extends Behavior
      *
      * binds Aro model so that it gets retrieved during admin_[edit|add].
      */
-    public function findRoleHierarchy(Query $query, array $options)
+    public function findRoleHierarchy(\Cake\ORM\Query\SelectQuery $query, array $options)
     {
         $alias = $this->_table->getAlias();
         $primaryKey = $this->_table->getPrimaryKey();

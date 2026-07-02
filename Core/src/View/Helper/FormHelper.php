@@ -16,7 +16,7 @@ use Croogo\Extensions\CroogoTheme;
 class FormHelper extends BaseFormHelper
 {
 
-    public $helpers = [
+    public array $helpers = [
         'Html',
         'Url',
         'Croogo/Core.Theme',
@@ -92,7 +92,7 @@ class FormHelper extends BaseFormHelper
     /**
      * placeholderOptions
      */
-    protected function _placeholderOptions($fieldName, $options = [])
+    protected function _placeholderOptions(string $fieldName, array $options): array
     {
         $autoPlaceholder = empty($options['placeholder']) &&
             isset($this->_inputDefaults['placeholder']) &&

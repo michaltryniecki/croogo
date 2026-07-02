@@ -2,13 +2,13 @@
 
 namespace Croogo\Users\Model\Entity;
 
-use Cake\Auth\DefaultPasswordHasher;
+use Croogo\Core\Auth\DefaultPasswordHasher;
 use Cake\ORM\Entity;
 
 class User extends Entity
 {
 
-    protected $_hidden = ['password', 'activation_key'];
+    protected array $_hidden = ['password', 'activation_key'];
 
     /**
      * Hashes password when setting

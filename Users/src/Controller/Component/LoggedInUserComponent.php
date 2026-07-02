@@ -21,7 +21,7 @@ class LoggedInUserComponent extends Component
             return;
         }
 
-        $users = TableRegistry::get('Croogo/Users.Users');
+        $users = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Users');
         $controller->set('loggedInUser', $users->get($controller->Auth->user('id')));
     }
 }

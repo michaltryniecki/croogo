@@ -342,7 +342,8 @@ class Croogo
      */
     public static function dispatchEvent($name, $subject = null, $data = null)
     {
-        $event = new Event($name, $subject, $data);
+        // Cake 5: Event::__construct wymaga array w $data.
+        $event = new Event($name, $subject, (array)$data);
         if ($subject) {
             $event = $subject->getEventManager()->dispatch($event);
         } else {

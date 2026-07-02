@@ -56,7 +56,7 @@ class HabtmDbAcl extends CachedDbAcl
         }
         extract($this->settings);
 
-        $User = TableRegistry::get($userModel);
+        $User = \Cake\ORM\TableRegistry::getTableLocator()->get($userModel);
         list($plugin, $groupAlias) = pluginSplit($groupAlias);
         $assoc = $User->associations()->get($groupAlias);
 

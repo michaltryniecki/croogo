@@ -33,7 +33,7 @@ class LayoutHelper extends Helper
      * @var array
      * @access public
      */
-    public $helpers = [
+    public array $helpers = [
         'Croogo/Core.Croogo',
         'Croogo/Core.Theme',
         'Html',

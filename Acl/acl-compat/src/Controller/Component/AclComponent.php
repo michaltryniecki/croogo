@@ -21,7 +21,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Configure\Engine\IniConfig;
-use Cake\Core\Exception\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 
@@ -72,7 +72,7 @@ class AclComponent extends Component
         if (!class_exists($className)) {
             $className = App::className('Acl.' . $name, 'Adapter');
             if (!$className) {
-                throw new Exception(sprintf('Could not find %s.', $name));
+                throw new CakeException(sprintf('Could not find %s.', $name));
             }
         }
         $this->adapter($className);
@@ -97,7 +97,7 @@ class AclComponent extends Component
                 $adapter = new $adapter();
             }
             if (!$adapter instanceof AclInterface) {
-                throw new Exception('AclComponent adapters must implement AclInterface');
+                throw new CakeException('AclComponent adapters must implement AclInterface');
             }
             $this->_Instance = $adapter;
             $this->_Instance->initialize($this);

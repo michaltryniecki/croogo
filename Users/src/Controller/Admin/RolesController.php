@@ -16,7 +16,7 @@ use Cake\Event\Event;
  */
 class RolesController extends AppController
 {
-    public $modelClass = 'Croogo/Users.Roles';
+    public ?string $modelClass = 'Croogo/Users.Roles';
 
     public function initialize(): void
     {

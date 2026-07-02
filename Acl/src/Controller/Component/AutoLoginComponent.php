@@ -21,7 +21,7 @@ use Cake\Event\Event;
 class AutoLoginComponent extends Component
 {
 
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'cookieName' => 'CAL',
         'cookieConfig' => [
             'expires' => '+1 day',

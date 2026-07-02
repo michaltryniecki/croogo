@@ -32,7 +32,7 @@ class JsHelper extends Helper
      *
      * @var array
      */
-    public $helpers = ['Html', 'Form'];
+    public array $helpers = ['Html', 'Form'];
 
     /**
      * Variables to pass to Javascript.

@@ -37,7 +37,7 @@ class CollectShell extends Shell
         if (isset($this->params['regex'])) {
             $regex = $this->params['regex'];
         }
-        $Attachment = TableRegistry::get('Croogo/FileManager.Attachments');
+        $Attachment = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/FileManager.Attachments');
         $importTask = $Attachment->importTask((array)$dir, $regex);
         if (!empty($importTask['error'])) {
             $this->out('<error>Warnings/Errors:</error>');

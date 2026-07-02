@@ -16,7 +16,7 @@
 namespace Acl\Model\Table;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception;
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
@@ -45,7 +45,7 @@ class AclNodesTable extends Table
      * Retrieves the Aro/Aco node for this model
      *
      * @param string|array|Table $ref Array with 'model' and 'foreign_key', model object, or string value
-     * @return array|Query|false Node found in database
+     * @return array|\Cake\ORM\Query\SelectQuery|false Node found in database
      * @throws \Cake\Core\Exception\Exception when binding to a model that doesn't exist.
      */
     public function node($ref = null)
@@ -136,7 +136,7 @@ class AclNodesTable extends Table
             }
 
             if (empty($entity)) {
-                throw new Exception\Exception(__d('cake_dev', "Entity class {0} not found in AclNode::node() when trying to bind {1} object", [$type, $this->getAlias()]));
+                throw new CakeException(__d('cake_dev', "Entity class {0} not found in AclNode::node() when trying to bind {1} object", [$type, $this->getAlias()]));
             }
 
             $tmpRef = null;
@@ -185,7 +185,7 @@ class AclNodesTable extends Table
             $query = $this->find('all', $queryData);
 
             if ($query->count() == 0) {
-                throw new Exception\Exception(__d('cake_dev', "AclNode::node() - Couldn't find %s node identified by \"%s\"", [$type, print_r($ref, true)]));
+                throw new CakeException(__d('cake_dev', "AclNode::node() - Couldn't find %s node identified by \"%s\"", [$type, print_r($ref, true)]));
             }
         }
 

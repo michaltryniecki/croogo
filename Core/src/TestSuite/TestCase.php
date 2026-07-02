@@ -66,7 +66,7 @@ class TestCase extends CakeTestCase
         }
     }
 
-    public function assertQueryCount($count, Query $query, $message = '')
+    public function assertQueryCount($count, \Cake\ORM\Query\SelectQuery $query, $message = '')
     {
         if (!is_int($count)) {
             throw new InvalidArgumentException('Argument 1 must be of type integer.');

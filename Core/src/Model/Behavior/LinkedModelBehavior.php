@@ -14,12 +14,12 @@ use Cake\ORM\TableRegistry;
 class LinkedModelBehavior extends Behavior
 {
 
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'modelField' => 'model',
         'foreignKeyField' => 'foreign_key'
     ];
 
-    public function findRelatedEntity(Query $query)
+    public function findRelatedEntity(\Cake\ORM\Query\SelectQuery $query)
     {
         $query->formatResults(function (ResultSet $resultSet) {
             return $resultSet->map(function (Entity $entity) {
@@ -42,6 +42,6 @@ class LinkedModelBehavior extends Behavior
      */
     public function relatedTable(Entity $comment)
     {
-        return TableRegistry::get($comment->get($this->getConfig('modelField')));
+        return \Cake\ORM\TableRegistry::getTableLocator()->get($comment->get($this->getConfig('modelField')));
     }
 }

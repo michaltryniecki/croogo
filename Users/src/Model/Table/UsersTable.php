@@ -102,7 +102,7 @@ class UsersTable extends CroogoTable
             ]
         ]);
 
-        $user->set([
+        $user->patch([
             'role_id' => $this->Roles->byAlias('registered'),
             'activation_key' => $this->generateActivationKey(),
         ]);
@@ -283,7 +283,7 @@ class UsersTable extends CroogoTable
             ]);
     }
 
-    public function findFilterMultiRoles(Query $query, array $options)
+    public function findFilterMultiRoles(\Cake\ORM\Query\SelectQuery $query, array $options)
     {
         $roleId = isset($options['role_id']) ? $options['role_id'] : false;
         $query
@@ -306,7 +306,7 @@ class UsersTable extends CroogoTable
         return bin2hex(Security::randomBytes($length));
     }
 
-    public function findAuthUser(Query $query, array $options)
+    public function findAuthUser(\Cake\ORM\Query\SelectQuery $query, array $options)
     {
         return $query
             ->where([$this->aliasField('status') => 1]);

@@ -33,7 +33,7 @@ class EventManager extends CakeEventManager
      * Returns the globally available instance of a EventManager
      * @return EventManager the global event manager
      */
-    public static function instance($manager = null)
+    public static function instance(?\Cake\Event\EventManager $manager = null): \Cake\Event\EventManager
     {
         if (empty(self::$_generalManager)) {
             return parent::instance(new EventManager());
