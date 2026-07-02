@@ -31,7 +31,6 @@ class AttachmentsController extends AppController
      * @access public
      */
     public array $paginate = [
-        'paramType' => 'querystring',
         'limit' => 5,
     ];
 
@@ -159,7 +158,8 @@ class AttachmentsController extends AppController
             $query->find($finder);
         }
 
-        $query->formatResults([$this->Attachments, 'getVideoPoster']);
+        // Cake 5: formatResults przyjmuje tylko Closure
+        $query->formatResults($this->Attachments->getVideoPoster(...));
 
         $this->set('attachments', $this->paginate($query));
 

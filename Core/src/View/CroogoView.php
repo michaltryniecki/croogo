@@ -81,6 +81,12 @@ class CroogoView extends AppView
 
         parent::loadHelpers();
 
+        // Cake 5: helpery nie doładowują się magicznie na poziomie widoku, a szablony
+        // Croogo używają $this->Theme wprost - gwarantujemy jego obecność.
+        if (!$this->helpers()->has('Theme')) {
+            $this->loadHelper('Croogo/Core.Theme');
+        }
+
         $prefix = $this->getRequest()->getParam('prefix') ?: '';
         if ($prefix === 'Admin') {
             $this->loadHelper('Croogo/Core.Croogo');

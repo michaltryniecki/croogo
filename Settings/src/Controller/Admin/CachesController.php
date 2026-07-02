@@ -40,7 +40,7 @@ class CachesController extends AppController
         if ($config === 'all') {
             $result = Cache::clearAll();
         } else {
-            $result = Cache::clear(false, $config);
+            $result = Cache::clear($config);
         }
         if ($result) {
             $this->Flash->success(__d('croogo', "Cache '%s' cleared", $config));

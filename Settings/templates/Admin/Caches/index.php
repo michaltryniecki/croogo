@@ -30,8 +30,10 @@ $this->append('action-buttons');
         ]);
     $this->end();
 
+    // Cake 5: PaginatorHelper wymaga setPaginated(), a lista cache nie jest
+    // paginowana (Cache::configured()) - zwykly naglowek zamiast sort-linka.
     $tableHeaders = $this->Html->tableHeaders([
-    $this->Paginator->sort('title', __d('croogo', 'Cache')),
+    __d('croogo', 'Cache'),
     __d('croogo', 'Engine'),
     __d('croogo', 'Duration'),
     __d('croogo', 'Actions')

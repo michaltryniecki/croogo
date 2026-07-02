@@ -3,7 +3,7 @@
 namespace Croogo\Extensions\Controller\Admin;
 
 use Cake\Cache\Cache;
-use Cake\Core\App;
+use Cake\Core\Configure;
 use Croogo\Core\Utility\FsUtils;
 use Cake\I18n\I18n;
 use Locale;
@@ -42,7 +42,8 @@ class LocalesController extends AppController
         $this->set('title_for_layout', __d('croogo', 'Locales'));
 
         $locales = [];
-        $paths = App::path('Locale');
+        // Cake 5: App::path('Locale') usuniete - sciezki locales sa w konfiguracji
+        $paths = (array)Configure::read('App.paths.locales');
         $currentLocale = I18n::getLocale();
         foreach ($paths as $path) {
             $content = FsUtils::read($path);
@@ -65,7 +66,7 @@ class LocalesController extends AppController
             }
         }
 
-        $this->set(compact('content', 'locales'));
+        $this->set(compact('locales'));
     }
 
     /**
@@ -85,8 +86,8 @@ class LocalesController extends AppController
 
         $result = $this->Settings->write('Site.locale', $locale);
         if ($result) {
-            Cache::clear(false, '_cake_translations_');
-            Cache::clear(false, 'croogo_menus');
+            Cache::clear('_cake_translations_');
+            Cache::clear('croogo_menus');
             $this->Flash->success(__d('croogo', "Locale '%s' set as default", $locale));
         } else {
             $this->Flash->error(__d('croogo', 'Could not save Locale setting.'));
@@ -110,8 +111,8 @@ class LocalesController extends AppController
         }
         $result = $this->Settings->write('Site.locale', '');
         if ($result) {
-            Cache::clear(false, '_cake_translations_');
-            Cache::clear(false, 'croogo_menus');
+            Cache::clear('_cake_translations_');
+            Cache::clear('croogo_menus');
             $this->Flash->success(__d('croogo', "Locale '%s' deactivated", $locale));
         } else {
             $this->Flash->error(__d('croogo', 'Could not save Locale setting.'));
@@ -280,7 +281,7 @@ class LocalesController extends AppController
      */
     private function __getPoFile($locale)
     {
-        $paths = App::path('Locale');
+        $paths = (array)Configure::read('App.paths.locales');
         foreach ($paths as $path) {
             $poFile = $path . $locale . DS . 'croogo.po';
 

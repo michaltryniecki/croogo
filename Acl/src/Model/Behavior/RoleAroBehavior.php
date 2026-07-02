@@ -112,7 +112,7 @@ class RoleAroBehavior extends Behavior
                         $result->setDirty('parent_id', false);
                         $result->setDirty('lft', false);
                         $result->setDirty('rght', false);
-                        $result->unsetProperty('parent_aro');
+                        $result->unset('parent_aro');
                     }
                 }
 

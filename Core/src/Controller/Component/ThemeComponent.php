@@ -38,7 +38,8 @@ class ThemeComponent extends Component
         $this->_controller->viewBuilder()->setTheme($theme);
         $this->loadThemeSettings($theme);
 
-        $this->_controller->viewBuilder()->setHelpers(['Croogo/Core.Theme']);
+        // Cake 5: setHelpers() zastepuje liste (w Cake 4 mergowal) -> addHelpers
+        $this->_controller->viewBuilder()->addHelpers(['Croogo/Core.Theme']);
     }
 
     /**
@@ -61,6 +62,6 @@ class ThemeComponent extends Component
             }
         }
 
-        $this->_controller->viewBuilder()->setHelpers($themeHelpers);
+        $this->_controller->viewBuilder()->addHelpers($themeHelpers);
     }
 }
