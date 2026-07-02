@@ -97,11 +97,11 @@ class PermissionsController extends AppController
         if ($this->getRequest()->is('ajax') && isset($query)) {
             $this->render('Croogo/Acl.acl_permissions_table');
         } elseif ($isJson) {
-            // _ext=json ustawia subDir 'json' -> render('index') trafia w
-            // Admin/Permissions/json/index.php (echo json_encode). Bez layoutu.
+            // Detekcja po naglowku Accept (bez _ext=json) NIE ustawia subDir 'json',
+            // wiec szablon json/index.php (echo json_encode) wskazujemy jawnie.
             $this->viewBuilder()->disableAutoLayout();
             $this->setResponse($this->getResponse()->withType('application/json'));
-            $this->render('index');
+            $this->render('json/index');
         } else {
             $this->_setPermissionRoots();
         }
