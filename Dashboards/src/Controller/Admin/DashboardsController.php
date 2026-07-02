@@ -97,7 +97,8 @@ class DashboardsController extends AppController
         if (!$userId) {
             throw new CakeException('You must be logged in');
         }
-        $data = Hash::insert($this->getRequest()->data['dashboard'], '{n}.user_id', $userId);
+        // Cake 5: legacy property $request->data nie istnieje -> getData()
+        $data = Hash::insert((array)$this->getRequest()->getData('dashboard'), '{n}.user_id', $userId);
         $dashboardIds = array_filter(Hash::extract($data, '{n}.id'));
         $query = $this->Dashboards->find();
         if ($dashboardIds) {

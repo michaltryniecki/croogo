@@ -188,7 +188,9 @@ class FileManagerHelper extends Helper
         if (isset($url['action']) && in_array($url['action'], $this->__postLinkActions)) {
             $output = $this->Form->postLink($title, $url, ['data' => compact('path'), 'escape' => true], __d('croogo', 'Are you sure?'));
         } else {
-            $url[$pathKey] = $path;
+            // Cake 5: nieznane klucze w tablicy URL sa GUBIONE (w Cake 3 szly
+            // do query stringa) -> jawnie do '?'
+            $url['?'][$pathKey] = $path;
             $output = $this->Html->link($title, $url, [
                 'class' => $class,
             ]);

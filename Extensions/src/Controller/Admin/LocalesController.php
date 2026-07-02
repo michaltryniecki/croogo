@@ -130,16 +130,24 @@ class LocalesController extends AppController
     {
         $this->set('title_for_layout', __d('croogo', 'Upload a new locale'));
 
-        if ($this->getRequest()->is('post') && !empty($this->getRequest()->data)) {
-            $file = $this->getRequest()->data['Locale']['file'];
-            unset($this->getRequest()->data['Locale']['file']);
+        if ($this->getRequest()->is('post') && !empty($this->getRequest()->getData())) {
+            // Cake 5: upload to obiekt UploadedFileInterface; PHP 8: zip_* usuniete -> ZipArchive
+            $file = $this->getRequest()->getData('Locale.file');
+            if (!($file instanceof \Psr\Http\Message\UploadedFileInterface) ||
+                $file->getError() !== UPLOAD_ERR_OK
+            ) {
+                $this->Flash->error(__d('croogo', 'Invalid locale.'));
+
+                return $this->redirect(['action' => 'add']);
+            }
+            $tmpName = $file->getStream()->getMetadata('uri');
 
             // get locale name
-            $zip = zip_open($file['tmp_name']);
+            $zip = new \ZipArchive();
             $locale = null;
-            if ($zip) {
-                while ($zipEntry = zip_read($zip)) {
-                    $zipEntryName = zip_entry_name($zipEntry);
+            if ($zip->open($tmpName) === true) {
+                for ($idx = 0; $idx < $zip->numFiles; $idx++) {
+                    $zipEntryName = (string)$zip->getNameIndex($idx);
                     if (strstr($zipEntryName, 'LC_MESSAGES')) {
                         $zipEntryNameE = explode('/LC_MESSAGES', $zipEntryName);
                         if (isset($zipEntryNameE['0'])) {
@@ -150,8 +158,8 @@ class LocalesController extends AppController
                         }
                     }
                 }
+                $zip->close();
             }
-            zip_close($zip);
 
             if (!$locale) {
                 $this->Flash->error(__d('croogo', 'Invalid locale.'));
@@ -165,11 +173,11 @@ class LocalesController extends AppController
                 return $this->redirect(['action' => 'add']);
             }
 
-            // extract
-            $zip = zip_open($file['tmp_name']);
-            if ($zip) {
-                while ($zipEntry = zip_read($zip)) {
-                    $zipEntryName = zip_entry_name($zipEntry);
+            // extract (PHP 8: zip_* usuniete -> ZipArchive)
+            $zip = new \ZipArchive();
+            if ($zip->open($tmpName) === true) {
+                for ($idx = 0; $idx < $zip->numFiles; $idx++) {
+                    $zipEntryName = (string)$zip->getNameIndex($idx);
                     if (strstr($zipEntryName, $locale . '/')) {
                         $zipEntryNameE = explode($locale . '/', $zipEntryName);
                         if (isset($zipEntryNameE['1'])) {
@@ -180,22 +188,21 @@ class LocalesController extends AppController
 
                         if (substr($path, strlen($path) - 1) == DS) {
                             // create directory
-                            mkdir($path);
+                            mkdir($path, 0777, true);
                         } else {
                             // create file
-                            if (zip_entry_open($zip, $zipEntry, 'r')) {
-                                $fileContent = zip_entry_read($zipEntry, zip_entry_filesize($zipEntry));
-                                touch($path);
-                                $fh = fopen($path, 'w');
-                                fwrite($fh, $fileContent);
-                                fclose($fh);
-                                zip_entry_close($zipEntry);
+                            $fileContent = $zip->getFromIndex($idx);
+                            if ($fileContent !== false) {
+                                if (!is_dir(dirname($path))) {
+                                    mkdir(dirname($path), 0777, true);
+                                }
+                                file_put_contents($path, $fileContent);
                             }
                         }
                     }
                 }
+                $zip->close();
             }
-            zip_close($zip);
 
             return $this->redirect(['action' => 'index']);
         }
@@ -237,7 +244,7 @@ class LocalesController extends AppController
             'schema' => true,
         ];
 
-        if (!empty($this->getRequest()->data)) {
+        if (!empty($this->getRequest()->getData())) {
             // save
             if (file_put_contents($poFile, $this->getRequest()->getData('content')) !== false) {
                 $this->Flash->success(__d('croogo', 'Locale updated successfully'));
