@@ -211,13 +211,14 @@ class Router extends CakeRouter
      *
      * @return void
      */
-    public static function homepage(): void
+    public static function homepage(RouteBuilder $routes): void
     {
         $homeUrl = Configure::read('Site.home_url');
         if ($homeUrl && strpos($homeUrl, ':') !== false) {
             $converter = new StringConverter();
             $url = $converter->linkStringToArray($homeUrl);
-            Router::connect('/', $url);
+            // Cake 5: statyczne Router::connect() usunięte — trasy łączymy przez builder.
+            $routes->connect('/', $url);
         }
     }
 }
