@@ -32,20 +32,12 @@ class ComposerInstaller
 
         $plugins = [];
         // Shim ACL (plugin `Acl`) — zvendorowany cakephp/acl w Acl/acl-compat.
-        $plugins[] = "\t\t'Acl' => \$baseDir . '" .
-            DIRECTORY_SEPARATOR . "vendor" .
-            DIRECTORY_SEPARATOR . "croogo" .
-            DIRECTORY_SEPARATOR . "croogo" .
-            DIRECTORY_SEPARATOR . "Acl" .
-            DIRECTORY_SEPARATOR . "acl-compat" .
-            DIRECTORY_SEPARATOR . "',";
+        // Uwaga: używamy dosłownego '/' zamiast DIRECTORY_SEPARATOR. Na Windows separator
+        // to '\', więc wpis kończył się na "...\'," — w apostrofach PHP \' to escape'owany
+        // apostrof, string się nie zamykał i cakephp-plugins.php miał parse error.
+        $plugins[] = "\t\t'Acl' => \$baseDir . '/vendor/croogo/croogo/Acl/acl-compat/',";
         foreach ($corePlugins as $plugin) {
-            $plugins[] = "\t\t'Croogo/" . $plugin . "' => \$baseDir . '" .
-                DIRECTORY_SEPARATOR . "vendor" .
-                DIRECTORY_SEPARATOR . "croogo" .
-                DIRECTORY_SEPARATOR . "croogo" .
-                DIRECTORY_SEPARATOR . $plugin .
-                DIRECTORY_SEPARATOR . "',";
+            $plugins[] = "\t\t'Croogo/{$plugin}' => \$baseDir . '/vendor/croogo/croogo/{$plugin}/',";
         }
         $plugins[] = "\t],";
 
