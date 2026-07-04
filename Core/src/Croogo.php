@@ -290,7 +290,9 @@ class Croogo
         }
 
         if ($option) {
-            return $options[$option];
+            // PHP 8: dostęp do offsetu na null daje warning. Configure::read może zwrócić
+            // null, gdy dla obiektu nie ma zarejestrowanych opcji.
+            return $options[$option] ?? null;
         }
 
         return $options;

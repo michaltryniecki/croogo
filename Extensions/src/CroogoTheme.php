@@ -286,6 +286,9 @@ class CroogoTheme
      */
     public static function config($theme = null)
     {
+        // PHP 8.5: null jako offset tablicy ($themeData[$theme]) jest deprecated.
+        // Prefix pusty na froncie/instalatorze wołał config(null) — normalizujemy na wejściu.
+        $theme = $theme ?? '';
         static $croogoTheme = null;
         static $themeData = [];
         if ($croogoTheme === null) {
