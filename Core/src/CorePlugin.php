@@ -35,7 +35,7 @@ class CorePlugin extends BasePlugin
     public function routes(RouteBuilder $routes): void
     {
         parent::routes($routes);
-        Router::homepage();
+        Router::homepage($routes);
     }
 
 }
