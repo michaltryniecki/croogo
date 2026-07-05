@@ -183,10 +183,11 @@ class HtmlHelper extends BaseHtmlHelper
     {
         $iconDefaults = $this->getConfig('iconDefaults');
 
-        $defaults = [
-            'iconSet' => $iconDefaults['iconSet'],
-        ];
-        $options += $defaults;
+        // BootstrapUI 5: klasa bazowa ikony pochodzi z 'namespace' (domyślnie 'bi'),
+        // nie z legacy 'iconSet' (BS-UI 2 / Cake 3). Mapujemy iconSet->namespace i
+        // zerujemy iconSet, bo BS-UI 5 go nie wyklucza -> wyciekał jako atrybut HTML.
+        $options += ['namespace' => $iconDefaults['iconSet'] ?? 'fa'];
+        $options['iconSet'] = null;
 
         return parent::icon($this->Theme->getIcon($name), $options);
     }

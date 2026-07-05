@@ -58,7 +58,9 @@ class CroogoView extends AppView
             $themePaths,
             $pluginPaths,
             $templatePaths,
-            [dirname(__DIR__) . DIRECTORY_SEPARATOR . static::NAME_TEMPLATE . DIRECTORY_SEPARATOR]
+            // Cake 5: szablony Core leżą w Core/templates/, nie Core/src/templates/.
+            // Z Core/src/View trzeba wyjść 2 poziomy (dirname(__DIR__,2) = Core).
+            [dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . static::NAME_TEMPLATE . DIRECTORY_SEPARATOR]
         );
 
         if ($plugin !== null) {
