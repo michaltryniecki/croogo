@@ -1380,6 +1380,10 @@ class PluginManager extends Plugin
         // Access musi być hookowany globalnie obok Filter — inaczej UsersController::login()
         // woła $this->Access->isUrlAuthorized() na null (500 po udanym logowaniu).
         Croogo::hookComponent('*', 'Croogo/Acl.Access');
+        // Acl/config/bootstrap.php (martwy na Cake 5) hookował behaviory ARO — przenosimy
+        // tu, inaczej /admin/users/roles = 500 i zapis usera nie synchronizuje ARO.
+        Croogo::hookBehavior('Croogo/Users.Users', 'Croogo/Acl.UserAro', ['priority' => 20]);
+        Croogo::hookBehavior('Croogo/Users.Roles', 'Croogo/Acl.RoleAro', ['priority' => 20]);
         // Cake 5: SecurityComponent usunięty -> FormProtectionComponent.
         // blackHoleCallback -> validationFailureCallback (Closure) ustawiany
         // per-request w AppController::beforeFilter (nie w statycznym hooku).

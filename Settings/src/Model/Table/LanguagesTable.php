@@ -27,7 +27,9 @@ class LanguagesTable extends CroogoTable
     {
         $this->addBehavior('Croogo/Core.Trackable');
         $this->addBehavior('ADmad/Sequence.Sequence', [
-            'order' => 'weight',
+            // admad/cakephp-sequence: 'order' zastąpiony 'sequenceField' (domyślne 'position'
+            // nie istnieje -> Unknown column w ORDER BY na każdym find).
+            'sequenceField' => 'weight',
         ]);
         $this->addBehavior('Search.Search');
         $this->addBehavior('Timestamp');

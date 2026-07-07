@@ -337,4 +337,72 @@ class FormHelper extends BaseFormHelper
 
         return $out;
     }
+
+    /**
+     * BootstrapUI 5 taguje select klasą Bootstrap-5-ową `form-select`. Admin działa na
+     * Bootstrap 4 — przywracamy `form-control` (mirror BootstrapUI::select).
+     */
+    public function select(string $fieldName, iterable $options = [], array $attributes = []): string
+    {
+        $attributes['injectFormControl'] = false;
+        $attributes = $this->injectClasses('form-control', $attributes);
+
+        return \Cake\View\Helper\FormHelper::select($fieldName, $options, $attributes);
+    }
+
+    /**
+     * BootstrapUI 5 zawsze dokłada `form-check-input`. To poprawne w kontenerze
+     * `.form-check`, ale psuje „gołe" checkboxy w komórkach tabel (BS4 pozycjonuje je
+     * absolutnie). `'formCheckInput' => false` pozwala się z tego wypisać.
+     */
+    public function checkbox(string $fieldName, array $options = []): array|string
+    {
+        if (array_key_exists('formCheckInput', $options) && $options['formCheckInput'] === false) {
+            unset($options['formCheckInput']);
+
+            return \Cake\View\Helper\FormHelper::checkbox($fieldName, $options);
+        }
+
+        return parent::checkbox($fieldName, $options);
+    }
+
+    /**
+     * BootstrapUI 5 przy align=inline generuje siatkę Bootstrap 5 (row/g-N/
+     * align-items-center + wrapper col-auto). Admin to Bootstrap 4 — sprowadzamy
+     * z powrotem do `form-inline` bez wrappera.
+     */
+    protected function _processFormOptions(array $options): array
+    {
+        $options = parent::_processFormOptions($options);
+        if ($this->_align === static::ALIGN_INLINE) {
+            $class = preg_replace('/\b(row|align-items-center|g-[0-9]+)\b/', '', (string)($options['class'] ?? ''));
+            $options['class'] = trim(preg_replace('/\s+/', ' ', $class . ' form-inline'));
+            $options['role'] = $options['role'] ?? 'form';
+            $options['templates']['elementWrapper'] = '{{content}}';
+        }
+
+        return $options;
+    }
+
+    /**
+     * Usuń Bootstrap-5-owe `form-label` (BS4 go nie zna) i zamień `visually-hidden`
+     * (BS5) na `sr-only` (BS4) na etykietach.
+     */
+    protected function _labelOptions(?string $fieldName, array $options): array
+    {
+        $options = parent::_labelOptions($fieldName, $options);
+        if (isset($options['label']['class'])) {
+            $class = (string)$options['label']['class'];
+            $class = preg_replace('/\bform-label\b/', '', $class);
+            $class = preg_replace('/\bvisually-hidden\b/', 'sr-only', $class);
+            $class = trim(preg_replace('/\s+/', ' ', $class));
+            if ($class === '') {
+                unset($options['label']['class']);
+            } else {
+                $options['label']['class'] = $class;
+            }
+        }
+
+        return $options;
+    }
 }

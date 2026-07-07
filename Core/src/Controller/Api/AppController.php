@@ -113,6 +113,30 @@ class AppController extends Controller
     }
 
     /**
+     * Cake 5: RequestHandlerComponent usunięty. Dla żądań .json (a) wybieramy JsonView,
+     * o ile Crud/CrudJsonApi nie ustawiło własnej klasy widoku, (b) mapujemy legacy
+     * zmienną widoku `_serialize` na opcję widoku `serialize`. Dzięki temu kontrolery
+     * API w stylu Cake 3 ($this->set(['_serialize' => [...]])) działają bez zmian.
+     *
+     * @param \Cake\Event\EventInterface $event
+     * @return void
+     */
+    public function beforeRender(\Cake\Event\EventInterface $event): void
+    {
+        parent::beforeRender($event);
+
+        $builder = $this->viewBuilder();
+        if ($builder->getClassName() === null && $this->getRequest()->getParam('_ext') === 'json') {
+            $builder->setClassName('Json');
+        }
+
+        $serialize = $builder->getVar('_serialize');
+        if ($serialize !== null && $builder->getOption('serialize') === null) {
+            $builder->setOption('serialize', $serialize);
+        }
+    }
+
+    /**
      * beforeFilter
      *
      * @return void

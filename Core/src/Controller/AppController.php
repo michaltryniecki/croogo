@@ -5,6 +5,7 @@ namespace Croogo\Core\Controller;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\Configure;
+use Cake\Datasource\Paging\PaginatedInterface;
 use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\Http\ResponseEmitter;
@@ -90,6 +91,16 @@ class AppController extends \App\Controller\AppController implements HookableCom
 
         parent::initialize();
 
+        // Cake 5: public $helpers na kontrolerze nie jest juz auto-ladowane. Doladowujemy
+        // je do ViewBuildera, zeby istniejace deklaracje ($this->helpers) dzialaly (BC).
+        if (property_exists($this, 'helpers') && !empty($this->helpers)) {
+            foreach ((array)$this->helpers as $name => $config) {
+                is_string($name)
+                    ? $this->viewBuilder()->addHelper($name, (array)$config)
+                    : $this->viewBuilder()->addHelper($config);
+            }
+        }
+
         $this->_setupAclComponent();
     }
 
@@ -103,6 +114,44 @@ class AppController extends \App\Controller\AppController implements HookableCom
         if (empty($this->viewBuilder()->getClassName()) || $this->viewBuilder()->getClassName() === 'App\View\AjaxView') {
             unset($this->viewClass);
             $this->viewBuilder()->setClassName('Croogo/Core.Croogo');
+        }
+
+        $this->_restoreLegacyPagingParam();
+    }
+
+    /**
+     * Cake 5 trzyma dane paginacji tylko w PaginatedResultSet (nie w request params jak
+     * Cake 3), a klucze zmieniły semantykę. ~34 szablony admina bramkują blok paginacji na
+     * request param 'paging' z legacy kluczami — odtwarzamy go z każdej zmiennej widoku
+     * implementującej PaginatedInterface.
+     *
+     * @return void
+     */
+    protected function _restoreLegacyPagingParam(): void
+    {
+        $builder = $this->viewBuilder();
+        $paging = [];
+        foreach ($builder->getVars() as $name) {
+            $var = $builder->getVar($name);
+            if (!$var instanceof PaginatedInterface) {
+                continue;
+            }
+            $params = $var->pagingParams();
+            $alias = $var->pagingParam('alias') ?? $name;
+            $paging[$alias] = [
+                'page' => $var->currentPage(),
+                'current' => $var->count(),
+                'count' => $var->totalCount(),
+                'perPage' => $var->perPage(),
+                'limit' => $var->perPage(),
+                'pageCount' => $var->pageCount(),
+                'prevPage' => $var->hasPrevPage(),
+                'nextPage' => $var->hasNextPage(),
+            ] + $params;
+        }
+        if ($paging) {
+            $existing = (array)$this->getRequest()->getParam('paging');
+            $this->setRequest($this->getRequest()->withParam('paging', $paging + $existing));
         }
     }
 

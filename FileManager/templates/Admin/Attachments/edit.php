@@ -68,6 +68,7 @@ $this->append('tab-content');
         $this->Form->button($this->Html->icon('save') . __d('croogo', 'Save'), [
             'icon' => 'save',
             'class' => 'btn-outline-success',
+            'escapeTitle' => false,
         ]) . ' ' .
         $this->Html->link(
             $this->Html->icon('times') . __d('croogo', 'Cancel'),
