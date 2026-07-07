@@ -22,12 +22,15 @@ $cancelLabel = $this->Html->icon('times') . $cancelText;
             'class' => 'cancel btn btn-outline-danger'
         ]);
     if ($applyText) :
+        // Cake 5: Form->button escapuje tytul przez escapeTitle (nie escape). Etykieta
+        // jest HTML (ikona), wiec bez tego renderowaloby doslownie <i ...>Zastosuj.
         echo $this->Form->button($applyLabel, ['class' => 'btn-outline-primary',
             'name' => '_apply',
+            'escapeTitle' => false,
         ]);
     endif;
-        
-        echo $this->Form->button($saveLabel, ['class' => 'btn-outline-success']);
+
+        echo $this->Form->button($saveLabel, ['class' => 'btn-outline-success', 'escapeTitle' => false]);
         ?>
     </div>
 </div>

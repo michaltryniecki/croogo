@@ -70,6 +70,26 @@ class CroogoView extends AppView
         return $this->_paths = $paths;
     }
 
+    /**
+     * Cake 5: helpery są dostępne wyłącznie przez View::__get() (bez właściwości i bez
+     * __isset), więc isset($this->Paginator) zawsze zwracało false — a ~34 szablony admina
+     * bramkują na tym blok paginacji. Odtwarzamy semantykę „helper istnieje".
+     *
+     * @param string $name Helper name
+     * @return bool
+     */
+    public function __isset(string $name): bool
+    {
+        if ($this->helpers()->has($name)) {
+            return true;
+        }
+        try {
+            return $this->loadHelper($name) !== null;
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
     public function loadHelpers(): void
     {
         // Aliasuj Html/Form na wersje Croogo PRZED parent (inaczej parent ładuje

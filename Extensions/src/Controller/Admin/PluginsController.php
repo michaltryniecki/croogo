@@ -28,6 +28,10 @@ class PluginsController extends AppController
         if ($name == 'corePlugins') {
             return Plugin::$corePlugins;
         }
+
+        // PHP 8: typ zwrotny :mixed wymaga return na kazdej sciezce; poza tym
+        // musimy delegowac do core'owego __get (magiczny dostep do komponentow/tabel).
+        return parent::__get($name);
     }
 
     /**

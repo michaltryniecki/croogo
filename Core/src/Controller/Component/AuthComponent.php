@@ -424,9 +424,17 @@ class AuthComponent extends Component implements EventDispatcherInterface
      */
     protected function _isLoginAction(Controller $controller): bool
     {
+        $loginAction = $this->_config['loginAction'];
+        // API ustawia loginAction => false (brak strony logowania). Cake 5
+        // Router::normalize() ma sygnaturę array|string -> TypeError na false.
+        // W Cake 3 normalize(false) po cichu dawało '/'.
+        if (!is_array($loginAction) && !is_string($loginAction)) {
+            return false;
+        }
+
         $uri = $controller->getRequest()->getUri();
         $url = Router::normalize($uri->getPath());
-        $loginAction = Router::normalize($this->_config['loginAction']);
+        $loginAction = Router::normalize($loginAction);
 
         return $loginAction === $url;
     }

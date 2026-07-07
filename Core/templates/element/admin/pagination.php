@@ -1,10 +1,10 @@
 <div class="pagination-wrapper">
     <p>
         <?php
-        echo $this->Paginator->counter([
-            'format' => __d('croogo',
-                'Page {{page}} of {{pages}}, showing {{current}} records out of {{count}} total'),
-        ]);
+        // Cake 5: counter() przyjmuje string (w Cake 3 tablicę z 'format'). Tokeny
+        // {{count}}/{{current}} Cake mapuje po staremu (count -> totalCount).
+        echo $this->Paginator->counter(__d('croogo',
+            'Page {{page}} of {{pages}}, showing {{current}} records out of {{count}} total'));
         ?>
     </p>
     <ul class="pagination justify-content-center pagination-sm">
