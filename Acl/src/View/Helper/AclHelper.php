@@ -85,8 +85,8 @@ class AclHelper extends Helper
                 [ ':plugin/', ':prefix', ':controller', ':action' ],
                 [
                     $plugin,
-                    Inflector::camelize($prefix),
-                    Inflector::camelize($controller),
+                    Inflector::camelize((string)$prefix),
+                    Inflector::camelize((string)$controller),
                     $action,
                 ],
                 'controllers/' . $path
