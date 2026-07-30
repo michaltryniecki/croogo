@@ -8,7 +8,6 @@ use Cake\Core\Configure;
 use Cake\Datasource\Paging\PaginatedInterface;
 use Cake\Event\Event;
 use Cake\Http\Response;
-use Cake\Http\ResponseEmitter;
 use Cake\Http\ServerRequest;
 use Cake\View\Exception\MissingTemplateException;
 use Closure;
@@ -259,11 +258,11 @@ class AppController extends \App\Controller\AppController implements HookableCom
     }
 
     /**
-     * blackHoleCallback for SecurityComponent
+     * validationFailureCallback for FormProtectionComponent
      *
-     * @return bool
+     * @return \Cake\Http\Response|null
      */
-    public function _securityError($type = null, $exception = null): void
+    public function _securityError($type = null, $exception = null): ?Response
     {
         switch ($type) {
             case 'auth':
@@ -289,11 +288,10 @@ class AppController extends \App\Controller\AppController implements HookableCom
             $theme = Configure::read('Site.theme');
         }
         $template = $theme . './Error/security';
-        $response = $this->render($template);
-        $response = $response->withStatus(400);
-        $emitter = new ResponseEmitter();
-        $emitter->emit($this->getResponse());
-        exit(-1);
+
+        // Cake 5: zwrocony Response staje sie wynikiem eventu Controller.startup,
+        // ControllerFactory konczy zadanie sam - bez recznej emisji i exit().
+        return $this->render($template)->withStatus(400);
     }
 
     /**
