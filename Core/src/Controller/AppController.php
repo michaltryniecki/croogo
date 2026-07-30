@@ -131,7 +131,8 @@ class AppController extends \App\Controller\AppController implements HookableCom
     {
         $builder = $this->viewBuilder();
         $paging = [];
-        foreach ($builder->getVars() as $name) {
+        // getVars() w Cake 5 zwraca mape nazwa => wartosc (nie liste nazw)
+        foreach ($builder->getVars() as $name => $var) {
             $var = $builder->getVar($name);
             if (!$var instanceof PaginatedInterface) {
                 continue;
