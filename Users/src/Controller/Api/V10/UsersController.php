@@ -49,7 +49,7 @@ class UsersController extends AppController
             'user' => $payload,
             'iat' => time(),
             'exp' => $exp,
-        ], Security::getSalt());
+        ], Security::getSalt(), 'HS256');
     }
 
     public function token()
