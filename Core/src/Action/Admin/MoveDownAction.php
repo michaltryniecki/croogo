@@ -116,7 +116,7 @@ class MoveDownAction extends BaseAction
         $entity->set($this->getConfig('field'), $entity->get($this->getConfig('field')) + $step);
 
         $this->_trigger('beforeMoveUp', $subject);
-        if (call_user_func([$this->_table(), $this->saveMethod()], $entity, $this->saveOptions())) {
+        if (call_user_func([$this->_model(), $this->saveMethod()], $entity, $this->saveOptions())) {
             return $this->_success($subject);
         }
 
