@@ -1508,7 +1508,12 @@ class PluginManager extends Plugin
                 try {
                     PluginManager::load($plugin, $option);
                 } catch (MissingPluginException $e) {
-                    Log::error('Plugin not found during bootstrap: ' . $plugin);
+                    // With a settings DB shared between apps, `Hook.bootstraps` may list
+                    // plugins only the other app ships — that is what `ignoreMissing`
+                    // opts into, so skip those without flooding the error log.
+                    if (empty($option['ignoreMissing'])) {
+                        Log::error('Plugin not found during bootstrap: ' . $plugin);
+                    }
                     continue;
                 }
             }
