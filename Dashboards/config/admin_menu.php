@@ -12,6 +12,7 @@ Nav::add('sidebar', 'dashboard', [
 Nav::add('sidebar', 'settings.children.dashboard', [
     'title' => __d('croogo', 'Dashboard'),
     'url' => [
+        'prefix' => 'Admin',
         'plugin' => 'Croogo/Dashboards',
         'controller' => 'Dashboards',
         'action' => 'index',
