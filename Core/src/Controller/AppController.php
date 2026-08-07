@@ -110,12 +110,51 @@ class AppController extends \App\Controller\AppController implements HookableCom
     {
         parent::beforeRender($event);
 
-        if (empty($this->viewBuilder()->getClassName()) || $this->viewBuilder()->getClassName() === 'App\View\AjaxView') {
-            unset($this->viewClass);
-            $this->viewBuilder()->setClassName('Croogo/Core.Croogo');
+        if (!$this->_setupLegacySerializedView()) {
+            if (empty($this->viewBuilder()->getClassName()) || $this->viewBuilder()->getClassName() === 'App\View\AjaxView') {
+                unset($this->viewClass);
+                $this->viewBuilder()->setClassName('Croogo/Core.Croogo');
+            }
         }
 
         $this->_restoreLegacyPagingParam();
+    }
+
+    /**
+     * Cake 5: RequestHandlerComponent usunięty. Kontrolery w stylu Cake 3 sygnalizują
+     * odpowiedź JSON zmienną widoku `_serialize` — RequestHandler przełączał wtedy widok
+     * na JsonView i honorował tę zmienną. Bez niego beforeRender wymuszał widok Croogo
+     * (HTML) także na takiej akcji, więc szukała nieistniejącego szablonu i kończyła się
+     * MissingTemplateException — renderowaną jako error400 „The requested address ... was
+     * not found on this server." (wyjątek niesie kod 0, a renderer bierze error400 dla
+     * wszystkiego < 500), przez co wygląda to na 404 routingu. Realny przypadek:
+     * /admin/photo_ai/editor/create-directory.json na prod85.
+     *
+     * Odpowiednik shimu z Api\AppController, ale WARUNKOWY: admin serwuje HTML, więc
+     * bezwarunkowy JsonView położyłby każdy zwykły widok. `_serialize` ustawiają wyłącznie
+     * akcje JSON-owe, więc obecność tej zmiennej jest wystarczającym sygnałem.
+     *
+     * @return bool Czy akcja deklaruje odpowiedź serializowaną (i widok jest już ustawiony).
+     */
+    protected function _setupLegacySerializedView(): bool
+    {
+        $builder = $this->viewBuilder();
+        $serialize = $builder->getVar('_serialize');
+        if ($serialize === null) {
+            return false;
+        }
+
+        if ($builder->getOption('serialize') === null) {
+            $builder->setOption('serialize', $serialize);
+        }
+
+        $className = $builder->getClassName();
+        if (empty($className) || $className === 'App\View\AjaxView') {
+            unset($this->viewClass);
+            $builder->setClassName('Json');
+        }
+
+        return true;
     }
 
     /**
