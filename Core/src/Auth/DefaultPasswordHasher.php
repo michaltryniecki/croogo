@@ -31,11 +31,17 @@ class DefaultPasswordHasher extends AbstractPasswordHasher
      * - `hashOptions` - Associative array of options. Check the PHP manual for
      *   supported options for each hash type. Defaults to empty array.
      *
+     * `cost` is pinned to 10 for parity with the legacy PHP 7.4 production
+     * sharing the same users table — PHP 8.4+ defaults to cost 12, which made
+     * every admin login rehash-flip hashes between the two stacks (and spam
+     * "password changed" notifications). Remove the pin only after the legacy
+     * stack is retired.
+     *
      * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'hashType' => PASSWORD_DEFAULT,
-        'hashOptions' => [],
+        'hashOptions' => ['cost' => 10],
     ];
 
     /**
