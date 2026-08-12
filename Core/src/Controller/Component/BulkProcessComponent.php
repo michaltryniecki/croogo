@@ -151,7 +151,7 @@ class BulkProcessComponent extends Component
                 $message = __d('croogo', '%s processed', Inflector::humanize($table->getAlias()));
             }
             $flashMethod = 'success';
-            Croogo::dispatchEvent($eventName, $Controller, compact($ids));
+            Croogo::dispatchEvent($eventName, $Controller, compact('ids'));
         } else {
             $message = $message ?: __d('croogo', 'An error occured');
             $flashMethod = 'error';
