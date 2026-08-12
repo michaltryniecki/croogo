@@ -753,6 +753,21 @@ class PluginManager extends Plugin
     }
 
     /**
+     * Drop the cached event listener map.
+     *
+     * Plugin loading runs on every request. Invalidate the listener map
+     * only when the set of enabled plugins changes.
+     *
+     * @return void
+     */
+    private static function invalidateEventHandlersCache(): void
+    {
+        if (in_array('cached_settings', Cache::configured(), true)) {
+            Cache::delete('EventHandlers', 'cached_settings');
+        }
+    }
+
+    /**
      * Activate plugin
      *
      * @param string $plugin Plugin name
@@ -805,11 +820,7 @@ class PluginManager extends Plugin
             }
 
             Cache::clear('croogo_menus');
-            // load() no longer clears EventHandlers (it runs on every request);
-            // the activation lifecycle is the only place the handler map changes
-            if (in_array('cached_settings', Cache::configured())) {
-                Cache::delete('EventHandlers', 'cached_settings');
-            }
+            self::invalidateEventHandlersCache();
             Cache::delete('file_map', '_cake_translations_');
 
             return true;
@@ -856,14 +867,10 @@ class PluginManager extends Plugin
             if (isset($pluginActivation) && method_exists($pluginActivation, 'onDeactivation')) {
                 $pluginActivation->onDeactivation($this->_Controller);
             }
+            // clear() already invalidated the listener map for this plugin
             static::clear($plugin);
 
             Cache::clear('croogo_menus');
-            // load() no longer clears EventHandlers (it runs on every request);
-            // the activation lifecycle is the only place the handler map changes
-            if (in_array('cached_settings', Cache::configured())) {
-                Cache::delete('EventHandlers', 'cached_settings');
-            }
             Cache::delete('file_map', '_cake_translations_');
 
             return true;
@@ -1033,7 +1040,7 @@ class PluginManager extends Plugin
                 $eventManager->detachPluginSubscribers($plugin);
             }
         }
-        Cache::delete('EventHandlers', 'cached_settings');
+        self::invalidateEventHandlersCache();
     }
 
     /**
