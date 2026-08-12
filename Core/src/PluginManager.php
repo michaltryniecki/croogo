@@ -725,6 +725,21 @@ class PluginManager extends Plugin
     }
 
     /**
+     * Drop the cached event listener map.
+     *
+     * Plugin loading runs on every request. Invalidate the listener map
+     * only when the set of enabled plugins changes.
+     *
+     * @return void
+     */
+    private static function invalidateEventHandlersCache()
+    {
+        if (in_array('cached_settings', Cache::configured(), true)) {
+            Cache::delete('EventHandlers', 'cached_settings');
+        }
+    }
+
+    /**
      * Activate plugin
      *
      * @param string $plugin Plugin name
@@ -777,6 +792,7 @@ class PluginManager extends Plugin
             }
 
             Cache::clear(false, 'croogo_menus');
+            self::invalidateEventHandlersCache();
             Cache::delete('file_map', '_cake_core_');
 
             return true;
@@ -823,6 +839,7 @@ class PluginManager extends Plugin
             if (isset($pluginActivation) && method_exists($pluginActivation, 'onDeactivation')) {
                 $pluginActivation->onDeactivation($this->_Controller);
             }
+            // unload() already invalidated the listener map for this plugin
             static::unload($plugin);
 
             Cache::clear(false, 'croogo_menus');
@@ -944,10 +961,6 @@ class PluginManager extends Plugin
         if ($config['bootstrap'] === true) {
             static::bootstrap($plugin);
         }
-
-        if (in_array('cached_settings', Cache::configured())) {
-            Cache::delete('EventHandlers', 'cached_settings');
-        }
     }
 
     /**
@@ -984,7 +997,7 @@ class PluginManager extends Plugin
                 $eventManager->detachPluginSubscribers($plugin);
             }
         }
-        Cache::delete('EventHandlers', 'cached_settings');
+        self::invalidateEventHandlersCache();
     }
 
     /**
