@@ -805,6 +805,11 @@ class PluginManager extends Plugin
             }
 
             Cache::clear('croogo_menus');
+            // load() no longer clears EventHandlers (it runs on every request);
+            // the activation lifecycle is the only place the handler map changes
+            if (in_array('cached_settings', Cache::configured())) {
+                Cache::delete('EventHandlers', 'cached_settings');
+            }
             Cache::delete('file_map', '_cake_translations_');
 
             return true;
@@ -854,6 +859,11 @@ class PluginManager extends Plugin
             static::clear($plugin);
 
             Cache::clear('croogo_menus');
+            // load() no longer clears EventHandlers (it runs on every request);
+            // the activation lifecycle is the only place the handler map changes
+            if (in_array('cached_settings', Cache::configured())) {
+                Cache::delete('EventHandlers', 'cached_settings');
+            }
             Cache::delete('file_map', '_cake_translations_');
 
             return true;
@@ -986,10 +996,6 @@ class PluginManager extends Plugin
 
         if ($config['bootstrap'] === true) {
             static::bootstrap($plugin);
-        }
-
-        if (in_array('cached_settings', Cache::configured())) {
-            Cache::delete('EventHandlers', 'cached_settings');
         }
     }
 
