@@ -188,8 +188,11 @@ class LayoutHelper extends Helper
      */
     public function displayField(Entity $item, $model, $field, $options = [])
     {
+        // array_intersect_key() drops absent keys, so extract() leaves $type
+        // undefined for callers passing no options — read it before extract()
+        // can overwrite $options with its 'options' key.
+        $type = $options['type'] ?? null;
         extract(array_intersect_key($options, [
-            'type' => null,
             'url' => [],
             'options' => [],
         ]));
