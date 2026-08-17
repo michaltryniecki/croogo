@@ -82,15 +82,20 @@ class ImageHelper extends HtmlHelper
 
         $dimension = $resizedInd . $width . 'x' . $height;
         $parts = pathinfo(WWW_ROOT . $path);
+        // pathinfo() omits `extension` entirely for a name carrying no dot, while file_exists()
+        // above has already proven the source is really there - so an extension-less upload warned
+        // on every render and built a cache name ending in a bare dot. Carry the separator with
+        // the extension so the normal case is byte-identical and the odd one simply has neither.
+        $extension = isset($parts['extension']) ? '.' . $parts['extension'] : '';
         if ($resizedInd === '') {
             // legacy format
             $filename = $parts['filename'];
             $filename = preg_replace('/^[0-9]*x[0-9]*_/', '', $filename);
-            $resized = $width . 'x' . $height . '_' . $filename . '.' . $parts['extension'];
+            $resized = $width . 'x' . $height . '_' . $filename . $extension;
         } else {
             $filename = $parts['filename'];
             $filename = preg_replace('/' . preg_quote($resizedInd) . '[0-9]*x[0-9]*/', '', $filename);
-            $resized = $filename . $dimension . '.' . $parts['extension'];
+            $resized = $filename . $dimension . $extension;
         }
         $relfile = '/';
         if ($uploadsDir) {
