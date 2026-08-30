@@ -75,7 +75,7 @@ foreach ($linksTree as $linkId => $linkTitle) :
     ], __d('croogo', 'Are you sure?'));
     $actions = $this->Html->div('item-actions', implode(' ', $actions));
     if ($linksStatus[$linkId] == Status::PREVIEW) {
-        $linkTitle .= ' ' . $this->Html->tag('span', __d('croogo', 'preview'), ['class' => 'label label-warning']);
+        $linkTitle .= ' ' . $this->Html->tag('span', __d('croogo', 'preview'), ['class' => 'badge text-bg-warning']);
     }
     $rows[] = [
         $this->Form->checkbox('Links.' . $linkId . '.id', ['class' => 'row-select', 'id' => 'Link' . $linkId . 'Id']),

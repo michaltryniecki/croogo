@@ -161,10 +161,13 @@ class LayoutHelper extends Helper
         }
         if ($value == 1) {
             $icon = $icons['check-mark'];
-            $class = 'green';
+            // `text-green`/`text-red` are Tabler's own colour utilities. The bare
+            // `green`/`red` these used to be were defined only by the old
+            // croogo-admin stylesheet, which the admin panel no longer loads.
+            $class = 'text-green';
         } else {
             $icon = $icons['x-mark'];
-            $class = 'red';
+            $class = 'text-red';
         }
         if (method_exists($this->Html, 'icon')) {
             return $this->Html->icon($icon, compact('class'));

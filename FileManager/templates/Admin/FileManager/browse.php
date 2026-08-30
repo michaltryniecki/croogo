@@ -2,6 +2,9 @@
 
 $this->extend('Croogo/Core./Common/admin_index');
 $tableHeaderClass = $this->Theme->getCssClass('tableHeaderClass');
+// This template renders its own body, so admin_index leaves the framing to it
+// (see the `content` note there) - hence the explicit card below.
+$tableClass = $this->Theme->getCssClass('tableClass');
 
 $this->assign('title', __d('croogo', 'File Manager'));
 $this->Breadcrumbs->add(__d('croogo', 'File Manager'), $this->getRequest()->getRequestTarget());
@@ -30,10 +33,12 @@ $this->Breadcrumbs->add(__d('croogo', 'File Manager'), $this->getRequest()->getR
 </div>
 <?php $this->end() ?>
 
-<?= $this->element('Croogo/FileManager.admin/breadcrumbs') ?>
-
-<div class="directory-content">
-    <table class="table table-striped">
+<div class="card">
+    <div class="card-header">
+        <?= $this->element('Croogo/FileManager.admin/breadcrumbs') ?>
+    </div>
+    <div class="directory-content table-responsive">
+    <table class="<?= $tableClass ?>">
         <?php
         $tableHeaders = $this->Html->tableHeaders([
             '',
@@ -63,7 +68,7 @@ $this->Breadcrumbs->add(__d('croogo', 'File Manager'), $this->getRequest()->getR
             ], $fullpath);
             $actions = $this->Html->div('item-actions', implode(' ', $actions));
             $rows[] = [
-                $this->Html->image('/croogo/core/img/icons/folder.png'),
+                $this->Html->icon('folder', ['class' => 'text-yellow fs-3']),
                 $this->FileManager->linkDirectory($directory, $fullpath . DS),
                 $actions,
             ];
@@ -76,7 +81,7 @@ $this->Breadcrumbs->add(__d('croogo', 'File Manager'), $this->getRequest()->getR
             $actions = [];
             $fullpath = $path . $file;
             $icon = $this->FileManager->filename2icon($file);
-            if ($icon == 'picture.png') :
+            if ($icon === 'photo') :
                 $image = '/' . str_replace(WWW_ROOT, '', $fullpath);
                 $lightboxOptions = [
                     'data-toggle' => 'lightbox',
@@ -106,7 +111,7 @@ $this->Breadcrumbs->add(__d('croogo', 'File Manager'), $this->getRequest()->getR
             ], $fullpath);
             $actions = $this->Html->div('item-actions', implode(' ', $actions));
             $rows[] = [
-                $this->Html->image('/croogo/core/img/icons/' . $icon),
+                $this->Html->icon($icon, ['class' => 'text-secondary fs-3']),
                 $linkFile,
                 $actions,
             ];
@@ -114,8 +119,6 @@ $this->Breadcrumbs->add(__d('croogo', 'File Manager'), $this->getRequest()->getR
         echo $this->Html->tableCells($rows, ['class' => 'file-listing'], ['class' => 'file-listing']);
 
         ?>
-        <thead class="<?= $tableHeaderClass ?>">
-            <?= $tableHeaders ?>
-        </thead>
     </table>
+    </div>
 </div>

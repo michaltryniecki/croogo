@@ -27,9 +27,6 @@ $this->append('tab-content');
         'empty' => true,
         'label' => __d('croogo', 'Parent'),
     ]);
-    $this->Form->templates([
-        'class' => 'span10',
-    ]);
     echo $this->Form->input('alias', [
         'label' => __d('croogo', 'Alias'),
     ]);

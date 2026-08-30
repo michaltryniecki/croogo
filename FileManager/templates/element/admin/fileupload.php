@@ -38,8 +38,8 @@ $cancelIcon = $this->Html->icon('delete');
     <!-- The global progress state -->
     <div class="col-4 fileupload-progress fade">
         <!-- The global progress bar -->
-        <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-            <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar progress-bar-striped bg-success" style="width:0%;"></div>
         </div>
 
         <!-- The extended global progress state -->
@@ -62,7 +62,7 @@ $cancelIcon = $this->Html->icon('delete');
         </td>
         <td>
             <p class="size">Processing...</p>
-            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar progress-bar-success" style="width:0%;"></div></div>
+            <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar progress-bar-striped bg-success" style="width:0%;"></div></div>
         </td>
         <td>
             {% if (!i && !o.options.autoUpload) { %}
@@ -104,7 +104,7 @@ $cancelIcon = $this->Html->icon('delete');
                 {% } %}
             </p>
             {% if (file.error) { %}
-                <div><span class="badge badge-danger">Error</span> {%=file.error%}</div>
+                <div><span class="badge text-bg-danger">Error</span> {%=file.error%}</div>
             {% } %}
         </td>
         <td>

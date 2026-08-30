@@ -163,8 +163,12 @@ $this->append('table-heading');
     $this->end();
 
     $this->start('bulk-action');
+    // A label above a select and a full-width button read as a form; this is
+    // a toolbar, so the label is dropped in favour of the empty option and the
+    // two controls sit on one row.
+    echo '<div class="d-flex align-items-center gap-2">';
     echo $this->Form->input('action', [
-    'label' => __d('croogo', 'Bulk action'),
+    'label' => false,
     'class' => 'c-select',
     'options' => [
         'delete' => __d('croogo', 'Delete'),
@@ -174,8 +178,9 @@ $this->append('table-heading');
     echo $this->Form->button(__d('croogo', 'Apply'), [
     'type' => 'submit',
     'value' => 'submit',
-    'class' => 'bulk-process btn-outline-primary',
+    'class' => 'bulk-process btn btn-outline-primary',
     ]);
+    echo '</div>';
     $this->end();
 
     $this->append('page-footer');

@@ -22,7 +22,7 @@ echo $this->Form->create($user);
         'type' => 'submit',
         'class' => 'btn btn-primary',
         'templates' => [
-            'submitContainer' => '<div class="float-right">{{content}}</div>',
+            'submitContainer' => '<div class="text-end">{{content}}</div>',
         ],
     ]);
 

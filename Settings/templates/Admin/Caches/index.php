@@ -48,7 +48,7 @@ $this->append('action-buttons');
             array_merge($clearUrl, ['config' => $cache]),
             [
             'button' => false,
-            'class' => 'red',
+            'class' => 'text-red',
             'icon' => 'delete',
             'method' => 'post',
             'tooltip' => [

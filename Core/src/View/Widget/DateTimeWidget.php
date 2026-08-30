@@ -101,12 +101,16 @@ html;
         if ($addon) {
             $themeData = CroogoTheme::config(Configure::read('Site.admin_theme'));
             $iconSet = Hash::extract($themeData, 'settings.iconDefaults.iconSet')[0];
+            // Bootstrap 5 removed `.input-group-append`: an addon is now a direct
+            // child of the group. The icon class is built from the theme's own
+            // prefix too, instead of the hardcoded `fa-calendar` that renders as
+            // an empty box under any icon set but Font Awesome.
+            $iconPrefix = Hash::extract($themeData, 'settings.iconDefaults.prefix')[0];
+            $iconName = Hash::get($themeData, 'settings.icons.calendar') ?: 'calendar';
             $widget .= <<<html
-                <div class="input-group-append" data-target="#{$id}" data-toggle="datetimepicker">
-                    <span class="input-group-text">
-                    <i class="$iconSet fa-calendar"></i>
-                    </span>
-                </div>
+                <span class="input-group-text" data-target="#{$id}" data-toggle="datetimepicker">
+                    <i class="$iconSet $iconPrefix-$iconName"></i>
+                </span>
 html;
         }
 

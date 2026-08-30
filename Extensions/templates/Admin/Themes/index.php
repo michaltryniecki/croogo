@@ -14,10 +14,16 @@ $this->start('action-buttons');
 echo $this->Croogo->adminAction(__d('croogo', 'Upload'), ['action' => 'add']);
 $this->end() ?>
 
-<div class="extensions-themes card-columns" style="column-count: 2">
+<div class="extensions-themes row row-cards">
 <?php
 foreach ($themesData as $themeAlias => $theme) :
-    echo $this->element('admin/theme-preview', ['theme' => $theme]);
+    // `row-cards` lays out COLUMNS; the element renders a bare card, so the
+    // column is added here rather than inside it - the attachment chooser
+    // reuses the same element at a different width.
+    echo $this->Html->div(
+        'col-md-6',
+        $this->element('admin/theme-preview', ['theme' => $theme])
+    );
 endforeach;
 ?>
 </div>

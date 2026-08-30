@@ -83,27 +83,49 @@ class FileManagerHelper extends Helper
     {
         $ext = strtolower($ext);
 
+        // Icon NAMES, not filenames: these are looked up in the theme's icon map
+        // and rendered as font glyphs, so they follow the admin icon set instead
+        // of being a set of 16px PNGs from a different decade.
         $extToIcon = [
-            'css' => 'css.png',
-            'htm' => 'html.png',
-            'html' => 'html.png',
-            'php' => 'page_white_php.png',
+            'css' => 'file-type-css',
+            'htm' => 'file-type-html',
+            'html' => 'file-type-html',
+            'php' => 'file-type-php',
+            'js' => 'file-type-js',
+            'json' => 'file-type-js',
+            'txt' => 'file-text',
+            'md' => 'file-text',
+            'pdf' => 'file-type-pdf',
+            'doc' => 'file-type-doc',
+            'docx' => 'file-type-docx',
+            'xls' => 'file-type-xls',
+            'xlsx' => 'file-type-xls',
+            'csv' => 'file-type-csv',
 
-            'rar' => 'page_white_compressed.png',
-            'tar' => 'page_white_compressed.png',
-            'zip' => 'page_white_compressed.png',
+            'rar' => 'file-zip',
+            'tar' => 'file-zip',
+            'gz' => 'file-zip',
+            'zip' => 'file-zip',
 
-            'bmp' => 'picture.png',
-            'gif' => 'picture.png',
-            'jpg' => 'picture.png',
-            'jpeg' => 'picture.png',
-            'png' => 'picture.png',
+            'bmp' => 'photo',
+            'gif' => 'photo',
+            'jpg' => 'photo',
+            'jpeg' => 'photo',
+            'png' => 'photo',
+            'svg' => 'photo',
+            'webp' => 'photo',
+
+            'mp3' => 'file-music',
+            'ogg' => 'file-music',
+            'wav' => 'file-music',
+            'mp4' => 'movie',
+            'webm' => 'movie',
         ];
 
         if (isset($extToIcon[$ext])) {
             $output = $extToIcon[$ext];
         } else {
-            $output = 'page_white.png';
+            $output = 'file';
         }
 
         return $output;

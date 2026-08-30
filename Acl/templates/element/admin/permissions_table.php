@@ -1,6 +1,8 @@
 <?php
 
-$this->set('tableClass', 'table permission-table');
+// Keeps the theme's own table classes so the grid still sits flush in its
+// card; `permission-table` only adds the ACL-specific behaviour styles.
+$this->set('tableClass', $this->Theme->getCssClass('tableClass') . ' permission-table');
 
 $roleTitles = array_values($roles->toArray());
 $roleIds = array_keys($roles->toArray());
@@ -15,7 +17,7 @@ $tableHeaders = $this->Html->tableHeaders($tableHeaders);
 echo $this->Html->tag('thead', $tableHeaders);
 
 $currentController = '';
-$icon = '<i class="icon-none float-right"></i>';
+$icon = '<i class="ti ti-chevron-right float-end perm-icon"></i>';
 foreach ($acos as $aco) {
     $id = $aco->id;
     $alias = $aco->alias;
@@ -23,8 +25,8 @@ foreach ($acos as $aco) {
     if (substr($alias, 0, 1) == '_') {
         $level = 1;
         $class .= 'level-' . $level;
-        $oddOptions = ['class' => 'hidden controller-' . $currentController];
-        $evenOptions = ['class' => 'hidden controller-' . $currentController];
+        $oddOptions = ['class' => 'd-none controller-' . $currentController];
+        $evenOptions = ['class' => 'd-none controller-' . $currentController];
         $alias = substr_replace($alias, '', 0, 1);
     } else {
         $level = 0;

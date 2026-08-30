@@ -17,7 +17,7 @@
 </div>
 <div class="<?php echo $this->Theme->getCssClass('row'); ?>">
     <div class="<?php echo $this->Theme->getCssClass('columnFull'); ?>">
-        <div id="attachments-for-links" class="card-deck">
+        <div id="attachments-for-links" class="row row-cards">
         <?php foreach ($attachments as $attachment) : ?>
             <div class="card">
                 <?php
@@ -56,6 +56,6 @@
             </div>
         <?php endforeach; ?>
         </div>
-        <?php echo $this->element('admin/pagination'); ?>
+        <?php echo $this->element('admin/pagination', ['paginationClass' => 'mt-3']); ?>
     </div>
 </div>

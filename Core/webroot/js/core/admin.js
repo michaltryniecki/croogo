@@ -6,6 +6,27 @@
 var Admin = typeof Admin == 'undefined' ? {} : Admin;
 
 /**
+ * Where the admin page content lives. Tabler's shell has no `#content`; the
+ * equivalent wrapper is `.page-body`.
+ */
+Admin.TABS_SELECTOR = '.page-body .nav-tabs';
+
+/**
+ * Show a tab.
+ *
+ * Bootstrap 5 removed the jQuery plugin API, so `$a.tab('show')` is now a call
+ * against the component class. Silently does nothing when the selector matched
+ * nothing, which is the common case: most admin pages have no tabs at all.
+ */
+Admin.showTab = function ($link) {
+  var el = $link && $link.get(0);
+  if (!el) {
+    return;
+  }
+  bootstrap.Tab.getOrCreateInstance(el).show();
+};
+
+/**
  * Gets spinner class
  */
 Admin.spinnerClass = function () {
@@ -138,7 +159,7 @@ Admin.formFeedback = function () {
   var activateErrorTab = function(e) {
     var pane = $(e.target).closest('.tab-pane').get(0);
     var selector = 'a[href="#' + pane.attributes['id'].value + '"]';
-    $('#content .nav-tabs').find(selector).tab('show')
+    Admin.showTab($(Admin.TABS_SELECTOR).find(selector));
   };
   $('form input').on('invalid', _.debounce(activateErrorTab, 150))
 };
@@ -188,20 +209,23 @@ Admin.removeHash = function() {
  */
 Admin.extra = function () {
   var hash = document.location.hash;
-  var $tabs = $('#content .nav-tabs');
+  var $tabs = $(Admin.TABS_SELECTOR);
   if (hash && hash.match("^#tab_")) {
     // Activates tab if hash starting with tab_* is given
-    $tabs.find('a[href="' + hash.replace('tab_', '') + '"]').tab('show');
+    Admin.showTab($tabs.find('a[href="' + hash.replace('tab_', '') + '"]'));
     Admin.removeHash();
   } else {
-    // Activates the first tab in #content by default
-    $tabs.find('li:first-child a').tab('show');
+    // Activates the first tab by default
+    Admin.showTab($tabs.find('li:first-child a'));
   }
 
   // Apply buttons jump to current tab for persistence
-  $('#content [name="_apply"]').click(function () {
-    var activeTab = $tabs.find('.active[data-toggle=tab]').attr('href');
-    var form = $('#content form:first');
+  $('.page-body [name="_apply"]').click(function () {
+    var activeTab = $tabs.find('.active[data-bs-toggle=tab]').attr('href');
+    if (!activeTab) {
+      return;
+    }
+    var form = $('.page-body form:first');
     var action = form.attr('action').split('#')[0];
     form.attr('action', action + activeTab.replace('#', '#tab_'));
   });
@@ -212,33 +236,42 @@ Admin.extra = function () {
   $("div.message").addClass("notice");
   $('#loading p').addClass('ui-corner-bl ui-corner-br');
 
-  if (typeof $.fn.ekkoLightbox !== 'undefined') {
-    $(document).on('click', '[data-toggle="lightbox"]', function(event) {
-      event.preventDefault();
-      $(this).ekkoLightbox();
-    });
-  }
-
   if (typeof $.fn.select2 !== 'undefined') {
     $('select:not(".no-select2")').select2(Croogo.themeSettings.select2Defaults);
   }
+
+  Admin.tooltips();
+};
+
+/**
+ * Bootstrap 5 does not initialise tooltips on its own - opting in is the
+ * documented behaviour, not an optimisation.
+ */
+Admin.tooltips = function (context) {
+  var root = context || document;
+  Array.prototype.forEach.call(
+    root.querySelectorAll('[data-bs-toggle="tooltip"]'),
+    function (el) {
+      bootstrap.Tooltip.getOrCreateInstance(el);
+    }
+  );
 };
 
 /**
  * Initialize boxes to enable to toggling Box content
  */
 Admin.slideBoxToggle = function () {
-  var iconMinus = Admin.iconClass('minus', false);
-  var iconPlus = Admin.iconClass('plus', false);
+  var iconMinus = '.' + Admin.iconClass('minus', false);
+  var iconPlus = '.' + Admin.iconClass('plus', false);
   $('body').on('click', '.box-title', function () {
     $(this)
       .next().slideToggle(function () {
       $(this).trigger('slide.toggle');
     }).end()
       .find(iconMinus)
-      .switchClass(iconMinus, iconPlus).end()
+      .switchClass(iconMinus.substring(1), iconPlus.substring(1)).end()
       .find(iconPlus)
-      .switchClass(iconPlus, iconMinus);
+      .switchClass(iconPlus.substring(1), iconMinus.substring(1));
   });
 };
 

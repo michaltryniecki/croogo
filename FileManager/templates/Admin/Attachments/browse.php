@@ -237,7 +237,7 @@ $this->append('action-buttons');
                         $this->Html->tag(
                             'span',
                             $attachment['AssetsAssetUsage']['type'],
-                            ['class' => 'badge badge-info']
+                            ['class' => 'badge text-bg-info']
                         ),
                         [
                             'action' => 'browse',

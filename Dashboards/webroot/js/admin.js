@@ -39,8 +39,8 @@ Dashboard.saveDashboard = function(e, ui) {
   var saveCallback = function(data, textStatus, jqXHR) {
     box
       .find('.toggle-icon .' + Croogo.themeSettings.iconDefaults.iconSet)
-      .removeClass('fa-spinner fa-spin')
-      .addClass(collapsed ? 'fa-plus' : 'fa-minus');
+      .removeClass(Admin.spinnerClass())
+      .addClass(Admin.iconClass(collapsed ? 'plus' : 'minus', false));
 
     for (var i in data) {
       $('#' + data[i].alias).data('id', data[i].id);
@@ -94,8 +94,8 @@ Dashboard.collapsable = function (saveDashboard) {
       var collapsed = !box.find('.card-body').is(':visible') ? 1 : 0;
       box
         .find('.toggle-icon .' + Croogo.themeSettings.iconDefaults.iconSet)
-        .removeClass(collapsed ? 'fa-plus' : 'fa-minus')
-        .addClass('fa-spinner fa-spin');
+        .removeClass(Admin.iconClass(collapsed ? 'plus' : 'minus', false))
+        .addClass(Admin.spinnerClass());
     });
 
   $('body')

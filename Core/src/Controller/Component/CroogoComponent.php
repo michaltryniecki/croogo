@@ -84,6 +84,84 @@ class CroogoComponent extends Component
         if (empty($user)) {
             return;
         }
+
+        Nav::add('top-left', 'site', [
+            'icon' => 'link',
+            'title' => __d('croogo', 'Visit website'),
+            'url' => '/',
+            'htmlAttributes' => [
+                'target' => '_blank',
+                'rel' => 'noopener',
+            ],
+        ]);
+
+        Nav::add('top-right', 'user', [
+            // `icon => false` so the account entry gets the avatar below instead
+            // of a glyph; `before` is rendered ahead of the title verbatim.
+            'icon' => false,
+            'title' => $user['username'],
+            'before' => $this->_userAvatar($user),
+            'url' => '#',
+            'children' => [
+                'profile' => [
+                    'title' => __d('croogo', 'Profile'),
+                    'icon' => 'user',
+                    'url' => [
+                        'prefix' => 'Admin',
+                        'plugin' => 'Croogo/Users',
+                        'controller' => 'Users',
+                        'action' => 'view',
+                        $user['id'],
+                    ],
+                ],
+                'separator-1' => [
+                    'separator' => true,
+                ],
+                'logout' => [
+                    'icon' => 'power-off',
+                    'title' => __d('croogo', 'Logout'),
+                    'url' => [
+                        'prefix' => 'Admin',
+                        'plugin' => 'Croogo/Users',
+                        'controller' => 'Users',
+                        'action' => 'logout',
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * Markup for the avatar shown next to the username in the admin header.
+     *
+     * Tabler's `.avatar` renders the image as a round chip and, with no image,
+     * falls back to showing whatever text is inside it - so the initial is the
+     * natural placeholder while Gravatar is unreachable or the user has no email.
+     *
+     * @param array $user The authenticated user
+     * @return string
+     */
+    protected function _userAvatar(array $user)
+    {
+        $email = trim((string)($user['email'] ?? ''));
+        $initial = mb_strtoupper(mb_substr((string)$user['username'], 0, 1));
+
+        if ($email === '') {
+            return sprintf('<span class="avatar avatar-sm me-2">%s</span>', h($initial));
+        }
+
+        // `d=blank` rather than a generated fallback: a user without a Gravatar
+        // should land on the initial above, not on a random identicon.
+        $url = sprintf(
+            'https://www.gravatar.com/avatar/%s?s=64&d=blank',
+            md5(strtolower($email))
+        );
+
+        return sprintf(
+            '<span class="avatar avatar-sm me-2" style="background-image: url(%s)">%s</span>',
+            h($url),
+            h($initial)
+        );
     }
 
     /**
