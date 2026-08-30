@@ -1,8 +1,19 @@
+<?php
+/**
+ * Admin error layout.
+ *
+ * No sidebar: an error page is often thrown by something that failed before the
+ * menus could be built, so rendering them here risks a second failure on top of
+ * the one being reported.
+ *
+ * @var \Croogo\Core\View\CroogoView $this
+ */
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width">
+        <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0">
         <title><?= $this->fetch('title') ?> - <?= $_siteTitle ?></title>
         <?php
 
@@ -13,25 +24,19 @@
         echo $this->fetch('css');
 
         ?>
-        <style>
-            #content {
-                border-radius: 0px;
-            }
-        </style>
     </head>
     <body>
-        <?= $this->element('Croogo/Core.admin/header') ?>
-        <div id="wrap">
-            <div id="content-container" class="content-container">
-                <div id="content" class="content">
-                    <div id="inner-content" class="<?= $this->Theme->getCssClass('columnFull') ?>">
+        <div class="page">
+            <div class="page-wrapper">
+                <div class="page-body">
+                    <div class="<?= $this->Theme->getCssClass('containerFluid') ?>">
                         <?= $this->Layout->sessionFlash() ?>
                         <?= $this->fetch('content') ?>
                     </div>
                 </div>
+                <?= $this->element('Croogo/Core.admin/footer') ?>
             </div>
         </div>
-        <?= $this->element('Croogo/Core.admin/footer') ?>
         <?php
         echo $this->element('Croogo/Core.admin/initializers');
         echo $this->fetch('body-footer');

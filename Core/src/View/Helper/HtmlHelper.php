@@ -40,9 +40,12 @@ class HtmlHelper extends BaseHtmlHelper
             $boxHeaderClass = $settings['css']['boxHeaderClass'];
             $boxBodyClass = $settings['css']['boxBodyClass'];
         }
+        // {{title}} is wrapped in Tabler's `.card-title` rather than sitting bare
+        // in the header: that is what gives it the heading weight and spacing, and
+        // it is also what `.card-header` sizes itself against.
         $this->_defaultConfig['templates']['beginbox'] = "<div class='$boxContainerClass'>
                         <div class='$boxHeaderClass'>
-                            {{icon}} {{title}}
+                            <h3 class='card-title'>{{icon}} {{title}}</h3>
                         </div>
                         <div class='$boxBodyClass'>";
         $this->_defaultConfig['templates']['endbox'] = '</div>
@@ -186,8 +189,14 @@ class HtmlHelper extends BaseHtmlHelper
         // BootstrapUI 5: klasa bazowa ikony pochodzi z 'namespace' (domyślnie 'bi'),
         // nie z legacy 'iconSet' (BS-UI 2 / Cake 3). Mapujemy iconSet->namespace i
         // zerujemy iconSet, bo BS-UI 5 go nie wyklucza -> wyciekał jako atrybut HTML.
-        $options += ['namespace' => $iconDefaults['iconSet'] ?? 'fa'];
+        $options += ['namespace' => $iconDefaults['iconSet'] ?? 'ti'];
         $options['iconSet'] = null;
+
+        // Tabler Icons have no size modifiers, so `size` is empty and BootstrapUI
+        // would append a bare `ti-` class. Dropping the key makes it skip that.
+        if (isset($options['size']) && $options['size'] === '') {
+            unset($options['size']);
+        }
 
         return parent::icon($this->Theme->getIcon($name), $options);
     }
@@ -201,7 +210,10 @@ class HtmlHelper extends BaseHtmlHelper
     public function status($value, $url = [])
     {
         $icon = $value == Status::PUBLISHED ? $this->Theme->getIcon('check-mark') : $this->Theme->getIcon('x-mark');
-        $class = $value == Status::PUBLISHED ? 'green' : 'red';
+        // `text-green`/`text-red` rather than the bare `green`/`red` the Croogo
+        // stylesheet used to define: Tabler ships the full `text-<colour>` scale
+        // and nothing styles a bare colour word.
+        $class = $value == Status::PUBLISHED ? 'text-green' : 'text-red';
         $iconTag = $this->icon($icon, ['class' => $class]);
 
         if (empty($url)) {
@@ -251,19 +263,32 @@ class HtmlHelper extends BaseHtmlHelper
         }
 
         if (isset($options['icon'])) {
-            $iconSize = $iconDefaults['size'];
-            if (isset($options['iconSize']) && $options['iconSize'] === 'small') {
-                $iconSize = $iconDefaults['size'];
-                unset($options['iconSize']);
-            }
+            // Kept only so callers passing it do not leak it into the markup; with
+            // Tabler Icons there is no size scale to select from.
+            unset($options['iconSize']);
+
             if (empty($options['iconInline'])) {
-                $title = $this->icon($options['icon'], ['class' => $iconSize]) . $title;
+                // `me-1` only when there is a label to be spaced away from:
+                // most row actions are icon-only, and a trailing margin there
+                // would knock them out of alignment with their neighbours.
+                $iconOptions = (string)$title === '' ? [] : ['class' => 'me-1'];
+                $title = $this->icon($options['icon'], $iconOptions) . $title;
             } else {
-                $icon = trim($iconSize . ' ' . $iconDefaults['prefix'] . $this->Theme->getIcon($options['icon']));
+                // `iconInline` puts the icon classes on the <a> itself instead of
+                // nesting an <i>. Both parts are needed - the namespace (`ti`)
+                // loads the font, `ti-<name>` picks the glyph - and the separator
+                // is a dash, not nothing: the old code concatenated prefix and
+                // name straight together and produced `tihome`.
+                $icon = trim(sprintf(
+                    '%s %s-%s',
+                    $iconDefaults['iconSet'],
+                    $iconDefaults['prefix'],
+                    $this->Theme->getIcon($options['icon'])
+                ));
                 if (isset($options['class'])) {
                     $options['class'] .= ' ' . $icon;
                 } else {
-                    $options['class'] = ' ' . $icon;
+                    $options['class'] = $icon;
                 }
                 unset($options['iconInline']);
             }
@@ -272,15 +297,17 @@ class HtmlHelper extends BaseHtmlHelper
         }
 
         if (isset($options['tooltip'])) {
+            // Bootstrap 5 attribute names (`data-bs-*`) and its own opt-in
+            // attribute: `rel="tooltip"` was a Bootstrap 3 convention and nothing
+            // reads it any more, so these links showed no tooltip at all. The
+            // title lives in `title=` so it still degrades to the native tooltip
+            // if the JS never initialises.
             $tooltipOptions = [
-                'rel' => 'tooltip',
-                'data-placement' => 'top',
-                'data-trigger' => 'hover',
+                'data-bs-toggle' => 'tooltip',
+                'data-bs-placement' => 'top',
             ];
             if (is_string($options['tooltip'])) {
-                $tooltipOptions = array_merge([
-                    'data-title' => $options['tooltip'],
-                ], $tooltipOptions);
+                $tooltipOptions['title'] = $options['tooltip'];
                 $options = array_merge($options, $tooltipOptions);
             } else {
                 $options['tooltip'] = array_merge($tooltipOptions, $options['tooltip']);

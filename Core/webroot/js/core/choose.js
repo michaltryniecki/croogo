@@ -26,7 +26,8 @@
       },
 
       clickCallback: function (e, data) {
-        this.modal.modal('hide');
+        // Bootstrap 5 removed the jQuery plugin API.
+    bootstrap.Modal.getOrCreateInstance(this.modal.get(0)).hide();
         var $target = $(e.target);
         var attr = $target.data('chooserAttr');
         var type = $target.data('chooserType');

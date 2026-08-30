@@ -18,7 +18,7 @@ $this->append('action-buttons');
         [
             'button' => 'outline-secondary',
             'class' => 'btn-sm dropdown-toggle',
-            'data-toggle' => 'dropdown',
+            'data-bs-toggle' => 'dropdown',
             'escape' => false
         ]
     );
@@ -66,7 +66,9 @@ $this->append('action-buttons');
     );
     $this->end();
 
-    $this->set('tableClass', 'table permission-table');
+    // Keeps the theme's own table classes so the grid still sits flush in its
+// card; `permission-table` only adds the ACL-specific behaviour styles.
+$this->set('tableClass', $this->Theme->getCssClass('tableClass') . ' permission-table');
     $this->start('table-heading');
     $tableHeaders = $this->Html->tableHeaders([
         __d('croogo', 'Id'),
@@ -78,7 +80,7 @@ $this->append('action-buttons');
 
     $this->append('table-body');
     $currentController = '';
-    $icon = '<i class="icon-none float-right"></i>';
+    $icon = '<i class="ti ti-chevron-right float-end perm-icon"></i>';
     foreach ($acos as $aco) {
         $id = $aco->id;
         $alias = $aco->alias;

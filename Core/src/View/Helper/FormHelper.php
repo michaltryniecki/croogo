@@ -40,6 +40,16 @@ class FormHelper extends BaseFormHelper
     public function __construct(View $View, $settings = [])
     {
         $settings = Hash::merge([
+            // Downgrade BootstrapUI 5's output to Bootstrap 4 markup.
+            //
+            // The admin panel runs on Tabler (Bootstrap 5), so this is off and
+            // BootstrapUI's own output is used unchanged. A theme whose front end
+            // is still on Bootstrap 4 can turn it back on from its theme.json:
+            //
+            //     "prefixes": { "": { "helpers": { "Form": {
+            //         "className": "Croogo/Core.Form", "bootstrap4Compat": true
+            //     } } } }
+            'bootstrap4Compat' => false,
             'widgets' => [
                 'stringlist' => [
                     'Croogo/Core.StringList',
@@ -339,11 +349,16 @@ class FormHelper extends BaseFormHelper
     }
 
     /**
-     * BootstrapUI 5 taguje select klasą Bootstrap-5-ową `form-select`. Admin działa na
-     * Bootstrap 4 — przywracamy `form-control` (mirror BootstrapUI::select).
+     * BootstrapUI 5 taguje select klasą Bootstrap-5-ową `form-select`, co jest
+     * poprawne dla Tablera. Podmiana na `form-control` zostaje tylko dla motywów
+     * na Bootstrapie 4 — patrz `bootstrap4Compat`.
      */
     public function select(string $fieldName, iterable $options = [], array $attributes = []): string
     {
+        if (!$this->getConfig('bootstrap4Compat')) {
+            return parent::select($fieldName, $options, $attributes);
+        }
+
         $attributes['injectFormControl'] = false;
         $attributes = $this->injectClasses('form-control', $attributes);
 
@@ -368,13 +383,14 @@ class FormHelper extends BaseFormHelper
 
     /**
      * BootstrapUI 5 przy align=inline generuje siatkę Bootstrap 5 (row/g-N/
-     * align-items-center + wrapper col-auto). Admin to Bootstrap 4 — sprowadzamy
-     * z powrotem do `form-inline` bez wrappera.
+     * align-items-center + wrapper col-auto) — dokładnie to, czego chce Tabler.
+     * Sprowadzenie do `form-inline` (klasa usunięta w Bootstrapie 5) zostaje tylko
+     * dla motywów na Bootstrapie 4 — patrz `bootstrap4Compat`.
      */
     protected function _processFormOptions(array $options): array
     {
         $options = parent::_processFormOptions($options);
-        if ($this->_align === static::ALIGN_INLINE) {
+        if ($this->getConfig('bootstrap4Compat') && $this->_align === static::ALIGN_INLINE) {
             $class = preg_replace('/\b(row|align-items-center|g-[0-9]+)\b/', '', (string)($options['class'] ?? ''));
             $options['class'] = trim(preg_replace('/\s+/', ' ', $class . ' form-inline'));
             $options['role'] = $options['role'] ?? 'form';
@@ -386,12 +402,13 @@ class FormHelper extends BaseFormHelper
 
     /**
      * Usuń Bootstrap-5-owe `form-label` (BS4 go nie zna) i zamień `visually-hidden`
-     * (BS5) na `sr-only` (BS4) na etykietach.
+     * (BS5) na `sr-only` (BS4) na etykietach. Tylko dla motywów na Bootstrapie 4 —
+     * patrz `bootstrap4Compat`; Tabler stylizuje `form-label`.
      */
     protected function _labelOptions(?string $fieldName, array $options): array
     {
         $options = parent::_labelOptions($fieldName, $options);
-        if (isset($options['label']['class'])) {
+        if ($this->getConfig('bootstrap4Compat') && isset($options['label']['class'])) {
             $class = (string)$options['label']['class'];
             $class = preg_replace('/\bform-label\b/', '', $class);
             $class = preg_replace('/\bvisually-hidden\b/', 'sr-only', $class);

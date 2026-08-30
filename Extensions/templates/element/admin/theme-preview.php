@@ -9,10 +9,11 @@ $activeThemes = [$currentTheme['name'], $currentBackendTheme['name']];
     if (!empty($theme['screenshot'])) :
         $dataUri = $this->Croogo->dataUri($theme['name'], $theme['screenshot']);
         $thumbnail = '<img class="card-img-top" src="' . $dataUri . '">';
+        // `data-title` is what core/lightbox.js uses to caption the dialog.
         $image = sprintf(
-            '<a href="%s" %s>%s</a>',
+            '<a href="%s" data-toggle="lightbox" data-title="%s">%s</a>',
             $dataUri,
-            'data-toggle="lightbox"',
+            h($theme['name']),
             $thumbnail
         );
         echo $image;
@@ -37,13 +38,15 @@ $activeThemes = [$currentTheme['name'], $currentBackendTheme['name']];
         <?php
             $badge = '';
         if ($theme['name'] == $currentTheme['name']) :
-            $badge .= $this->Html->tag('p', 'Current Frontend Theme', ['class' => 'badge badge-success']);
+            $badge .= $this->Html->tag('span', __d('croogo', 'Current Frontend Theme'), ['class' => 'badge text-bg-success']);
         endif;
         if ($theme['name'] == $currentBackendTheme['name']) :
-            $badge .= $this->Html->tag('p', 'Current Backend Theme', ['class' => 'badge badge-success']);
+            $badge .= $this->Html->tag('span', __d('croogo', 'Current Backend Theme'), ['class' => 'badge text-bg-success']);
         endif;
         if ($badge) :
-            echo $badge;
+            // `.badges-list` is Tabler's inline badge row - without it the two
+            // badges sit flush against each other.
+            echo $this->Html->div('badges-list mb-2', $badge);
         endif;
         ?>
 
@@ -95,7 +98,7 @@ if (!in_array($theme['name'], $activeThemes)) :
 endif;
 
 if (!empty($out)) :
-    echo $this->Html->div('actions text-right card-footer', $out);
+    echo $this->Html->div('card-footer', $this->Html->div('btn-list justify-content-end', $out));
 endif;
 ?>
 </div>

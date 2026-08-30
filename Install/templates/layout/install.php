@@ -1,61 +1,72 @@
+<?php
+/**
+ * Installer layout.
+ *
+ * Uses the same Tabler assets as the admin panel rather than a stripped-down set
+ * of its own: the installer is the first admin screen anyone sees, and it is
+ * built from the same FormHelper, so a separate stylesheet would only mean a
+ * second look to keep in sync.
+ *
+ * @var \Croogo\Core\View\CroogoView $this
+ */
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <meta name="viewport" content="width=device-width">
+        <meta charset="utf-8">
+        <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0">
         <title><?= __d('croogo', 'Installation: %s', $this->fetch('title')) ?> - <?= __d('croogo', 'Croogo') ?></title>
-        <style>
-            .fa { min-width: 16px; }
-        </style>
         <?php
         echo $this->Html->css([
-            'Croogo/Core.core/croogo-admin',
-            'Croogo/Core.core/select2.min',
-            'Croogo/Core.core/select2-bootstrap.min',
+            'Croogo/Core.tabler/tabler.min',
+            'Croogo/Core.tabler/tabler-icons.min',
+            'Croogo/Core.core/select2.min.css',
+            'Croogo/Core.core/croogo-tabler',
         ]);
         echo $this->Html->script([
             'Croogo/Core.jquery/jquery.min',
-            'Croogo/Core.core/croogo-bootstrap',
+            'Croogo/Core.tabler/bootstrap.bundle.min.js',
             'Croogo/Core.core/select2.full.min',
-            'Croogo/Core.core/admin',
-        ]);
+        ], ['async' => false]);
         echo $this->fetch('script');
         ?>
     </head>
-    <body class="installer">
-        <header class="navbar navbar-dark bg-black navbar-fixed-top">
-            <span class="navbar-brand"><?= __d('croogo', 'Install Croogo') ?></span>
-        </header>
-
-        <div id="wrap">
-            <div class="card">
+    <body class="d-flex flex-column">
+        <div class="page page-center">
+            <div class="container container-tight py-4">
+                <div class="text-center mb-4">
+                    <span class="navbar-brand navbar-brand-autodark fs-2">
+                        <?= __d('croogo', 'Install Croogo') ?>
+                    </span>
+                </div>
                 <?= $this->fetch('before') ?>
-                <h3 class="card-header">
-                    <?= __d('croogo', 'Installation: %s', $this->fetch('title')) ?>
-                </h3>
-                <div class="card-body">
+                <div class="card card-md">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <?= __d('croogo', 'Installation: %s', $this->fetch('title')) ?>
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <?php
+                        echo $this->element('installer_steps');
+                        echo $this->Layout->sessionFlash();
+                        echo $this->fetch('content');
+                        ?>
+                    </div>
                     <?php
-                    echo $this->element('installer_steps');
-                    echo $this->Layout->sessionFlash();
-                    echo $this->fetch('content');
+                    if ($buttons = $this->fetch('buttons')) {
+                        echo $this->Html->div('card-footer text-end', $buttons);
+                    }
                     ?>
                 </div>
-                <?php
-                if ($buttons = $this->fetch('buttons')) {
-                    echo $this->Html->div('card-footer text-right', $buttons);
-                }
-                echo $this->fetch('after');
-                ?>
+                <?= $this->fetch('after') ?>
             </div>
         </div>
-
-        <?= $this->element('admin/footer') ?>
         <?php
         $script = <<<EOF
-$('[rel=tooltip],input[data-title]').tooltip();
-$('select:not(".no-select2")').select2({
+\$('select:not(".no-select2")').select2({
     dropdownAutoWidth: true,
-    theme: 'bootstrap'
+    theme: 'tabler'
 });
 EOF;
         $this->Js->buffer($script);

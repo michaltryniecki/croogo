@@ -16,7 +16,7 @@ $this->append('action-buttons');
 $toolsButton = $this->Html->link(__d('croogo', 'Tools'), '#', [
         'button' => 'outline-secondary btn-sm',
         'class' => 'dropdown-toggle',
-        'data-toggle' => 'dropdown',
+        'data-bs-toggle' => 'dropdown',
         'escape' => false,
     ]);
 

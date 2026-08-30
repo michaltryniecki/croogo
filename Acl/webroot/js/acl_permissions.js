@@ -17,7 +17,7 @@ AclPermissions.templates = {
 <td> \
   <div class="<%= classes %>" data-alias="<%= alias %>" \
     data-level="<%= level %>" data-id="<%= id %>" > \
-  <%= alias %><i class="pull-right icon-none"></i> \
+  <%= alias %><i class="ti ti-chevron-right float-end perm-icon"></i> \
   </div> \
 </td>'),
 
@@ -178,12 +178,12 @@ AclPermissions.tableToggle = function() {
 
       var allowed = roles['roles'][aroIndex];
       if (aroIndex == 1) {
-        cell.classes += "lightgray permission-disabled " + Admin.iconClass("check-mark");
+        cell.classes += "text-secondary permission-disabled " + Admin.iconClass("check-mark");
       } else {
         if (allowed) {
-          cell.classes += "green " + Admin.iconClass("check-mark");
+          cell.classes += "text-green " + Admin.iconClass("check-mark");
         } else {
-          cell.classes += "red " + Admin.iconClass("x-mark");
+          cell.classes += "text-red " + Admin.iconClass("x-mark");
         }
       }
       text += AclPermissions.templates.toggleButton(cell);

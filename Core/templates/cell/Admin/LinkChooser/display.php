@@ -19,7 +19,7 @@ foreach ($linkChoosers as $name => $chooser) :
         'data-type' => 'Node',
         'data-attr' => 'rel',
         'data-target' => '#link-chooser',
-        'data-toggle' => 'modal',
+        'data-bs-toggle' => 'modal',
         'data-chooser' => true
     ]);
     $dropdowns[] = $link;
@@ -28,7 +28,7 @@ endforeach;
 echo $this->Form->button('', [
     'type' => 'button',
     'class' => 'btn btn-secondary dropdown-toggle',
-    'data-toggle' => 'dropdown',
+    'data-bs-toggle' => 'dropdown',
     'aria-haspopup' => true,
     'aria-expanded' => false,
 ]);

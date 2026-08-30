@@ -16,7 +16,7 @@
     </thead>
 
     <?php
-    $icon = '<i class="float-right"></i>';
+    $icon = '<i class="ti ti-chevron-right float-end perm-icon"></i>';
     $currentController = '';
     foreach ($acos as $index => $aco) {
         $id = $aco->id;

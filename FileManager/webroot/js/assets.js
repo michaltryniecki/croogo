@@ -2,10 +2,10 @@ var Assets = {};
 
 Assets.reloadAssetsTab = function(e) {
   e && e.preventDefault();
-  var $tab = $('a[data-toggle="tab"][href$="-media"]');
+  var $tab = $('a[data-bs-toggle="tab"][href$="-media"]');
   var url = $('.asset-list').data('url');
-  var loadingMsg = '<span><i class="' + Admin.iconClass('spinner') + ' fa-spin"></i> Loading. Please wait...</span>';
-  $tab.tab('show');
+  var loadingMsg = '<span><i class="' + Admin.spinnerClass() + '"></i> Loading. Please wait...</span>';
+  Admin.showTab($tab);
   $($tab.attr('href'))
     .html(loadingMsg)
     .load(url);
@@ -24,7 +24,8 @@ Assets.popup = function(e) {
   var options = 'menubar=no,resizable=yes,chrome=yes,centerScreen=yes,scrollbars=yes' +
     ',top=' + top + ',left=' + left +
     ',width=' + width + ',height=' + height;
-  var $tab = $('a[data-toggle="tab"][href$="-media"]').tab('show');
+  var $tab = $('a[data-bs-toggle="tab"][href$="-media"]');
+  Admin.showTab($tab);
   window.open(url, 'Asset Browser', options).focus();
   return false;
 };
@@ -95,7 +96,14 @@ Assets.unregisterAssetUsage = function(e) {
   var postData = {
     id: $target.data('id')
   };
-  $('.tooltip').tooltip('hide');
+  // Bootstrap 5 has no jQuery plugin API; hide through the instances.
+  Array.prototype.forEach.call(
+    document.querySelectorAll('[data-bs-toggle="tooltip"]'),
+    function (el) {
+      var tip = bootstrap.Tooltip.getInstance(el);
+      if (tip) { tip.hide(); }
+    }
+  );
   $.post({
     url: $target.attr('href'),
     data: postData,

@@ -93,6 +93,12 @@ class UsersController extends AppController
     {
         parent::beforeFilter($event);
 
+        // The `view` action's query contains nothing by default, so $user->role
+        // was never loaded and the profile page showed an empty Role.
+        $this->Crud->on('beforeFind', function (Event $event): void {
+            $event->getSubject()->query->contain(['Roles']);
+        });
+
         $this->Crud->on('relatedModel', function (Event $event): void {
             if ($event->getSubject()->name == 'Roles') {
                 $event->getSubject()->query = $this->Users->Roles

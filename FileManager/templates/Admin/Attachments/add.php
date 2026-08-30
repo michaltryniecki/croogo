@@ -139,7 +139,7 @@ endif;
         $redirectUrl = $this->Url->build($indexUrl);
         $script = <<<EOF
 
-    \$('[data-toggle=tab]:first').tab('show');
+    Admin.showTab(\$('[data-bs-toggle=tab]:first'));
     var filesToUpload = [];
     var uploadContext = [];
     var uploadResults = [];
@@ -193,7 +193,7 @@ endif;
                 });
         }
 
-        \$startUpload.html('<i class="fa fa-spin fa-spinner"></i> Upload')
+        \$startUpload.html('<i class="' + Admin.spinnerClass() + '"></i> Upload')
             .attr('disabled', true);
 
         var checkInterval = setInterval(function() {

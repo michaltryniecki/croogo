@@ -1,4 +1,17 @@
 <?php
+/**
+ * Shared skeleton for admin index pages.
+ *
+ * The search bar, the table and the pager live inside one Tabler card, which is
+ * what gives an index page its frame. The fetch() blocks (`search`,
+ * `main`/`table-body`, `bulk-action`, `paging`) are still the extension points
+ * plugins override; only the wrapper around them changed.
+ *
+ * A template that renders its own body instead lands in the `content` block and
+ * is emitted as-is - see the note further down.
+ *
+ * @var \Croogo\Core\View\CroogoView $this
+ */
 
 use Cake\Utility\Inflector;
 
@@ -35,7 +48,10 @@ if (empty($this->fetch('action-buttons'))) {
         $entityName = __($humanName);
     }
     $actionTitle = __d('croogo', 'New %s', $entityName);
-    $this->assign('action-buttons', $this->Croogo->adminAction($actionTitle, ['action' => 'add']));
+    $this->assign('action-buttons', $this->Croogo->adminAction($actionTitle, ['action' => 'add'], [
+        'button' => 'primary',
+        'icon' => 'create',
+    ]));
 }
 
 $tableHeaders = trim($this->fetch('table-heading'));
@@ -108,25 +124,27 @@ $tableFooters = trim($this->fetch('table-footer'));
     <div class="<?= $rowClass ?>">
         <div class="<?= $columnFull ?>">
             <?php
-            $searchBlock = $this->fetch('search');
-            if (!$searchBlock) :
-                $searchBlock = $this->element('Croogo/Core.admin/search');
-            endif;
-
-            if (!empty($searchBlock)) :
-                ?>
-            <div class="navbar navbar-light bg-light">
-                <div class="table-search float-right">
-                    <?= $searchBlock ?>
-                </div>
-            </div>
-                <?php
-            endif;
-
+            // A template that renders its own body - the theme grid, the ACL
+            // matrix - lands in the `content` block, and gets NO card: it has
+            // already decided what its frame looks like, and wrapping it would
+            // nest a card inside a card.
             if ($contentBlock = trim($this->fetch('content'))) :
-                echo $this->element('Croogo/Core.admin/search');
                 echo $contentBlock;
             else :
+                ?>
+            <div class="card">
+                <?php
+                $searchBlock = $this->fetch('search');
+                if (!$searchBlock) :
+                    $searchBlock = $this->element('Croogo/Core.admin/search');
+                endif;
+
+                if (trim((string)$searchBlock) !== '') :
+                    ?>
+                <div class="card-header py-2"><?= $searchBlock ?></div>
+                    <?php
+                endif;
+
                 if ($formStart = trim($this->fetch('form-start'))) :
                     echo $formStart;
                 endif;
@@ -148,10 +166,14 @@ $tableFooters = trim($this->fetch('table-footer'));
                         ?>
                     </table>
                     </div>
+                <?php else : ?>
+                    <div class="card-body">
+                        <p class="text-secondary m-0"><?= __d('croogo', 'No records found.') ?></p>
+                    </div>
                 <?php endif ?>
 
                 <?php if ($bulkAction = trim($this->fetch('bulk-action'))) : ?>
-                <div id="bulk-action">
+                <div class="card-footer" id="bulk-action">
                     <?= $bulkAction ?>
                 </div>
                 <?php endif ?>
@@ -162,21 +184,15 @@ $tableFooters = trim($this->fetch('table-footer'));
                 elseif ($formStart) :
                     echo $this->Form->end();
                 endif;
-                ?>
 
-            <?php endif ?>
-        </div>
-    </div>
-
-    <div class="<?= $rowClass ?>">
-        <div class="<?= $columnFull ?>">
-            <?php
-            if ($pagingBlock = $this->fetch('paging')) :
-                echo $pagingBlock;
-            else :
-                if (isset($this->Paginator) && $this->getRequest()->getParam('paging')) :
+                if ($pagingBlock = $this->fetch('paging')) :
+                    echo $pagingBlock;
+                elseif (isset($this->Paginator) && $this->getRequest()->getParam('paging')) :
                     echo $this->element('Croogo/Core.admin/pagination');
                 endif;
+                ?>
+            </div>
+                <?php
             endif;
             ?>
         </div>

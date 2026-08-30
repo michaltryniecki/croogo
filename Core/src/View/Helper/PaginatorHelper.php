@@ -28,7 +28,7 @@ class PaginatorHelper extends BasePaginatorHelper
                 'prevActive' => '<li class="prev page-item"><a rel="prev" aria-label="Previous" href="{{url}}" class="page-link">' .
                     '<span aria-hidden="true">{{text}}</span></a></li>',
                 'prevDisabled' => '<li class="prev page-item disabled"><a class="page-link"><span aria-hidden="true">{{text}}</span></a></li>',
-                'current' => '<li class="page-item active"><a class="page-link">{{text}} <span class="sr-only">(current)</span></a></li>',
+                'current' => '<li class="page-item active"><a class="page-link">{{text}} <span class="visually-hidden">(current)</span></a></li>',
                 'number' => '<li class="page-item"><a class="page-link" href="{{url}}">{{text}}</a></li>',
                 'first' => '<li class="first page-item"><a href="{{url}}" class="page-link">{{text}}</a></li>',
                 'last' => '<li class="last page-item"><a href="{{url}}" class="page-link">{{text}}</a></li>',

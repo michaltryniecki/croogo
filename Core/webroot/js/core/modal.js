@@ -12,7 +12,13 @@ Admin.modal = function() {
     var remote = $button.data('remote');
     $modal.find('.modal-body')
       .load(remote, function () {
-        $modal.data('bs.modal').handleUpdate();
+        // Bootstrap 5 keeps component instances in its own registry instead of
+        // jQuery data, so the old `$modal.data('bs.modal')` reads undefined here
+        // and reflowing the dialog after the XHR would throw.
+        var instance = bootstrap.Modal.getInstance($modal.get(0));
+        if (instance) {
+          instance.handleUpdate();
+        }
       });
   });
 

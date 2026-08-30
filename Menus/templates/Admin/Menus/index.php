@@ -50,7 +50,7 @@ foreach ($menus as $menu) :
     ]);
 
     if ($menu->status === Status::PREVIEW) {
-        $title .= ' ' . $this->Html->tag('span', __d('croogo', 'preview'), ['class' => 'label label-warning']);
+        $title .= ' ' . $this->Html->tag('span', __d('croogo', 'preview'), ['class' => 'badge text-bg-warning']);
     }
 
     $status = $this->element('Croogo/Core.admin/toggle', [

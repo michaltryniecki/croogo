@@ -86,8 +86,14 @@ if (!$this->exists('left-column')) :
     $tabContent .= $this->Croogo->adminTabs();
 
     $this->start('left-column');
-    echo $this->Html->tag('ul', $tabHeading, ['class' => 'nav nav-tabs']);
-    echo $this->Html->div($tabContentClass, $tabContent);
+    echo '<div class="card">';
+    echo $this->Html->tag('div', $this->Html->tag('ul', $tabHeading, [
+        'class' => 'nav nav-tabs card-header-tabs',
+        'data-bs-toggle' => 'tabs',
+        'role' => 'tablist',
+    ]), ['class' => 'card-header']);
+    echo $this->Html->div('card-body', $this->Html->div($tabContentClass, $tabContent));
+    echo '</div>';
     $this->end();
 endif;
 
@@ -111,9 +117,9 @@ endif;
 
 $output = '';
 $output .= $this->Html->tag('div', $this->fetch('left-column'), ['class' => $columnLeft]);
-$rightColumn = $this->Html->tag('div', $this->fetch('right-column'), ['class' => 'card-columns', 'style' => 'column-count: 1']);
+$rightColumn = $this->Html->tag('div', $this->fetch('right-column'), ['class' => 'd-flex flex-column gap-3']);
 $output .= $this->Html->tag('div', $rightColumn, ['class' => $columnRight]);
-echo $this->Html->tag('div', $output, ['class' => $rowClass]);
+echo $this->Html->tag('div', $output, ['class' => $rowClass . ' g-3']);
 
 if ($formEnd = trim($this->fetch('form-end'))) :
     echo $formEnd;

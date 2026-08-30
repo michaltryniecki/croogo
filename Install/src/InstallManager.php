@@ -106,13 +106,13 @@ class InstallManager
 
         try {
             $db = ConnectionManager::get('default');
-            $db->connect();
+            $db->getDriver()->connect();
         } catch (MissingConnectionException $e) {
             ConnectionManager::drop('default');
 
             return __d('croogo', 'Could not connect to database: ') . $e->getMessage();
         }
-        if (!$db->isConnected()) {
+        if (!$db->getDriver()->isConnected()) {
             ConnectionManager::drop('default');
 
             return __d('croogo', 'Could not connect to database.');

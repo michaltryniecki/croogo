@@ -31,7 +31,11 @@ class Nav
      *
      * @var array
      */
-    protected static $_items = ['sidebar' => []];
+    // `top-left` and `top-right` are seeded alongside `sidebar` because the admin
+    // header renders all three (Core/templates/element/admin/header.php). Without
+    // the keys, items() takes its "Invalid menu" branch and logs an error on every
+    // single admin page render.
+    protected static $_items = ['sidebar' => [], 'top-left' => [], 'top-right' => []];
 
     /**
      * _defaults

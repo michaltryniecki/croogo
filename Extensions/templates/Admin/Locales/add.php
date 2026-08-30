@@ -35,9 +35,9 @@ $this->end();
 
 $this->append('panels');
 echo $this->Html->beginBox(__d('croogo', 'Publishing')) .
-    '<div class="clearfix"><div class="float-left">' .
+    '<div class="d-flex justify-content-between"><div>' .
     $this->Form->button(__d('croogo', 'Upload'), ['button' => 'success']) .
-    '</div><div class="float-right">' .
+    '</div><div>' .
     $this->Html->link(__d('croogo', 'Cancel'), ['action' => 'index'], ['button' => 'danger']) .
     '</div></div>';
 echo $this->Html->endBox();

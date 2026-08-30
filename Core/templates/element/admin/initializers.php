@@ -1,4 +1,10 @@
 <?php
+/**
+ * `Admin.navigation()` is gone with core/sidebar.js: the sidebar is Bootstrap 5
+ * dropdown markup now, which needs no initialisation.
+ *
+ * @var \Croogo\Core\View\CroogoView $this
+ */
 
 $adminThemeScripts = <<<EOF
     Admin.form();
@@ -7,7 +13,7 @@ $adminThemeScripts = <<<EOF
     Admin.extra();
     Admin.slideBoxToggle();
     Admin.dateTimeFields();
-    Admin.navigation();
+    Admin.lightbox();
     Admin.modal();
 
 EOF;

@@ -15,6 +15,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
 use Cake\Utility\File;
 use Composer\IO\BufferIO;
+use Croogo\Core\PluginManager;
 use Croogo\Install\InstallManager;
 use Exception;
 
@@ -147,7 +148,10 @@ class InstallController extends Controller
             $connection = ConnectionManager::get('default');
             $config = $connection->config();
             $currentConfiguration['exists'] = !empty($config) && !($config['username'] === 'my_app' && $config['database'] === 'my_app');
-            $currentConfiguration['valid'] = $connection->connect();
+            // CakePHP 5 dropped Connection::connect()/isConnected(); connecting is the
+            // driver's job now, and it throws rather than returning false.
+            $connection->getDriver()->connect();
+            $currentConfiguration['valid'] = true;
             $context = [
                 'schema' => true,
                 'defaults' => $config,
@@ -226,7 +230,7 @@ class InstallController extends Controller
     {
         $this->_check();
         if (!Plugin::isLoaded('Croogo/Users')) {
-            Plugin::load('Croogo/Users');
+            PluginManager::load('Croogo/Users');
         }
         $this->Users = $this->fetchTable('Croogo/Users.Users');
 

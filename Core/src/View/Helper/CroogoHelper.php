@@ -118,10 +118,24 @@ class CroogoHelper extends Helper
         return $this->Html->script($url, $options);
     }
 
-    /** Generate Admin menus added by Nav::add()
+    /**
+     * Generate Admin menus added by Nav::add()
      *
-     * @param array $menus
-     * @param array $options
+     * Emits Tabler's navbar markup. Both menu types are the same Bootstrap 5
+     * dropdown component, they only differ in where the submenu opens:
+     *
+     * - `sidebar` - the vertical navbar down the left. Items carry
+     *   `.nav-link-icon` / `.nav-link-title` spans so the labels collapse away
+     *   with the sidebar, and submenus open as `.dropdown-menu`.
+     * - `dropdown` - the horizontal top bar. Submenus are end-aligned so they do
+     *   not hang off the right edge of the window.
+     *
+     * Everything is plain Bootstrap 5 behaviour driven by `data-bs-toggle`; there
+     * is no Croogo JavaScript behind it any more.
+     *
+     * @param array $menus Menu items, as collected by Nav::items()
+     * @param array $options Rendering options
+     * @param int $depth Current nesting level, 0 for the top level
      * @return string menu html tags
      */
     public function adminMenus($menus, $options = [], $depth = 0)
@@ -130,10 +144,8 @@ class CroogoHelper extends Helper
             'type' => 'sidebar',
             'children' => true,
             'htmlAttributes' => [
-                'class' => 'nav flex-column',
+                'class' => 'navbar-nav',
             ],
-            'itemTag' => 'li',
-            'listTag' => 'ul',
         ], $options);
 
         $userId = $this->getView()->getRequest()->getSession()->read('Auth.User.id');
@@ -143,136 +155,132 @@ class CroogoHelper extends Helper
 
         $sidebar = $options['type'] === 'sidebar';
         $htmlAttributes = $options['htmlAttributes'];
-        $out = null;
+        $isSubmenu = $depth > 0;
+
+        $out = '';
         $sorted = Hash::sort($menus, '{s}.weight', 'ASC');
         if (empty($this->Role)) {
-            $this->Role = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Roles');
+            $this->Role = TableRegistry::getTableLocator()->get('Croogo/Users.Roles');
             $this->Role->addBehavior('Croogo/Core.Aliasable');
         }
         $currentRole = $this->Role->getBehavior('Aliasable')->byId($this->Layout->getRoleId());
 
         foreach ($sorted as $menu) {
             if (isset($menu['separator'])) {
-                if ($options['itemTag'] === false) {
-                    $liOptions['class'] = 'dropdown-divider';
-                    $out .= $this->Html->tag('div', '', $liOptions);
-                } else {
-                    $liOptions['class'] = 'divider';
-                    $out .= $this->Html->tag($options['itemTag'], '', $liOptions);
-                }
+                // A submenu is a <div class="dropdown-menu"> of <a>s, so its
+                // divider is a <hr>; the top level is a <ul>, where it has to be
+                // an <li> to stay valid markup.
+                $out .= $isSubmenu
+                    ? '<hr class="dropdown-divider">'
+                    : $this->Html->tag('li', '', ['class' => 'nav-item dropdown-divider']);
                 continue;
             }
             if ($currentRole != 'superadmin' && !$this->Acl->linkIsAllowedByUserId($userId, $menu['url'])) {
                 continue;
             }
 
-            if (empty($menu['htmlAttributes']['class'])) {
-                $menuClass = Text::slug(strtolower('menu-' . $menu['title']), '-');
-                $menu['htmlAttributes'] = Hash::merge([
-                    'class' => $menuClass,
-                ], $menu['htmlAttributes']);
+            $attributes = $menu['htmlAttributes'] ?? [];
+            if (empty($attributes['class'])) {
+                $attributes['class'] = Text::slug(strtolower('menu-' . $menu['title']), '-');
             }
-            $title = '';
-            if ($menu['icon'] === false) {
-            } elseif (empty($menu['icon'])) {
-                $menu['htmlAttributes'] += ['icon' => 'white'];
-            } else {
-                $menu['htmlAttributes'] += ['icon' => $menu['icon']];
-            }
-            if ($sidebar) {
-                $title .= '<span>' . h($menu['title']) . '</span>';
-            } else {
-                $title .= $menu['title'];
-            }
+
             $children = '';
             if (!empty($menu['children'])) {
-                $childClass = '';
-                if ($sidebar) {
-                    $itemTag = 'li';
-                    $listTag = 'ul';
-                    $childClass = 'nav flex-column sub-nav ';
-                    $childClass .= ' submenu-' . Text::slug(strtolower($menu['title']), '-');
-                    if ($depth > 0) {
-                        $childClass .= ' dropdown-menu';
-                    }
-                } else {
-                    if ($depth == 0) {
-                        $childClass = 'dropdown-menu';
-                    }
-                    $itemTag = false;
-                    $listTag = 'div';
-                }
                 $children = $this->adminMenus($menu['children'], [
                     'type' => $options['type'],
                     'children' => true,
-                    'htmlAttributes' => ['class' => $childClass],
-                    'itemTag' => $itemTag,
-                    'listTag' => $listTag,
+                    'htmlAttributes' => [
+                        'class' => $sidebar ? 'dropdown-menu' : 'dropdown-menu dropdown-menu-end',
+                    ],
                 ], $depth + 1);
-
-                $menu['htmlAttributes']['class'] .= ' hasChild dropdown-close';
             }
 
-            $menuUrl = $this->Url->build($menu['url']);
-            if ($menuUrl == env('REQUEST_URI')) {
-                if (isset($menu['htmlAttributes']['class'])) {
-                    $menu['htmlAttributes']['class'] .= ' current';
-                } else {
-                    $menu['htmlAttributes']['class'] = 'current';
-                }
+            $isCurrent = $this->Url->build($menu['url']) === env('REQUEST_URI');
+            if ($isCurrent) {
+                $attributes['class'] .= ' active';
             }
 
-            if (!$sidebar && !empty($children)) {
-                $menu['htmlAttributes']['class'] = 'dropdown-toggle';
-                $menu['htmlAttributes']['data-toggle'] = 'dropdown';
+            $attributes['class'] .= $isSubmenu ? ' dropdown-item' : ' nav-link';
+            if ($children) {
+                $attributes['class'] .= ' dropdown-toggle';
+                $attributes['data-bs-toggle'] = 'dropdown';
+                $attributes['data-bs-auto-close'] = 'outside';
+                $attributes['role'] = 'button';
+                $attributes['aria-expanded'] = 'false';
             }
 
-            if (!$sidebar && $depth == 0) {
-                $menu['htmlAttributes']['class'] .= ' nav-link';
-            } elseif (!$sidebar && $depth > 0) {
-                $menu['htmlAttributes']['class'] .= ' dropdown-item';
-            } else {
-                $menu['htmlAttributes']['class'] .= ' sidebar-item';
-            }
-
-            if (isset($menu['before'])) {
-                $title = $menu['before'] . $title;
-            }
-
-            if (isset($menu['after'])) {
-                $title = $title . $menu['after'];
-            }
-
-            $menu['htmlAttributes']['escape'] = false;
-
-            $link = $this->Html->link($title, $menu['url'], $menu['htmlAttributes']);
-            if ($options['itemTag'] === false) {
-                $out .= $link;
-                continue;
-            }
-
-            $liOptions = [
-                'class' => 'nav-item',
-            ];
-            if ($sidebar && !empty($children) && $depth > 0) {
-                $liOptions['class'] .= ' dropdown-submenu';
-            }
-            if (!$sidebar && !empty($children)) {
-                if ($depth > 0) {
-                    $liOptions['class'] .= ' dropdown-submenu';
-                } else {
-                    $liOptions['class'] .= ' dropdown';
-                }
-            }
-
-            $out .= $this->Html->tag($options['itemTag'], $link . $children, $liOptions);
+            $out .= $this->_adminMenuItem($menu, $attributes, $children, $sidebar, $isSubmenu);
         }
 
-        if (!$sidebar && $depth > 0) {
-            $htmlAttributes['class'] = 'dropdown-menu';
+        // (string) cast, and an early return for an empty menu: HtmlHelper::tag()
+        // emits ONLY the opening tag when the content is null, and an unclosed
+        // <ul> swallows whatever markup follows it - which is how the always-empty
+        // `top-left` menu used to eat the account dropdown next to it.
+        if ($out === '') {
+            return '';
         }
 
-        return $this->Html->tag($options['listTag'], $out, $htmlAttributes);
+        return $this->Html->tag($isSubmenu ? 'div' : 'ul', $out, $htmlAttributes);
+    }
+
+    /**
+     * Render one entry of an admin menu.
+     *
+     * Split out of adminMenus() because a top-level entry and a submenu entry are
+     * different elements, not the same element with different classes: the former
+     * is an <li> wrapping an <a>, the latter is a bare <a> inside the parent's
+     * .dropdown-menu.
+     *
+     * @param array $menu The menu item
+     * @param array $attributes Html attributes for the link
+     * @param string $children Rendered submenu, empty when there is none
+     * @param bool $sidebar Whether this belongs to the vertical navbar
+     * @param bool $isSubmenu Whether this item sits inside a .dropdown-menu
+     * @return string
+     */
+    protected function _adminMenuItem(array $menu, array $attributes, $children, $sidebar, $isSubmenu)
+    {
+        $title = h($menu['title']);
+        if ($sidebar && !$isSubmenu) {
+            // `.nav-link-title` is what Tabler hides when the sidebar collapses,
+            // so the label has to be inside it rather than a bare text node.
+            $title = '<span class="nav-link-title">' . $title . '</span>';
+        }
+
+        if (!empty($menu['icon'])) {
+            // A submenu entry is a `.dropdown-item`, where the icon is just an
+            // inline glyph. Only a nav link gets `.nav-link-icon`, which is the
+            // hook Tabler uses to keep the icon visible while the sidebar is
+            // collapsed to icons only.
+            $title = $isSubmenu
+                ? $this->Html->icon($menu['icon'], ['class' => 'dropdown-item-icon']) . $title
+                : '<span class="nav-link-icon">' . $this->Html->icon($menu['icon']) . '</span>' . $title;
+        }
+
+        if (isset($menu['before'])) {
+            $title = $menu['before'] . $title;
+        }
+        if (isset($menu['after'])) {
+            $title = $title . $menu['after'];
+        }
+
+        $attributes['escape'] = false;
+        $link = $this->Html->link($title, $menu['url'], $attributes);
+
+        if ($isSubmenu) {
+            // Nested one level deeper still: Bootstrap has no submenu component,
+            // so the child menu is wrapped in a `.dropend` that opens sideways.
+            return $children
+                ? $this->Html->tag('div', $link . $children, ['class' => 'dropend'])
+                : $link;
+        }
+
+        $liClass = 'nav-item';
+        if ($children) {
+            $liClass .= ' dropdown';
+        }
+
+        return $this->Html->tag('li', $link . $children, ['class' => $liClass]);
     }
 
     /**
@@ -416,9 +424,15 @@ class CroogoHelper extends Helper
      */
     public function adminAction($title, $url, $options = [], $confirmMessage = false)
     {
+        // `outline-primary`, not `outline-secondary`: these sit in the page
+        // header against Tabler's light grey page background, where a grey
+        // outline on a near-white button all but disappears. Primary-outlined
+        // still reads as secondary to the filled primary button next to it.
+        //
+        // No `btn-sm` either: these are a page's main actions and were coming
+        // out 28px tall next to the 40px controls in the card below them.
         $options = Hash::merge([
-            'button' => 'outline-secondary',
-            'class' => 'btn-sm',
+            'button' => 'outline-primary',
             'list' => false,
             'confirm' => $confirmMessage,
             'escape' => false,
@@ -447,11 +461,15 @@ class CroogoHelper extends Helper
      */
     public function adminTab($title, $url, $options = [])
     {
-//        $options = Hash::merge([
-//            'data-toggle' => 'tab',
-//        ], $options);
+        // Real Bootstrap 5 tabs. The `scroll` class this used to carry belonged to
+        // a scroll-to-section behaviour built on jQuery Waypoints, a library the
+        // admin panel no longer loads - so the tabs did nothing at all.
+        $options = Hash::merge([
+            'data-bs-toggle' => 'tab',
+            'role' => 'tab',
+        ], $options);
 
-        $options = $this->addClass($options, 'nav-link scroll');
+        $options = $this->addClass($options, 'nav-link');
 
         return $this->Html->tag('li', $this->Html->link($title, $url, $options), [
             'class' => 'nav-item',

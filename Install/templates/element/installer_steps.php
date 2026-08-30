@@ -1,22 +1,26 @@
 <?php
 /**
- * @var \uAfrica\View\AppView $this
+ * Installer progress, as Tabler's numbered steps.
+ *
+ * @var \Croogo\Core\View\CroogoView $this
  */
 
 use Croogo\Install\Controller\InstallController;
 
-$steps = [];
+$steps = '';
 
 foreach (InstallController::STEPS as $key => $step) {
-    if ($onStep >= $key + 1) {
-        $options = ['class' => 'btn btn-primary btn-circle'];
-    } else {
-        $options = ['class' => 'btn btn-secondary btn-circle'];
+    // `.active` marks the step you are on; Tabler colours every step up to and
+    // including it, so only the current one carries the class.
+    $class = 'step-item';
+    if ($onStep === $key + 1) {
+        $class .= ' active';
     }
 
-    $stepButton = $this->Html->tag('span', $key + 1, $options);
-    $step = $this->Html->para('', $step);
-    $steps[] = $this->Html->div('wizard-step', $stepButton . $step);
+    $steps .= $this->Html->tag('div', h($step), [
+        'class' => $class,
+        'title' => $step,
+    ]);
 }
 
-echo $this->Html->div('wizard-row', implode('', $steps));
+echo $this->Html->div('steps steps-counter steps-blue mb-4', $steps);

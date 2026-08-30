@@ -46,7 +46,7 @@
         hide: true,
         editable: true,
         editLabel: 'Edit',
-        editClass: 'btn btn-secondary btn-sm'
+        editClass: 'btn btn-link btn-sm px-0'
       };
 
       if (options) {

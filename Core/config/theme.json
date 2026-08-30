@@ -1,28 +1,24 @@
 {
-    "name" : "Croogo/Core",
-    "description" : "Default theme for Croogo (Based on StartBootstrap Agency)",
-    "screenshot" : "img/screenshot.jpg",
-
-    "author" : "Croogo Dev Team",
-    "authorEmail" : "team@croogo.org",
-    "authorUrl" : "http://croogo.org",
-
+    "name": "Croogo/Core",
+    "description": "Default theme for Croogo (Based on StartBootstrap Agency)",
+    "screenshot": "img/screenshot.jpg",
+    "author": "Croogo Dev Team",
+    "authorEmail": "team@croogo.org",
+    "authorUrl": "http://croogo.org",
     "isFrontendTheme": true,
     "isBackendTheme": true,
-
-    "menus" : [
+    "menus": [
         "main",
         "footer"
     ],
-
-    "regions" : [
+    "regions": [
         "right"
     ],
-
     "settings": {
         "select2Defaults": {
             "dropdownAutoWidth": true,
-            "theme": "bootstrap"
+            "width": "100%",
+            "theme": "tabler"
         }
     }
 }
