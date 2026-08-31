@@ -380,44 +380,6 @@ span.twitter-typeahead {
 }
 
 /* ---------------------------------------------------------------------------
- * Tempus Dominus 4
- *
- * Built for Bootstrap 4: it renders its calendar into a `.dropdown-menu` and
- * relies on that component's old padding and table styles.
- * ------------------------------------------------------------------------ */
-.bootstrap-datetimepicker-widget {
-    padding: .5rem;
-    border-radius: var(--tblr-border-radius);
-    background: var(--tblr-bg-surface);
-    color: var(--tblr-body-color);
-    box-shadow: var(--tblr-box-shadow);
-}
-
-.bootstrap-datetimepicker-widget table td,
-.bootstrap-datetimepicker-widget table th {
-    border: 0;
-    border-radius: var(--tblr-border-radius);
-    text-align: center;
-}
-
-.bootstrap-datetimepicker-widget table td.active,
-.bootstrap-datetimepicker-widget table td.active:hover {
-    background: var(--tblr-primary);
-    color: #fff;
-}
-
-.bootstrap-datetimepicker-widget table td.day:hover,
-.bootstrap-datetimepicker-widget table th:hover {
-    background: var(--tblr-bg-surface-secondary);
-    cursor: pointer;
-}
-
-.bootstrap-datetimepicker-widget table td.old,
-.bootstrap-datetimepicker-widget table td.new {
-    color: var(--tblr-secondary);
-}
-
-/* ---------------------------------------------------------------------------
  * ACL permissions grid
  *
  * A wide matrix of role columns against a lazily expanded tree of ACO rows.

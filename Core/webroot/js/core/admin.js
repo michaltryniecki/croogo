@@ -306,51 +306,135 @@ Admin.iconClass = function (icon, includeDefault) {
   return result.trim();
 };
 
-Admin.dateTimeFields = function(datePickers) {
-  $.fn.datetimepicker.Constructor.Default = $.extend({}, $.fn.datetimepicker.Constructor.Default, {
-      icons: {
-        time: Admin.iconClass('clock'),
-        date: Admin.iconClass('calendar'),
-        up: Admin.iconClass('chevron-up'),
-        down: Admin.iconClass('chevron-down'),
-        previous: Admin.iconClass('chevron-left'),
-        next: Admin.iconClass('chevron-right'),
-        today: Admin.iconClass('screenshot'),
-        clear: Admin.iconClass('trash'),
-        close: Admin.iconClass('remove')
-      }
-    }
+/**
+ * Date and time controls.
+ *
+ * The visible control is the browser's own `<input type="date|time|datetime-local">`
+ * (see Croogo\Core\View\Widget\DateTimeWidget), which speaks naive wall-clock time
+ * and knows nothing about time zones. What actually gets posted is the hidden input
+ * beside it, named by `data-related`, holding an ISO-8601 string with an explicit
+ * offset - one of CakePHP's `DateTimeType` marshal formats, so the server reads back
+ * exactly the instant it rendered.
+ *
+ * PHP fills both fields on render; everything below is the inbound half, run when
+ * the user changes the control. The wall clock is read in the user's own zone
+ * (`Auth.User.timezone`, published as `data-timezone`) through `Intl`, which is what
+ * moment-timezone used to be loaded for.
+ */
+
+/**
+ * Offset of `timeZone` from UTC, in minutes, at the given instant.
+ *
+ * Intl has no API for this, but it will format an instant *into* a zone; reading
+ * those parts back as though they were UTC and subtracting gives the offset, DST
+ * and historical changes included.
+ */
+Admin.zoneOffset = function (instant, timeZone) {
+  var parts = {};
+  new Intl.DateTimeFormat('en-US', {
+    timeZone: timeZone,
+    hour12: false,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
+  }).formatToParts(instant).forEach(function (part) {
+    parts[part.type] = part.value;
+  });
+
+  // `hour` comes back as 24 rather than 0 at midnight in some ICU versions.
+  var asUtc = Date.UTC(
+    parts.year, parts.month - 1, parts.day,
+    parts.hour % 24, parts.minute, parts.second
   );
 
+  return (asUtc - (instant.getTime() - instant.getUTCMilliseconds())) / 60000;
+};
+
+/**
+ * The instant named by a wall clock in `timeZone`.
+ *
+ * Two passes: the first offset is the one in force at the *nominal* UTC time, which
+ * is the wrong side of a DST boundary for values within an hour of the jump. Asking
+ * again at the candidate instant settles it.
+ */
+Admin.instantFromZoned = function (parts, timeZone) {
+  var naive = Date.UTC(parts[0], parts[1] - 1, parts[2], parts[3], parts[4], parts[5]);
+  var offset = Admin.zoneOffset(new Date(naive), timeZone);
+  var instant = new Date(naive - offset * 60000);
+  var settled = Admin.zoneOffset(instant, timeZone);
+  if (settled !== offset) {
+    instant = new Date(naive - settled * 60000);
+  }
+
+  return instant;
+};
+
+/**
+ * Formats an instant as ISO-8601 with the offset `timeZone` had then, e.g.
+ * `2026-08-30T12:00:00+02:00` - PHP's DateTime::ATOM, the same shape the widget
+ * rendered into the hidden field in the first place.
+ */
+Admin.toAtom = function (instant, timeZone) {
+  var offset = Admin.zoneOffset(instant, timeZone);
+  var magnitude = Math.abs(offset);
+  var pad = function (n) {
+    return (n < 10 ? '0' : '') + n;
+  };
+
+  return new Date(instant.getTime() + offset * 60000).toISOString().slice(0, 19) +
+    (offset < 0 ? '-' : '+') +
+    pad(Math.floor(magnitude / 60)) + ':' + pad(magnitude % 60);
+};
+
+/**
+ * Translates one native control's value into the string its hidden field posts.
+ */
+Admin.dateTimeValue = function (value, inputType, timeZone) {
+  if (!value) {
+    return '';
+  }
+
+  // A date names a day and a time names a time of day; neither is an instant, so
+  // there is nothing to shift and the native value is already what Cake marshals.
+  if (inputType !== 'datetime-local') {
+    return value;
+  }
+
+  var parts = value.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?/);
+  if (!parts) {
+    return value;
+  }
+
+  try {
+    return Admin.toAtom(Admin.instantFromZoned([
+      +parts[1], +parts[2], +parts[3], +parts[4], +parts[5], +(parts[6] || 0)
+    ], timeZone), timeZone);
+  } catch (e) {
+    // An unknown zone name makes Intl throw. Posting the wall clock unqualified is
+    // wrong by an offset, but it is still a readable date rather than nothing.
+    return value.replace('T', ' ');
+  }
+};
+
+Admin.dateTimeFields = function(datePickers) {
   datePickers = typeof datePickers !== 'undefined' ? datePickers : $('[role=datetime-picker]');
 
   datePickers.each(function () {
-    var picker = $(this);
-    var date = null;
+    var group = $(this);
+    var input = group.find('input[data-related]').first();
+    if (!input.length) {
+      return;
+    }
 
-    picker.on('dp.change', function(e) {
-      var sDate = "";
-      date = moment(e.date);
-      if (date.isValid()) {
-        date.tz('UTC').locale('UTC');
-        sDate = date.format('YYYY-MM-DD HH:mm:ss');
-      }
-      $('#' + picker.data('related')).val(sDate);
+    var hidden = $(document.getElementById(input.data('related')));
+    if (!hidden.length) {
+      return;
+    }
+
+    var timeZone = group.data('timezone') || 'UTC';
+    var inputType = input.attr('type');
+
+    input.on('change', function () {
+      hidden.val(Admin.dateTimeValue(input.val(), inputType, timeZone));
     });
-
-    var dpOptions = {
-      locale: picker.data('locale'),
-      format: picker.data('format')
-    };
-    if (picker.data('mindate')) {
-      dpOptions.minDate = picker.data('mindate');
-    }
-    if (picker.data('maxdate')) {
-      dpOptions.maxDate = picker.data('maxdate');
-    }
-    if (picker.data('timezone')) {
-      dpOptions.timeZone = picker.data('timezone');
-    }
-    picker.datetimepicker(dpOptions);
   });
 };

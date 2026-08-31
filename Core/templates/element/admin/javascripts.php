@@ -15,6 +15,10 @@
  * jQuery itself stays: select2, typeahead and Croogo's own admin scripts are all
  * built on it.
  *
+ * moment.js and moment-timezone went out with Tempus Dominus: the date fields are
+ * native `<input type="datetime-local">` now and do their one bit of time-zone
+ * arithmetic with `Intl` - see `Admin.dateTimeFields()`.
+ *
  * @var \Croogo\Core\View\CroogoView $this
  */
 
@@ -26,7 +30,6 @@ echo $this->Layout->js();
 
 echo $this->Html->script([
     'Croogo/Core.jquery/jquery.min.js',
-    'Croogo/Core.core/moment-with-locales',
     'Croogo/Core.core/underscore-min',
 ]);
 
@@ -36,8 +39,6 @@ echo $this->Html->script([
     'Croogo/Core.jquery/jquery.slug',
     'Croogo/Core.jquery/jquery.hoverIntent.minified',
     'Croogo/Core.core/bootstrap3-typeahead.min',
-    'Croogo/Core.core/moment-timezone-with-data',
-    'Croogo/Core.core/tempusdominus-bootstrap-4.min',
     'Croogo/Core.core/typeahead_autocomplete',
     'Croogo/Core.core/select2.full.min.js',
     'Croogo/Core.core/lightbox',
