@@ -8,7 +8,9 @@
  * reconciliation, it does not belong in this file.
  *
  * Written against Tabler's CSS custom properties (--tblr-*) so it follows the
- * light/dark theme rather than hardcoding colours.
+ * light/dark theme rather than hardcoding colours. The admin has a light/dark
+ * switch (see Core/templates/element/admin/header.php), so every literal colour
+ * left in this file is one that is right in BOTH themes, and says why.
  */
 
 /* ---------------------------------------------------------------------------
@@ -29,6 +31,11 @@
 
 /* ---------------------------------------------------------------------------
  * Sidebar
+ *
+ * The sidebar is pinned to `data-bs-theme="dark"` in navigation.php and stays a
+ * dark rail in both themes, so the tints below used to be written as white at low
+ * alpha. They are mixed out of `--tblr-navbar-color` instead: same colours today,
+ * but they now follow the navbar's own palette instead of assuming what it is.
  * ------------------------------------------------------------------------ */
 
 /* Tabler pins `overflow-y: scroll` on the vertical navbar so the layout does not
@@ -42,7 +49,7 @@
 .navbar-vertical.navbar-expand-xxl {
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, .2) transparent;
+    scrollbar-color: color-mix(in oklab, var(--tblr-navbar-color) 30%, transparent) transparent;
 }
 
 .navbar-vertical::-webkit-scrollbar {
@@ -55,7 +62,7 @@
 
 .navbar-vertical::-webkit-scrollbar-thumb {
     border-radius: 1rem;
-    background: rgba(255, 255, 255, .2);
+    background: color-mix(in oklab, var(--tblr-navbar-color) 30%, transparent);
 }
 
 /* The submenus render INSIDE the dark navbar but are `.dropdown-menu`s, so they
@@ -68,10 +75,10 @@
     --tblr-dropdown-color: var(--tblr-navbar-color);
     --tblr-dropdown-link-color: var(--tblr-navbar-color);
     --tblr-dropdown-link-hover-color: var(--tblr-navbar-active-color);
-    --tblr-dropdown-link-hover-bg: rgba(255, 255, 255, .06);
+    --tblr-dropdown-link-hover-bg: color-mix(in oklab, var(--tblr-navbar-color) 9%, transparent);
     --tblr-dropdown-link-active-color: var(--tblr-navbar-active-color);
-    --tblr-dropdown-link-active-bg: rgba(255, 255, 255, .1);
-    --tblr-dropdown-divider-bg: rgba(255, 255, 255, .12);
+    --tblr-dropdown-link-active-bg: color-mix(in oklab, var(--tblr-navbar-color) 14%, transparent);
+    --tblr-dropdown-divider-bg: color-mix(in oklab, var(--tblr-navbar-color) 17%, transparent);
 }
 
 /*
@@ -287,9 +294,12 @@
     padding: .25rem .75rem;
 }
 
+/* `--tblr-primary-fg` is the colour Tabler puts on a primary-coloured background
+   (it is what `.btn-primary` reads), and it carries the same `#fff` fallback.
+   `--tblr-primary` itself does not change between the two themes. */
 .select2-container--tabler .select2-results__option--highlighted[aria-selected] {
     background: var(--tblr-primary);
-    color: #fff;
+    color: var(--tblr-primary-fg, #fff);
 }
 
 .select2-container--tabler .select2-search--dropdown {
@@ -370,51 +380,13 @@ span.twitter-typeahead {
 .tt-suggestion:hover,
 .tt-suggestion:focus {
     background: var(--tblr-primary);
-    color: #fff;
+    color: var(--tblr-primary-fg, #fff);
 }
 
 .tt-suggestion.disabled {
     background: transparent;
     color: var(--tblr-secondary);
     cursor: not-allowed;
-}
-
-/* ---------------------------------------------------------------------------
- * Tempus Dominus 4
- *
- * Built for Bootstrap 4: it renders its calendar into a `.dropdown-menu` and
- * relies on that component's old padding and table styles.
- * ------------------------------------------------------------------------ */
-.bootstrap-datetimepicker-widget {
-    padding: .5rem;
-    border-radius: var(--tblr-border-radius);
-    background: var(--tblr-bg-surface);
-    color: var(--tblr-body-color);
-    box-shadow: var(--tblr-box-shadow);
-}
-
-.bootstrap-datetimepicker-widget table td,
-.bootstrap-datetimepicker-widget table th {
-    border: 0;
-    border-radius: var(--tblr-border-radius);
-    text-align: center;
-}
-
-.bootstrap-datetimepicker-widget table td.active,
-.bootstrap-datetimepicker-widget table td.active:hover {
-    background: var(--tblr-primary);
-    color: #fff;
-}
-
-.bootstrap-datetimepicker-widget table td.day:hover,
-.bootstrap-datetimepicker-widget table th:hover {
-    background: var(--tblr-bg-surface-secondary);
-    cursor: pointer;
-}
-
-.bootstrap-datetimepicker-widget table td.old,
-.bootstrap-datetimepicker-widget table td.new {
-    color: var(--tblr-secondary);
 }
 
 /* ---------------------------------------------------------------------------

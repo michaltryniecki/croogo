@@ -2,6 +2,7 @@
 
 namespace Croogo\Core\Model\Behavior;
 
+use ArrayObject;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Query;
@@ -120,14 +121,17 @@ class PublishableBehavior extends Behavior
 
     /**
      * Populate publish_start
+     *
+     * Cake passes `($event, $data, $options)` to `Model.beforeMarshal` and both
+     * payloads are `ArrayObject`s, so the old `($event, $options = [])` signature
+     * received the data in `$options` and had to dig it back out of the event -
+     * only to hand an `ArrayObject` to `array_key_exists()`, which is a TypeError
+     * on PHP 8. Taking the documented signature fixes both halves at once.
      */
-    public function beforeMarshal(Event $event, $options = []): void
+    public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options): void
     {
-        $data = $event->getData('data');
-        if (array_key_exists('publish_start', $data)) {
-            if (empty($data['publish_start'])) {
-                $data['publish_start'] = new \DateTime();
-            }
+        if ($data->offsetExists('publish_start') && empty($data['publish_start'])) {
+            $data['publish_start'] = new DateTime();
         }
     }
 

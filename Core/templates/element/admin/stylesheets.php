@@ -17,7 +17,6 @@ echo $this->Html->css([
     'Croogo/Core.tabler/tabler.min',
     'Croogo/Core.tabler/tabler-icons.min',
     'Croogo/Core.core/select2.min.css',
-    'Croogo/Core.core/tempusdominus-bootstrap-4.min',
     // Croogo's own layer: everything that reconciles the third-party widgets
     // above with Tabler lives here, so the vendored files stay pristine copies.
     'Croogo/Core.core/croogo-tabler',

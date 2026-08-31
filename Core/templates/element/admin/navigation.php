@@ -2,6 +2,16 @@
 /**
  * Admin sidebar - Tabler's vertical navbar.
  *
+ * `data-bs-theme="dark"` is pinned rather than left to follow the page: the dark
+ * rail against a light page is what the admin looks like, and letting it follow
+ * the switch would turn the light theme into a white-on-white panel. In dark mode
+ * the attribute is redundant but not a no-op - it keeps the sidebar on the navbar
+ * surface, a step lighter than the page body, so the two stay distinguishable.
+ *
+ * Croogo/Core.core/croogo-tabler.css leans on this: the sidebar's scrollbar and
+ * submenu tints are mixed out of `--tblr-navbar-color`, which is what this
+ * attribute selects.
+ *
  * @var \Croogo\Core\View\CroogoView $this
  */
 
