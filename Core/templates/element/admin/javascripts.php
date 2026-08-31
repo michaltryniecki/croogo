@@ -26,6 +26,11 @@ if ($this->getRequest()->is('ajax')) {
     return;
 }
 
+// The light/dark switch. This one goes FIRST and stays synchronous: it applies the
+// stored theme to <html> before the page paints, so a dark admin does not flash
+// white on every load. See Core/webroot/css/tabler/README.md.
+echo $this->Html->script('Croogo/Core.tabler/tabler-theme.min.js');
+
 echo $this->Layout->js();
 
 echo $this->Html->script([

@@ -438,3 +438,37 @@ Admin.dateTimeFields = function(datePickers) {
     });
   });
 };
+
+/**
+ * Light/dark theme switch.
+ *
+ * `tabler/tabler-theme.min.js` owns this: it runs before the page paints, reads
+ * `?theme=` or `localStorage['tabler-theme']`, and sets `data-bs-theme` on <html>.
+ * The two links in the admin header carry `?theme=` hrefs, so the switch already
+ * works with this function never running.
+ *
+ * All this adds is applying the change in place, so choosing a theme is not a page
+ * load. It writes the same storage key and mirrors the same set-or-remove rule the
+ * vendored script uses, so the next load agrees with what you are looking at.
+ */
+Admin.themeToggle = function () {
+  $(document).on('click', '[data-theme-toggle]', function (event) {
+    var theme = $(this).data('theme-toggle');
+    event.preventDefault();
+
+    try {
+      localStorage.setItem('tabler-theme', theme);
+    } catch (e) {
+      // Storage disabled or full (private browsing). The switch still applies to
+      // the page in front of the user; it just will not outlive it.
+    }
+
+    // `light` is Tabler's default and is expressed by the ABSENCE of the
+    // attribute, which is what tabler-theme.min.js writes.
+    if (theme === 'light') {
+      document.documentElement.removeAttribute('data-bs-theme');
+    } else {
+      document.documentElement.setAttribute('data-bs-theme', theme);
+    }
+  });
+};

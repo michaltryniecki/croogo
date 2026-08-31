@@ -13,6 +13,7 @@ $adminThemeScripts = <<<EOF
     Admin.extra();
     Admin.slideBoxToggle();
     Admin.dateTimeFields();
+    Admin.themeToggle();
     Admin.lightbox();
     Admin.modal();
 
