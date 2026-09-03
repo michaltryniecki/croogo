@@ -5,6 +5,8 @@ namespace Croogo\Users\Controller\Admin;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Event\Event;
+use Cake\Http\Response;
+use Cake\Routing\Router;
 use Croogo\Core\Croogo;
 
 /**
@@ -125,7 +127,10 @@ class UsersController extends AppController
         }
         $cacheName = 'auth_failed_' . $data[$field];
         $cacheValue = Cache::read($cacheName, 'users_login');
-        if ($cacheValue >= Configure::read('User.failed_login_limit')) {
+        // Both sides typed on purpose: with the limit unset `null >= null` is TRUE in PHP and
+        // every login would be refused as "limit reached" before identify() even ran.
+        $limit = (int)Configure::read('User.failed_login_limit');
+        if ($limit > 0 && (int)$cacheValue >= $limit) {
             $this->Flash->error(__d('croogo', 'You have reached maximum limit for failed login attempts. Please try again after a few minutes.'));
 
             $event->setResult($this->redirect(['action' => $this->getRequest()->getParam('action')]));
@@ -234,45 +239,115 @@ class UsersController extends AppController
             $session->write('Croogo.redirect', $redirectUrl);
         }
 
-        if ($this->getRequest()->is('post')) {
-            Croogo::dispatchEvent('Controller.Users.beforeAdminLogin', $this);
-            $user = $this->Auth->identify();
-            if ($user) {
-                if ($session->check('Croogo.redirect')) {
-                    $redirectUrl = $session->read('Croogo.redirect');
-                    $session->delete('Croogo.redirect');
-                } else {
-                    $redirectUrl = $this->Auth->redirectUrl();
-                }
+        if (!$this->getRequest()->is('post')) {
+            return;
+        }
 
-                if (!$this->Access->isUrlAuthorized($user, $redirectUrl)) {
-                    Croogo::dispatchEvent('Controller.Users.adminLoginFailure', $this);
-                    // PHP 8.2+: authError to konfiguracja komponentu, nie property
-                    $this->Auth->setConfig('authError', __d('croogo', 'Authorization error'));
-                    $this->Flash->error($this->Auth->getConfig('authError'), ['key' => 'auth']);
+        $event = Croogo::dispatchEvent('Controller.Users.beforeAdminLogin', $this);
+        if ($event->getResult() instanceof Response) {
+            // A listener already answered (the failed-login limit in onBeforeAdminLogin). Without
+            // this return identify() and setUser() kept running and, because Cake 5's
+            // Controller::redirect() never overwrites a Location header once set, correct
+            // credentials still logged the account in behind the "limit reached" banner.
+            return $event->getResult();
+        }
 
-                    return $this->redirect($this->Auth->getConfig('loginAction'));
-                }
+        $user = $this->Auth->identify();
+        if (!$user) {
+            Croogo::dispatchEvent('Controller.Users.adminLoginFailure', $this);
+            // PHP 8.2+: authError to konfiguracja komponentu, nie property
+            $this->Auth->setConfig('authError', __d('croogo', 'Incorrect username or password'));
+            $this->Flash->error($this->Auth->getConfig('authError'), ['key' => 'auth']);
 
-                $this->Auth->setUser($user);
+            return $this->redirect($this->Auth->getConfig('loginAction'));
+        }
 
-                if ($this->Auth->authenticationProvider()->needsPasswordRehash()) {
-                    $user = $this->Users->get($user['id']);
-                    $user->password = $this->getRequest()->getData('password');
-                    $this->Users->save($user);
-                }
+        if ($session->check('Croogo.redirect')) {
+            $redirectUrl = $session->read('Croogo.redirect');
+            $session->delete('Croogo.redirect');
+        } else {
+            $redirectUrl = $this->Auth->redirectUrl();
+        }
 
-                Croogo::dispatchEvent('Controller.Users.adminLoginSuccessful', $this);
+        if (!$this->Access->isUrlAuthorized($user, $redirectUrl)) {
+            // The credentials are right; only the redirect TARGET is off-limits for this role -
+            // typically a deep link into a module the account was never granted (a new hire
+            // opening the link a colleague sent). Refusing the whole login here, and counting
+            // it as a failed attempt, is what surfaced as "Authorization error" on freshly
+            // created accounts. Fall back to the dashboard when that is allowed; refuse only
+            // when even the dashboard is denied, and never feed the failed-login counter -
+            // the password was correct.
+            $target = $this->urlToString($redirectUrl);
+            $fallbackUrl = $this->authorizedFallbackUrl($user, $target);
+            $this->log(sprintf(
+                'Admin login of "%s" (role_id %s): redirect target %s is not authorized for the account, %s',
+                $user['username'] ?? '?',
+                $user['role_id'] ?? '?',
+                $target,
+                $fallbackUrl === null ? 'no authorized fallback - login refused' : 'falling back to ' . $fallbackUrl
+            ), 'warning');
 
-                return $this->redirect($redirectUrl);
-            } else {
-                Croogo::dispatchEvent('Controller.Users.adminLoginFailure', $this);
-                $this->Auth->setConfig('authError', __d('croogo', 'Incorrect username or password'));
+            if ($fallbackUrl === null) {
+                $this->Auth->setConfig('authError', __d('croogo', 'Authorization error'));
                 $this->Flash->error($this->Auth->getConfig('authError'), ['key' => 'auth']);
 
                 return $this->redirect($this->Auth->getConfig('loginAction'));
             }
+            $redirectUrl = $fallbackUrl;
         }
+
+        $this->Auth->setUser($user);
+
+        if ($this->Auth->authenticationProvider()->needsPasswordRehash()) {
+            $user = $this->Users->get($user['id']);
+            $user->password = $this->getRequest()->getData('password');
+            $this->Users->save($user);
+        }
+
+        Croogo::dispatchEvent('Controller.Users.adminLoginSuccessful', $this);
+
+        return $this->redirect($redirectUrl);
+    }
+
+    /**
+     * First landing page the account may open when `$deniedTarget` is off-limits: `loginRedirect`
+     * as configured by Croogo/Acl.Filter (`Site.dashboard_url`), then the bare `/admin` landing.
+     * The two differ whenever `Site.dashboard_url` points at a plugin action a role was never
+     * granted (Croogo's default is Dashboards) while `/admin` itself is open to everyone.
+     *
+     * @param array|\ArrayAccess $user Identified user.
+     * @param string $deniedTarget Normalized target that was just refused.
+     * @return string|null Normalized path, or null when nothing is authorized.
+     */
+    protected function authorizedFallbackUrl($user, string $deniedTarget): ?string
+    {
+        $candidates = array_unique([
+            $this->urlToString($this->Auth->getConfig('loginRedirect') ?: '/admin'),
+            $this->urlToString('/admin'),
+        ]);
+        foreach ($candidates as $candidate) {
+            if ($candidate === $deniedTarget) {
+                continue;
+            }
+            if ($this->Access->isUrlAuthorized($user, $candidate)) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array|string $url Route array or path.
+     * @return string Normalized path, comparable with what Auth::redirectUrl() returns.
+     */
+    protected function urlToString($url): string
+    {
+        if (is_array($url)) {
+            return Router::url($url + ['_base' => false]);
+        }
+
+        return Router::normalize((string)$url);
     }
 
     /**
