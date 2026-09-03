@@ -129,6 +129,7 @@ class UsersController extends AppController
         $cacheValue = Cache::read($cacheName, 'users_login');
         // Both sides typed on purpose: with the limit unset `null >= null` is TRUE in PHP and
         // every login would be refused as "limit reached" before identify() even ran.
+        // A limit of 0 (or unset) therefore means: lockout disabled.
         $limit = (int)Configure::read('User.failed_login_limit');
         if ($limit > 0 && (int)$cacheValue >= $limit) {
             $this->Flash->error(__d('croogo', 'You have reached maximum limit for failed login attempts. Please try again after a few minutes.'));
@@ -269,7 +270,7 @@ class UsersController extends AppController
             $redirectUrl = $this->Auth->redirectUrl();
         }
 
-        if (!$this->Access->isUrlAuthorized($user, $redirectUrl)) {
+        if (!$this->urlAuthorized($user, $redirectUrl)) {
             // The credentials are right; only the redirect TARGET is off-limits for this role -
             // typically a deep link into a module the account was never granted (a new hire
             // opening the link a colleague sent). Refusing the whole login here, and counting
@@ -321,20 +322,49 @@ class UsersController extends AppController
      */
     protected function authorizedFallbackUrl($user, string $deniedTarget): ?string
     {
-        $candidates = array_unique([
-            $this->urlToString($this->Auth->getConfig('loginRedirect') ?: '/admin'),
-            $this->urlToString('/admin'),
-        ]);
-        foreach ($candidates as $candidate) {
+        $candidates = [];
+        foreach ([$this->Auth->getConfig('loginRedirect') ?: '/admin', '/admin'] as $url) {
+            try {
+                $candidates[] = $this->urlToString($url);
+            } catch (\Throwable $e) {
+                // An unroutable `Site.dashboard_url` must not cost the login - skip the candidate.
+                $this->log('Admin login: loginRedirect is not routable: ' . $e->getMessage(), 'warning');
+            }
+        }
+        foreach (array_unique($candidates) as $candidate) {
             if ($candidate === $deniedTarget) {
                 continue;
             }
-            if ($this->Access->isUrlAuthorized($user, $candidate)) {
+            if ($this->urlAuthorized($user, $candidate)) {
                 return $candidate;
             }
         }
 
         return null;
+    }
+
+    /**
+     * ACL verdict for a redirect target that never turns into a 500: `Access::isUrlAuthorized()`
+     * parses the URL with the router, which throws for a non-routable one, and this runs on the
+     * error path of every login. Anything that cannot be checked counts as not authorized.
+     *
+     * @param array|\ArrayAccess $user Identified user.
+     * @param array|string $url Route array or path.
+     * @return bool
+     */
+    protected function urlAuthorized($user, $url): bool
+    {
+        try {
+            return (bool)$this->Access->isUrlAuthorized($user, $url);
+        } catch (\Throwable $e) {
+            $this->log(sprintf(
+                'Admin login: could not authorize redirect target %s: %s',
+                is_array($url) ? json_encode($url) : (string)$url,
+                $e->getMessage()
+            ), 'warning');
+
+            return false;
+        }
     }
 
     /**
