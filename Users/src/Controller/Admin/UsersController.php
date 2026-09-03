@@ -156,6 +156,24 @@ class UsersController extends AppController
     }
 
     /**
+     * Forget the failed-login count of the account that just proved its password. Without this
+     * the counter only ever grew until its TTL ran out: four typos followed by the right password
+     * still left the next five minutes one mistake away from the lockout, and once the lockout
+     * really blocks login() anyone who knows a username could keep the account locked by
+     * submitting garbage - the legitimate owner's correct password would never reset it.
+     *
+     * @param mixed $login Username as submitted with the form.
+     * @return void
+     */
+    protected function clearFailedLoginCount($login): void
+    {
+        if (!is_string($login) || $login === '') {
+            return;
+        }
+        Cache::delete('auth_failed_' . $login, 'users_login');
+    }
+
+    /**
      * @param \Cake\Event\Event $event Event object
      * @return void
      */
@@ -262,6 +280,11 @@ class UsersController extends AppController
 
             return $this->redirect($this->Auth->getConfig('loginAction'));
         }
+
+        // The password is right - whatever happens to the redirect target below, this account is
+        // no longer under attack from this form, so the lockout counter starts from zero again.
+        $usernameField = $this->Auth->getConfig('authenticate.all.fields.username');
+        $this->clearFailedLoginCount($this->getRequest()->getData($usernameField));
 
         if ($session->check('Croogo.redirect')) {
             $redirectUrl = $session->read('Croogo.redirect');
