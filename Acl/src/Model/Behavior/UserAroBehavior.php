@@ -39,6 +39,11 @@ class UserAroBehavior extends Behavior
         if (!Configure::read('Access Control.multiRole')) {
             return;
         }
+        // UsersTable deklaruje Roles (through RolesUsers) sam; Cake 5 rzuca
+        // wyjatek przy ponownej deklaracji aliasu asocjacji
+        if ($model->associations()->has('Roles')) {
+            return;
+        }
         $model->belongsToMany('Roles', [
             'className' => 'Croogo/Users.Roles',
             'saveStrategy' => 'replace',
