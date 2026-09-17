@@ -219,27 +219,32 @@ class FileManager
      */
     public function isWritableDirectory($path)
     {
-        return is_dir((string)$path) && $this->_isWithinAnyPath('FileManager.deletablePaths', $path, true);
+        return $this->_isWithinAnyPath('FileManager.deletablePaths', $path, true) && is_dir($path);
     }
 
     /**
      * Joins a user-supplied entry name onto $directory
      *
      * The name must be a bare file/directory name: a separator or `..` in it would
-     * leave the directory the caller has just checked.
+     * leave the directory the caller has just checked. An existing symlink is refused
+     * too, dangling ones included, because writes follow it out of the directory.
      *
      * @param string $directory Directory the entry belongs to
      * @param string $name Entry name as submitted by the user
-     * @return string|null Joined path, or null when the name is not a bare name
+     * @return string|null Joined path, or null when the entry cannot be written safely
      */
     public function childPath($directory, $name)
     {
-        $name = (string)$name;
+        if (!is_string($directory) || !is_string($name)) {
+            return null;
+        }
         if ($name === '' || $name === '.' || $name === '..' || strpbrk($name, "/\\\0") !== false) {
             return null;
         }
 
-        return rtrim((string)$directory, '/\\') . DIRECTORY_SEPARATOR . $name;
+        $path = rtrim($directory, '/\\') . DIRECTORY_SEPARATOR . $name;
+
+        return is_link($path) ? null : $path;
     }
 
     /**
@@ -269,7 +274,7 @@ class FileManager
             if (!$this->_isWithinPath($referencePath, $path)) {
                 continue;
             }
-            if ($allowRoot || realpath((string)$referencePath) !== realpath((string)$path)) {
+            if ($allowRoot || realpath($referencePath) !== realpath($path)) {
                 return true;
             }
         }
@@ -289,8 +294,12 @@ class FileManager
      */
     protected function _isWithinPath($referencePath, $pathToCheck)
     {
-        $reference = realpath((string)$referencePath);
-        $path = realpath((string)$pathToCheck);
+        // realpath('') resolves to the working directory, so an empty entry must not reach it.
+        if (!is_string($referencePath) || !is_string($pathToCheck) || $referencePath === '' || $pathToCheck === '') {
+            return false;
+        }
+        $reference = realpath($referencePath);
+        $path = realpath($pathToCheck);
         if ($reference === false || $path === false) {
             return false;
         }
