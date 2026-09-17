@@ -191,14 +191,7 @@ class FileManager
      */
     public function isEditable($path)
     {
-        $editablePaths = (array)Configure::check('FileManager.editablePaths');
-        foreach ($editablePaths as $editablePath) {
-            if ($this->_isWithinPath($editablePath, $path)) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->_isWithinAnyPath('FileManager.editablePaths', $path, true);
     }
 
     /**
@@ -212,17 +205,41 @@ class FileManager
      */
     public function isDeletable($path)
     {
-        $deletablePaths = (array)Configure::read('FileManager.deletablePaths');
-        foreach ($deletablePaths as $deletablePath) {
-            if ($deletablePath == $path) {
-                continue;
-            }
-            if ($this->_isWithinPath($deletablePath, $path)) {
-                return true;
-            }
+        return $this->_isWithinAnyPath('FileManager.deletablePaths', $path, false);
+    }
+
+    /**
+     * Checks that $path is an existing directory new entries may be written into
+     *
+     * Unlike isDeletable() the configured root itself qualifies, so uploads and
+     * new directories can still land directly in it.
+     *
+     * @param string $path Directory to check
+     * @return bool True when $path is a directory under FileManager.deletablePaths
+     */
+    public function isWritableDirectory($path)
+    {
+        return is_dir((string)$path) && $this->_isWithinAnyPath('FileManager.deletablePaths', $path, true);
+    }
+
+    /**
+     * Joins a user-supplied entry name onto $directory
+     *
+     * The name must be a bare file/directory name: a separator or `..` in it would
+     * leave the directory the caller has just checked.
+     *
+     * @param string $directory Directory the entry belongs to
+     * @param string $name Entry name as submitted by the user
+     * @return string|null Joined path, or null when the name is not a bare name
+     */
+    public function childPath($directory, $name)
+    {
+        $name = (string)$name;
+        if ($name === '' || $name === '.' || $name === '..' || strpbrk($name, "/\\\0") !== false) {
+            return null;
         }
 
-        return false;
+        return rtrim((string)$directory, '/\\') . DIRECTORY_SEPARATOR . $name;
     }
 
     /**
@@ -239,7 +256,32 @@ class FileManager
     }
 
     /**
-     * Checks that $pathToCheck resides under $referencePath
+     * Checks $path against every directory listed under the Configure key $key
+     *
+     * @param string $key Configure key holding the list of allowed directories
+     * @param string $path Path to check
+     * @param bool $allowRoot Whether a listed directory itself qualifies
+     * @return bool True when $path resides under one of the listed directories
+     */
+    protected function _isWithinAnyPath($key, $path, $allowRoot)
+    {
+        foreach ((array)Configure::read($key) as $referencePath) {
+            if (!$this->_isWithinPath($referencePath, $path)) {
+                continue;
+            }
+            if ($allowRoot || realpath((string)$referencePath) !== realpath((string)$path)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks that $pathToCheck resides under $referencePath (or is that directory)
+     *
+     * Fails closed: a path that does not resolve never matches, and the prefix only
+     * matches on a separator boundary, so `assets` does not cover `assets-old`.
      *
      * @param string $referencePath Reference path
      * @param string $pathToCheck Path to check
@@ -247,11 +289,14 @@ class FileManager
      */
     protected function _isWithinPath($referencePath, $pathToCheck)
     {
-        // PHP 8.1+: null do realpath()/preg_match() deprecated
+        $reference = realpath((string)$referencePath);
         $path = realpath((string)$pathToCheck);
-        $regex = '/^' . preg_quote((string)realpath((string)$referencePath), '/') . '/';
+        if ($reference === false || $path === false) {
+            return false;
+        }
 
-        return preg_match($regex, (string)$path) > 0;
+        return $path === $reference
+            || str_starts_with($path, rtrim($reference, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR);
     }
 
     public function filename2mime($filename) {
