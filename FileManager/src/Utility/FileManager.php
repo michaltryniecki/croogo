@@ -223,11 +223,37 @@ class FileManager
     }
 
     /**
+     * Checks whether an entry called $name may be written through the file manager
+     *
+     * The managed directories are served by the web server, so a name it could execute
+     * or read as configuration (`x.php`, `x.php.jpg`, `.htaccess`, `.user.ini`) would turn
+     * a file write into code execution. Every extension segment is checked, not just the
+     * last one, because a multi-extension handler mapping runs `x.php.jpg` as PHP.
+     *
+     * @param string $name Bare file or directory name
+     * @return bool True when the name is safe to create, write or rename to
+     */
+    public function isAllowedName($name)
+    {
+        if (!is_string($name) || $name === '' || $name[0] === '.') {
+            return false;
+        }
+        foreach (array_slice(explode('.', $name), 1) as $extension) {
+            if (preg_match('/^(php\d*|pht|phtml|phps|phar)$/i', trim($extension))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Joins a user-supplied entry name onto $directory
      *
-     * The name must be a bare file/directory name: a separator or `..` in it would
-     * leave the directory the caller has just checked. An existing symlink is refused
-     * too, dangling ones included, because writes follow it out of the directory.
+     * The name must be a bare file/directory name that isAllowedName() accepts: a
+     * separator or `..` in it would leave the directory the caller has just checked.
+     * An existing symlink is refused too, dangling ones included, because writes follow
+     * it out of the directory.
      *
      * @param string $directory Directory the entry belongs to
      * @param string $name Entry name as submitted by the user
@@ -235,10 +261,7 @@ class FileManager
      */
     public function childPath($directory, $name)
     {
-        if (!is_string($directory) || !is_string($name)) {
-            return null;
-        }
-        if ($name === '' || $name === '.' || $name === '..' || strpbrk($name, "/\\\0") !== false) {
+        if (!is_string($directory) || !$this->isAllowedName($name) || strpbrk($name, "/\\\0") !== false) {
             return null;
         }
 

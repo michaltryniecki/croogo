@@ -108,7 +108,7 @@ class FileManagerController extends AppController
         } else {
             return $this->redirect(['controller' => 'FileManager', 'action' => 'browse']);
         }
-        if (!$this->FileManager->isEditable($path) || !is_file($path)) {
+        if (!$this->FileManager->isEditable($path) || !is_file($path) || !$this->FileManager->isAllowedName(basename($path))) {
             $this->Flash->error(__d('croogo', 'Path %s is restricted', $path));
 
             return $this->redirect(['controller' => 'FileManager', 'action' => 'browse']);
