@@ -5,6 +5,8 @@
  */
 namespace Croogo\Core\View\Widget;
 
+use Cake\Chronos\ChronosDate;
+use Cake\Chronos\ChronosTime;
 use Cake\Database\TypeFactory;
 use Cake\I18n\I18n;
 use Cake\Routing\Router;
@@ -166,31 +168,60 @@ html;
     /**
      * Normalises whatever the form context handed over into a DateTime.
      *
+     * `Cake\I18n\Date` and `Cake\I18n\Time` are NOT `DateTimeInterface`: in CakePHP 5
+     * they extend `ChronosDate` / `ChronosTime`, value objects that implement only
+     * `Stringable`. So both the entity path (a `date` or `time` column hands over one
+     * of those objects, which falls straight through the `instanceof` guard) and the
+     * string path (`TypeFactory::build('date'|'time')->marshal()` returns one) used to
+     * hand back a value this method's own `?DateTimeInterface` return type rejects -
+     * a TypeError that took down every admin screen carrying such a control.
+     *
+     * They are converted with `toNative()` rather than the return type being widened,
+     * because the rest of the widget genuinely needs a real date/time: `_submitFormat()`
+     * asks a value for `DateTime::ATOM`, which a time-only `ChronosTime` cannot answer.
+     * `toNative()` preserves the calendar date and the wall clock exactly, so nothing
+     * shifts - `_toWallClock()` formats `date` and `time` without a zone conversion.
+     *
      * @param mixed $val Raw value.
      * @param string $type Widget type.
      * @return \DateTimeInterface|null Null when there is nothing to show.
      */
     protected function _toDateTime($val, string $type): ?DateTimeInterface
     {
+        if ($val === null || $val === '' || is_array($val)) {
+            return null;
+        }
+
         if ($val instanceof DateTimeInterface) {
             return $val;
         }
 
-        if ($val === null || $val === '' || is_array($val)) {
-            return null;
+        if ($val instanceof ChronosDate || $val instanceof ChronosTime) {
+            return $val->toNative();
         }
 
         try {
             switch ($type) {
                 case 'date':
                 case 'time':
-                    return TypeFactory::build($type)->marshal($val);
+                    $marshalled = TypeFactory::build($type)->marshal($val);
+                    break;
                 default:
-                    return TypeFactory::build('datetime')->marshal($val);
+                    $marshalled = TypeFactory::build('datetime')->marshal($val);
             }
         } catch (Exception $e) {
             return null;
         }
+
+        if ($marshalled instanceof DateTimeInterface) {
+            return $marshalled;
+        }
+
+        if ($marshalled instanceof ChronosDate || $marshalled instanceof ChronosTime) {
+            return $marshalled->toNative();
+        }
+
+        return null;
     }
 
     /**
