@@ -8,7 +8,7 @@ echo $this->Html->tag(
     $this->Html->tag('p', __d('croogo', 'Drop files here to upload')),
     [
         'id' => 'dropzone-target',
-        'data-base-url' => $this->Url->build('/', true),
+        'data-base-url' => $this->Url->build('/', ['fullBase' => true]),
         'data-csrf-token' => $this->getRequest()->getParam('_csrfToken'),
         'data-url' => $this->Url->build([
             'action' => 'add',

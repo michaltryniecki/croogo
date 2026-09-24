@@ -35,9 +35,11 @@ $indexUrl = [
 ];
 
 if (!$this->getRequest()->getQuery('editor')) :
-    $this->Breadcrumbs
-        ->add(__d('croogo', 'Attachments'), $indexUrl)
-        ->add(__d('croogo', 'Upload'), $this->getRequest()->getUri()->getPath());
+    $this->Breadcrumbs->add(__d('croogo', 'Attachments'), $indexUrl);
+    foreach ($folderPath as $crumb) :
+        $this->Breadcrumbs->add(h($crumb->name), $indexUrl + ['?' => ['folder_id' => $crumb->id]]);
+    endforeach;
+    $this->Breadcrumbs->add(__d('croogo', 'Upload'), $this->getRequest()->getUri()->getPath());
 endif;
 
 if ($this->layout === 'admin_popup') :
@@ -86,6 +88,14 @@ if (isset($model) && isset($foreignKey)) :
     ]);
 endif;
 
+        echo $this->Form->input('folder_id', [
+            'label' => __d('croogo', 'Folder'),
+            'type' => 'select',
+            'id' => 'attachment-folder-id',
+            'options' => $folderOptions,
+            'empty' => __d('croogo', '(root)'),
+            'value' => $folderId,
+        ]);
         echo $this->Form->input('asset.adapter', [
             'type' => 'select',
             'default' => 'LocalAttachment',
@@ -108,6 +118,9 @@ endif;
 
         $this->append('panels');
         $redirect = ['action' => 'index'];
+        if ($folderId !== null) {
+            $redirect['?'] = ['folder_id' => $folderId];
+        }
         if ($this->getRequest()->getSession()->check('Wysiwyg.redirect')) {
             $redirect = $this->getRequest()->getSession()->read('Wysiwyg.redirect');
         }
@@ -235,7 +248,9 @@ endif;
                             return false;
                         });
                 } else {
-                    window.location = '$redirectUrl';
+                    // Land in the folder the files went to.
+                    var folderId = \$('#attachment-folder-id').val();
+                    window.location = '$redirectUrl' + (folderId ? '?folder_id=' + encodeURIComponent(folderId) : '');
                 }
             }
 

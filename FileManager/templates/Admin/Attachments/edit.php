@@ -14,9 +14,9 @@ if ($this->layout === 'admin_popup') :
     $this->append('title', ' ');
 endif;
 
-$formUrl = ['controller' => 'Attachments', 'action' => 'edit'];
+$formUrl = ['controller' => 'Attachments', 'action' => 'edit', $attachment->id];
 if ($this->getRequest()->getQuery()) {
-    $formUrl = array_merge($formUrl, $this->getRequest()->getQuery());
+    $formUrl['?'] = $this->getRequest()->getQuery();
 }
 
 $this->append('form-start', $this->Form->create($attachment, [
@@ -38,10 +38,17 @@ $this->append('tab-content');
         echo $this->Form->input('excerpt', [
             'label' => __d('croogo', 'Excerpt'),
         ]);
+        echo $this->Form->input('folder_id', [
+            'label' => __d('croogo', 'Folder'),
+            'type' => 'select',
+            'options' => $folderOptions,
+            'empty' => __d('croogo', '(root)'),
+            'help' => __d('croogo', 'Moving a file to another folder does not change its URL.'),
+        ]);
 
         echo $this->Form->input('file_url', [
             'label' => __d('croogo', 'File URL'),
-            'value' => $this->Url->build($attachment->asset->path, true),
+            'value' => $this->Url->build($attachment->asset->path, ['fullBase' => true]),
             'readonly' => 'readonly']);
 
         echo $this->Form->input('file_type', [

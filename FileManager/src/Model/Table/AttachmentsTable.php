@@ -8,6 +8,8 @@ use Cake\Event\Event;
 use Croogo\Core\Utility\FsUtils;
 use Cake\Log\LogTrait;
 use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\RulesChecker;
 use Cake\Utility\Hash;
 use Char0n\FFMpegPHP\Movie;
 use Croogo\Core\Model\Table\CroogoTable;
@@ -55,6 +57,11 @@ class AttachmentsTable extends CroogoTable
             ],
         ]);
 
+        $this->belongsTo('AttachmentFolders', [
+            'className' => 'Croogo/FileManager.AttachmentFolders',
+            'foreignKey' => 'folder_id',
+        ]);
+
         $this->addBehavior('Timestamp');
         $this->addBehavior('Croogo/Core.Trackable');
         $this->addBehavior('Search.Search');
@@ -89,6 +96,48 @@ class AttachmentsTable extends CroogoTable
             ->value('type', [
                 'fields' => $this->Assets->AssetUsages->aliasField('type'),
             ]);
+    }
+
+    public function buildRules(RulesChecker $rules): RulesChecker
+    {
+        $rules->add($rules->existsIn('folder_id', 'AttachmentFolders', [
+            'allowNullableNulls' => true,
+            'message' => __d('croogo', 'The folder does not exist.'),
+        ]));
+
+        return $rules;
+    }
+
+    /**
+     * Limit to attachments directly in a folder; null means the root.
+     */
+    public function findInFolder(SelectQuery $query, ?int $folder = null): SelectQuery
+    {
+        return $query->where([$this->aliasField('folder_id') . ' IS' => $folder]);
+    }
+
+    /**
+     * Move attachments to another folder (null = root).
+     *
+     * Only `folder_id` changes; the files and their URLs stay where they are.
+     *
+     * @param array<int> $ids Attachment ids
+     * @return int Number of attachments moved
+     */
+    public function moveToFolder(array $ids, ?int $folderId): int
+    {
+        $ids = array_values(array_filter(array_map('intval', $ids)));
+        if (!$ids) {
+            return 0;
+        }
+        if ($folderId !== null && !$this->AttachmentFolders->exists(['id' => $folderId])) {
+            throw new InvalidArgumentException(__d('croogo', 'The folder does not exist.'));
+        }
+
+        return $this->updateAll(
+            ['folder_id' => $folderId],
+            ['id IN' => $ids]
+        );
     }
 
     /**
@@ -183,7 +232,7 @@ class AttachmentsTable extends CroogoTable
             ]);
         }
 
-        $query->formatResults([$this, 'getVideoPoster']);
+        $query->formatResults($this->getVideoPoster(...));
 
         return $query;
     }
