@@ -8,6 +8,20 @@ $this->extend('Croogo/Core./Common/admin_index');
 $this->Breadcrumbs
     ->add(__d('croogo', 'Attachments'), $this->getRequest()->getUri()->getPath());
 
+$folderBrowsing = !empty($folderBrowsing);
+if ($folderBrowsing) :
+    // admin_index renders a single full-width card; the folder tree goes in a
+    // column beside it, opened here and closed in page-footer below.
+    $this->append('page-heading');
+    echo '<div class="row attachments-with-folders">';
+    echo '<div class="col-lg-3">';
+    echo $this->element('Croogo/FileManager.admin/folder_tree', ['manage' => true]);
+    echo '</div>';
+    echo '<div class="col-lg-9">';
+    echo $this->element('Croogo/FileManager.admin/folder_path', ['manage' => true]);
+    $this->end();
+endif;
+
 $query = (array)$this->getRequest()->getQuery();
 
 $this->append('action-buttons');
@@ -115,7 +129,7 @@ $this->append('table-heading');
                 $thumbnail = $this->Html->link($imgUrl, $path, [
                     'escape' => false,
                     'data-toggle' => 'lightbox',
-                    'title' => $attachment['AssetsAttachment']['title'],
+                    'title' => $attachment->title,
                 ]);
                 break;
             case 'video':
@@ -146,7 +160,7 @@ $this->append('table-heading');
             [
                 $this->Html->div(null, h($attachment->title)) .
                 $this->Html->link(
-                    $this->Url->build($path, true),
+                    $this->Url->build($path, ['fullBase' => true]),
                     $path,
                     [
                         'target' => '_blank',
@@ -167,14 +181,28 @@ $this->append('table-heading');
     // a toolbar, so the label is dropped in favour of the empty option and the
     // two controls sit on one row.
     echo '<div class="d-flex align-items-center gap-2">';
+    $bulkOptions = [
+        'delete' => __d('croogo', 'Delete'),
+    ];
+    if ($folderBrowsing) :
+        $bulkOptions['move'] = __d('croogo', 'Move to folder');
+    endif;
     echo $this->Form->input('action', [
     'label' => false,
     'class' => 'c-select',
-    'options' => [
-        'delete' => __d('croogo', 'Delete'),
-    ],
+    'id' => 'attachments-bulk-action',
+    'options' => $bulkOptions,
     'empty' => __d('croogo', 'Bulk action'),
     ]);
+    if ($folderBrowsing) :
+        echo $this->Form->hidden('current_folder_id', ['value' => $folderId ?? '']);
+        echo $this->Html->div('d-none', $this->Form->select('target_folder_id', $folderOptions, [
+            'id' => 'attachments-bulk-target',
+            'class' => 'form-select',
+            'empty' => __d('croogo', '(root)'),
+            'aria-label' => __d('croogo', 'Target folder'),
+        ]));
+    endif;
     echo $this->Form->button(__d('croogo', 'Apply'), [
     'type' => 'submit',
     'value' => 'submit',
@@ -184,6 +212,9 @@ $this->append('table-heading');
     $this->end();
 
     $this->append('page-footer');
+    if ($folderBrowsing) :
+        echo '</div></div>';
+    endif;
     ?>
 <style>
     td.title {
@@ -200,6 +231,10 @@ if (!$this->getRequest()->is('ajax')) :
     $script = <<< EOF
         Assets.init();
         Attachments.init();
+        // The target folder only means something for "Move to folder".
+        $('#attachments-bulk-action').on('change', function () {
+            $('#attachments-bulk-target').parent().toggleClass('d-none', this.value !== 'move');
+        });
 EOF;
     $this->Js->buffer($script);
 endif;

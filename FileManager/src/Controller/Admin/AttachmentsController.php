@@ -3,10 +3,12 @@
 namespace Croogo\FileManager\Controller\Admin;
 
 use Cake\Event\Event;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
 use Croogo\Core\Croogo;
+use Croogo\FileManager\Model\Table\AttachmentFoldersTable;
 use Exception;
 
 /**
@@ -138,6 +140,8 @@ class AttachmentsController extends AppController
             $query->orderBy(['Attachments.created' => 'DESC']);
         }
 
+        $this->applyFolder($query);
+
         if ($isChooser) {
             if ($this->getRequest()->getQuery('chooser_type') == 'image') {
                 $query->where([
@@ -150,9 +154,9 @@ class AttachmentsController extends AppController
             }
         }
 
-        $query->find('search', [
-            'search' => $httpQuery,
-        ]);
+        // Cake 5.3 no longer maps an options array onto finder arguments, so
+        // the old `find('search', ['search' => ...])` silently filtered nothing.
+        $query->find('search', search: $httpQuery);
 
         if (isset($finder)) {
             $query->find($finder);
@@ -170,6 +174,70 @@ class AttachmentsController extends AppController
     }
 
     /**
+     * Folder browsing for the library list and the chooser.
+     *
+     * Only the plain library view is scoped to a folder. Lists opened for a
+     * specific record (model/foreign_key), a single asset's versions
+     * (asset_id/manage), `all`, and the editor's browse popup keep showing
+     * everything, as before folders existed - otherwise files put in a folder
+     * would silently vanish from them.
+     */
+    protected function applyFolder($query): void
+    {
+        $request = $this->getRequest();
+        $scoped = $request->getParam('action') === 'index';
+        foreach (['model', 'foreign_key', 'asset_id', 'manage', 'all'] as $param) {
+            if ($request->getQuery($param)) {
+                $scoped = false;
+            }
+        }
+        $this->set('folderBrowsing', $scoped);
+        if (!$scoped) {
+            return;
+        }
+
+        $folders = $this->fetchTable('Croogo/FileManager.AttachmentFolders');
+        $folderId = AttachmentFoldersTable::normalizeId($request->getQuery('folder_id'));
+        if ($folderId !== null && !$folders->exists(['id' => $folderId])) {
+            // The chooser reopens the last folder it remembers, which may have
+            // been deleted since; land on the root instead of a dead end.
+            if (!$request->getQuery('chooser') && !$request->getQuery('links')) {
+                throw new NotFoundException(__d('croogo', 'Folder not found'));
+            }
+            $folderId = null;
+        }
+
+        $allFolders = (bool)$request->getQuery('all_folders');
+        if (!$allFolders) {
+            $query->find('inFolder', folder: $folderId);
+        }
+
+        // Search stays in the current folder unless asked otherwise.
+        $this->set('searchFields', (array)$this->viewBuilder()->getVar('searchFields') + [
+            'folder_id' => [
+                'type' => 'hidden',
+            ],
+            'all_folders' => [
+                'type' => 'checkbox',
+                'label' => __d('croogo', 'In all folders'),
+                'hiddenField' => false,
+                'value' => 1,
+                'checked' => $allFolders,
+            ],
+        ]);
+
+        $tree = $folders->tree();
+        $this->set([
+            'folderId' => $folderId,
+            'allFolders' => $allFolders,
+            'folderTree' => $tree['folders'],
+            'rootFolderCount' => $tree['rootCount'],
+            'folderPath' => $folders->pathTo($folderId),
+            'folderOptions' => $folders->options(),
+        ]);
+    }
+
+    /**
      * Admin add
      *
      * @return void
@@ -183,9 +251,15 @@ class AttachmentsController extends AppController
             $this->viewBuilder()->setLayout('admin_popup');
         }
 
+        $folderId = AttachmentFoldersTable::normalizeId($this->getRequest()->getQuery('folder_id'));
+
         if ($this->getRequest()->is('post')) {
             $data = $this->getRequest()->getData();
             if (!empty($data)) {
+                if (array_key_exists('folder_id', $data)) {
+                    $data['folder_id'] = AttachmentFoldersTable::normalizeId($data['folder_id']);
+                    $folderId = $data['folder_id'];
+                }
                 $entity = $this->Attachments->newEntity($data);
                 $errors = $entity->getErrors();
             } else {
@@ -252,6 +326,9 @@ class AttachmentsController extends AppController
                     $url = array_merge($url, ['action' => 'browse']);
                 } else {
                     $url = array_merge($url, ['action' => 'index']);
+                    if ($folderId !== null) {
+                        $url['?']['folder_id'] = $folderId;
+                    }
                 }
 
                 return $this->redirect($url);
@@ -263,7 +340,10 @@ class AttachmentsController extends AppController
         }
 
         $attachment = $this->Attachments->newEmptyEntity();
-        $this->set(compact('attachment'));
+        $attachment->folder_id = $folderId;
+        $this->set(compact('attachment', 'folderId'));
+        $this->set('folderOptions', $this->Attachments->AttachmentFolders->options());
+        $this->set('folderPath', $this->Attachments->AttachmentFolders->pathTo($folderId));
     }
 
     /**
@@ -300,19 +380,28 @@ class AttachmentsController extends AppController
             ],
         ]);
         if (!empty($this->getRequest()->getData())) {
-            $attachment = $this->Attachments->patchEntity($attachment, $this->getRequest()->getData());
+            $data = $this->getRequest()->getData();
+            if (array_key_exists('folder_id', $data)) {
+                $data['folder_id'] = AttachmentFoldersTable::normalizeId($data['folder_id']);
+            }
+            $attachment = $this->Attachments->patchEntity($attachment, $data);
             if ($this->Attachments->save($attachment)) {
                 $this->Flash->success(__d('croogo', 'The Attachment has been saved'));
 
                 $redirect = $this->getRequest()->getQuery('redirect') ?: [
                     'action' => 'index',
                 ];
+                if (is_array($redirect) && $attachment->folder_id !== null) {
+                    $redirect['?']['folder_id'] = $attachment->folder_id;
+                }
+
                 return $this->redirect($redirect);
             } else {
                 $this->Flash->error(__d('croogo', 'The Attachment could not be saved. Please, try again.'));
             }
         }
         $this->set(compact('attachment'));
+        $this->set('folderOptions', $this->Attachments->AttachmentFolders->options());
     }
 
     /**
@@ -366,9 +455,7 @@ class AttachmentsController extends AppController
         }
 
         $query = $this->Attachments
-            ->find('search', [
-                'search' => (array)$this->getRequest()->getQuery(),
-            ])
+            ->find('search', search: (array)$this->getRequest()->getQuery())
             ->find('modelAttachments');
         $attachments = $this->paginate($query);
         $this->set(compact('attachments'));
@@ -397,14 +484,58 @@ class AttachmentsController extends AppController
     public function process()
     {
         $Attachments = $this->Attachments;
-        list($action, $ids) = $this->BulkProcess->getRequestVars($Attachments->alias());
+        list($action, $ids) = $this->BulkProcess->getRequestVars($Attachments->getAlias());
 
         $messageMap = [
             'delete' => __d('croogo', 'Attachments deleted'),
         ];
 
+        // Back to the folder the list was showing, not to the root.
+        $redirect = ['action' => 'index'];
+        $currentFolder = AttachmentFoldersTable::normalizeId($this->getRequest()->getData('current_folder_id'));
+        if ($currentFolder !== null) {
+            $redirect['?']['folder_id'] = $currentFolder;
+        }
+
+        if ($action === 'move') {
+            return $this->processMove($ids, $redirect);
+        }
+
         return $this->BulkProcess->process($Attachments, $action, $ids, [
             'messageMap' => $messageMap,
+            'redirect' => $redirect,
         ]);
+    }
+
+    /**
+     * Bulk "Move to folder". Not routed through BulkProcessBehavior because the
+     * behavior's actions only receive the ids, and this one needs a target.
+     */
+    protected function processMove(array $ids, array $redirect)
+    {
+        if (!$ids) {
+            $this->Flash->error(__d('croogo', 'No item selected'));
+
+            return $this->redirect($redirect);
+        }
+
+        $target = AttachmentFoldersTable::normalizeId($this->getRequest()->getData('target_folder_id'));
+        try {
+            $moved = $this->Attachments->moveToFolder($ids, $target);
+        } catch (\InvalidArgumentException $e) {
+            $this->Flash->error($e->getMessage());
+
+            return $this->redirect($redirect);
+        }
+
+        $this->Flash->success(__dn(
+            'croogo',
+            '%d attachment moved',
+            '%d attachments moved',
+            $moved,
+            $moved
+        ));
+
+        return $this->redirect($redirect);
     }
 }
