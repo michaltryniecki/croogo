@@ -8,6 +8,7 @@ use Cake\Event\Event;
 use Cake\Validation\Validator;
 use Croogo\Core\Croogo;
 use Croogo\Core\Model\Table\CroogoTable;
+use Psr\Http\Message\UploadedFileInterface;
 
 class AssetsTable extends CroogoTable
 {
@@ -51,6 +52,39 @@ class AssetsTable extends CroogoTable
             ->requirePresence('adapter', 'create');
 
         return $validator;
+    }
+
+    /**
+     * Cake 5 hands uploads over as UploadedFileInterface objects, while the storage
+     * handlers, checkFileUpload() and AttachmentsTable::beforeSave() all read the
+     * legacy $_FILES array (`name`, `tmp_name`, `error`...). Convert at the single
+     * point every upload passes through instead of teaching each reader both shapes.
+     */
+    public function beforeMarshal(\Cake\Event\EventInterface $event, ArrayObject $data, ArrayObject $options): void
+    {
+        if (isset($data['file']) && $data['file'] instanceof UploadedFileInterface) {
+            $data['file'] = static::uploadToArray($data['file']);
+        }
+    }
+
+    /**
+     * @param \Psr\Http\Message\UploadedFileInterface $file Uploaded file.
+     * @return array The file in the $_FILES array shape.
+     */
+    public static function uploadToArray(UploadedFileInterface $file): array
+    {
+        $tmpName = '';
+        if ($file->getError() === UPLOAD_ERR_OK) {
+            $tmpName = (string)$file->getStream()->getMetadata('uri');
+        }
+
+        return [
+            'name' => (string)$file->getClientFilename(),
+            'type' => (string)$file->getClientMediaType(),
+            'tmp_name' => $tmpName,
+            'error' => $file->getError(),
+            'size' => (int)$file->getSize(),
+        ];
     }
 
     public function beforeSave(\Cake\Event\EventInterface $event, EntityInterface $entity, ?ArrayObject $options = null)
