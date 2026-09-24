@@ -150,9 +150,7 @@ class AttachmentsController extends AppController
             }
         }
 
-        $query->find('search', [
-            'search' => $httpQuery,
-        ]);
+        $query->find('search', search: $httpQuery);
 
         if (isset($finder)) {
             $query->find($finder);
@@ -366,9 +364,7 @@ class AttachmentsController extends AppController
         }
 
         $query = $this->Attachments
-            ->find('search', [
-                'search' => (array)$this->getRequest()->getQuery(),
-            ])
+            ->find('search', search: (array)$this->getRequest()->getQuery())
             ->find('modelAttachments');
         $attachments = $this->paginate($query);
         $this->set(compact('attachments'));

@@ -92,30 +92,30 @@ class AttachmentsTable extends CroogoTable
     }
 
     /**
-     * @param $query
-     * @param $args
-     * @param $filter
+     * Callback for the `search` filter
      *
-     * @return mixed
+     * @param \Cake\ORM\Query\SelectQuery $query
+     * @param array $args
+     * @param \Search\Model\Filter\Base $filter
+     * @return bool Whether the query was modified
      */
-    public function filterAttachments($query, $args, $filter)
+    public function filterAttachments($query, $args, $filter): bool
     {
-        $conditions = [];
-        if (!empty($args['search'])) {
-            $filter = '%' . $args['search'] . '%';
-            $conditions = [
-                'OR' => [
-                    $this->aliasField('title') . ' LIKE' => $filter,
-                    $this->aliasField('excerpt') . ' LIKE' => $filter,
-                    $this->aliasField('body') . ' LIKE' => $filter,
-                ],
-            ];
-            $query
-                ->contain('Assets')
-                ->where($conditions);
+        if (empty($args['search'])) {
+            return false;
         }
+        $term = '%' . $args['search'] . '%';
+        $query
+            ->contain('Assets')
+            ->where([
+                'OR' => [
+                    $this->aliasField('title') . ' LIKE' => $term,
+                    $this->aliasField('excerpt') . ' LIKE' => $term,
+                    $this->aliasField('body') . ' LIKE' => $term,
+                ],
+            ]);
 
-        return $query;
+        return true;
     }
 
     /**

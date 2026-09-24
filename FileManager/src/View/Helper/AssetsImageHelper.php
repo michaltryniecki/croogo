@@ -24,6 +24,7 @@ class AssetsImageHelper extends ImageHelper
             'uploadsDir' => $uploadsDir,
         ], $options);
         $adapter = $options['adapter'];
+        $aspect = $options['aspect'];
         if ($adapter === 'LegacyLocalAttachment') {
             $options['cacheDir'] = 'resized';
             $options['resizedInd'] = '.resized-';
