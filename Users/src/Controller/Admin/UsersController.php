@@ -370,7 +370,7 @@ class UsersController extends AppController
 
             return $this->redirect($this->referer());
         }
-        $user = $this->Users->newEntity();
+        $user = $this->Users->newEmptyEntity();
 
         $this->set('user', $user);
 
