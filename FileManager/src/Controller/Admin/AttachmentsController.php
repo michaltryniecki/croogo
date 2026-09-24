@@ -154,8 +154,6 @@ class AttachmentsController extends AppController
             }
         }
 
-        // Cake 5.3 no longer maps an options array onto finder arguments, so
-        // the old `find('search', ['search' => ...])` silently filtered nothing.
         $query->find('search', search: $httpQuery);
 
         if (isset($finder)) {

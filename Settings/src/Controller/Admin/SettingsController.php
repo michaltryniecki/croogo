@@ -52,9 +52,11 @@ class SettingsController extends AppController
             try {
                 $clearBackground = $this->getRequest()->getData('_clearbackground');
                 if ($prefix == 'Theme' && $clearBackground) {
-                    $bgImagePath = $this->Settings->find('search', ['search' => ['key' => 'Theme.bgImagePath']])->first()->value;
+                    // Cake 5: finder options go as named arguments, an options array is ignored
+                    $bgImagePath = $this->Settings->find('search', search: ['key' => 'Theme.bgImagePath'])
+                        ->first()?->value;
                     $fullpath = WWW_ROOT . $bgImagePath;
-                    if (file_exists($fullpath)) {
+                    if ($bgImagePath && is_file($fullpath)) {
                         unlink($fullpath);
                     }
                     $this->Settings->write('Theme.bgImagePath', '');
