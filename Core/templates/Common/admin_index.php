@@ -22,7 +22,9 @@ if (!isset($className)) {
     $className = lcfirst($this->name);
 }
 $humanName = Inflector::humanize(Inflector::underscore($modelClass));
-$i18nDomain = $this->getRequest()->getParam('plugin') ? 'croogo' : $this->getRequest()->getParam('plugin');
+// Croogo plugins translate in `croogo`; an app controller has no plugin, and
+// __d() needs a string domain, so it gets the app's `default` one.
+$i18nDomain = $this->getRequest()->getParam('plugin') ? 'croogo' : 'default';
 
 $rowClass = $this->Theme->getCssClass('row');
 $columnFull = $this->Theme->getCssClass('columnFull');
