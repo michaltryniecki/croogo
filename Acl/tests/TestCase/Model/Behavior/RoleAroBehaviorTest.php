@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Croogo\Acl\Test\TestCase\Model\Behavior;
 
@@ -44,7 +45,7 @@ class RoleAroBehaviorTest extends TestCase
         return $this->Roles->find('roleHierarchy')
             ->orderBy(['ParentAro.lft' => 'DESC'])
             ->all()
-            ->map(fn ($role) => [$role->alias, $role->parent_id, $role->lft])
+            ->map(fn($role) => [$role->alias, $role->parent_id, $role->lft])
             ->toList();
     }
 
