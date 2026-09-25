@@ -37,6 +37,23 @@ class AclHelper extends Helper
     protected $_pathWhitelist = ['/', '#'];
 
     /**
+     * Helper settings (pathWhitelist)
+     *
+     * @var array
+     */
+    public $settings = [];
+
+    /**
+     * @var \Croogo\Acl\Model\Table\PermissionsTable
+     */
+    public $Permissions;
+
+    /**
+     * @var \Acl\Controller\Component\AclComponent
+     */
+    public $Acl;
+
+    /**
      * Constructor
      */
     public function __construct(View $View, $settings = [])
