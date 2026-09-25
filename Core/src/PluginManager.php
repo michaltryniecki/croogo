@@ -1342,6 +1342,14 @@ class PluginManager extends Plugin
                 ['groups' => ['settings']]
             ));
         }
+        // Core's admin navigation element and PluginManager use this cache, so
+        // it has to exist without the Menus plugin too. Same config as Menus.
+        if (!in_array('croogo_menus', $configured)) {
+            Cache::setConfig('croogo_menus', array_merge(
+                Configure::read('Croogo.Cache.defaultConfig'),
+                ['groups' => ['menus']],
+            ));
+        }
 
         /**
          * Default API Route Prefix. This can be overriden in settings.
