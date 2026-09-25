@@ -34,7 +34,7 @@
         "cakephp/authorization": "^3.0",
         "cakephp/plugin-installer": "^2.0",
         "admad/cakephp-sequence": "^4.0",
-        "firebase/php-jwt": "^6.0",
+        "firebase/php-jwt": "^6.0 || ^7.0",
         "friendsofcake/crud": "^7.0",
         "friendsofcake/crud-json-api": "^2.0",
         "friendsofcake/search": "^7.0",
