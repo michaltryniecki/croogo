@@ -78,7 +78,13 @@ class RoleAroBehavior extends Behavior
             );
         }
         if (!empty($entity->parent_id)) {
-            $aro->parent_id = $entity->parent_id;
+            // parent_id is a role id, the tree needs the id of that role's ARO.
+            // The two only coincide while roles and aros were filled in lockstep.
+            $parentAro = $model->getBehavior('Acl')->node([
+                'model' => $model->getAlias(),
+                'foreign_key' => $entity->parent_id,
+            ])->firstOrFail();
+            $aro->parent_id = $parentAro->id;
         }
         $model->Aro->save($aro);
         Cache::clearGroup('acl', 'permissions');
