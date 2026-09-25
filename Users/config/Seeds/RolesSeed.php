@@ -1,6 +1,7 @@
 <?php
 
 use Cake\ORM\TableRegistry;
+use Croogo\Core\Database\SequenceFixer;
 use Migrations\BaseSeed;
 
 class RolesSeed extends BaseSeed
@@ -48,6 +49,8 @@ class RolesSeed extends BaseSeed
         $Roles = TableRegistry::getTableLocator()->get('Croogo/Users.Roles');
         $entities = $Roles->newEntities($this->records);
         $result = $Roles->saveMany($entities);
+        // Records carry explicit ids, move the Postgres sequence past them.
+        (new SequenceFixer())->fix($this->getAdapter()->getConnection(), ['roles']);
         $this->getAdapter()->beginTransaction();
     }
 }

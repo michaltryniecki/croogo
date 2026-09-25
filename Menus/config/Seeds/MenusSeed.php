@@ -1,5 +1,6 @@
 <?php
 
+use Croogo\Core\Database\SequenceFixer;
 use Migrations\BaseSeed;
 
 class MenusSeed extends BaseSeed
@@ -60,5 +61,7 @@ class MenusSeed extends BaseSeed
     {
         $Table = $this->table('menus');
         $Table->insert($this->records)->save();
+        // Records carry explicit ids, move the Postgres sequence past them.
+        (new SequenceFixer())->fix($this->getAdapter()->getConnection(), ['menus']);
     }
 }
