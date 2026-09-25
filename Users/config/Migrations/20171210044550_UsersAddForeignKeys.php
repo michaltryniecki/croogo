@@ -1,8 +1,8 @@
 <?php
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
-class UsersAddForeignKeys extends AbstractMigration
+class UsersAddForeignKeys extends BaseMigration
 {
     public function change(): void
     {

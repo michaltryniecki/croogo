@@ -1,8 +1,8 @@
 <?php
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
-class MenusAddForeignKeys extends AbstractMigration
+class MenusAddForeignKeys extends BaseMigration
 {
     public function change(): void
     {

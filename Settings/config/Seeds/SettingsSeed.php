@@ -1,8 +1,8 @@
 <?php
 
-use Phinx\Seed\AbstractSeed;
+use Migrations\BaseSeed;
 
-class SettingsSeed extends AbstractSeed
+class SettingsSeed extends BaseSeed
 {
 
     public $records = [

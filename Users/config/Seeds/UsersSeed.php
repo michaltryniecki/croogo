@@ -2,9 +2,9 @@
 
 use Cake\Log\LogTrait;
 use Cake\ORM\TableRegistry;
-use Phinx\Seed\AbstractSeed;
+use Migrations\BaseSeed;
 
-class UsersSeed extends AbstractSeed
+class UsersSeed extends BaseSeed
 {
     use LogTrait;
 

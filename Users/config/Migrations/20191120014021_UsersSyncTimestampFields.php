@@ -1,7 +1,7 @@
 <?php
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
-class UsersSyncTimestampFields extends AbstractMigration
+class UsersSyncTimestampFields extends BaseMigration
 {
     /**
      * Change Method.

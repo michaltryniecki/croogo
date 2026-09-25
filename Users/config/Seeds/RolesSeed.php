@@ -1,9 +1,9 @@
 <?php
 
 use Cake\ORM\TableRegistry;
-use Phinx\Seed\AbstractSeed;
+use Migrations\BaseSeed;
 
-class RolesSeed extends AbstractSeed
+class RolesSeed extends BaseSeed
 {
 
     public $records = [

@@ -1,8 +1,8 @@
 <?php
 
-use Phinx\Seed\AbstractSeed;
+use Migrations\BaseSeed;
 
-class LinksSeed extends AbstractSeed
+class LinksSeed extends BaseSeed
 {
 
     public $records = [

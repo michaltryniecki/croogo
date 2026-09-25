@@ -1,8 +1,8 @@
 <?php
 
-use Phinx\Seed\AbstractSeed;
+use Migrations\BaseSeed;
 
-class MenusSeed extends AbstractSeed
+class MenusSeed extends BaseSeed
 {
 
     public $records = [
