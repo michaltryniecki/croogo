@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Croogo\Core\Database;
 
@@ -13,7 +14,6 @@ use Psr\Log\LogLevel;
  */
 class SequenceFixer
 {
-
     use LogTrait;
 
     /**
@@ -21,7 +21,7 @@ class SequenceFixer
      * @param array<string> $tables Limit to these tables, all tables when empty
      * @return void
      */
-    public function fix($connection, array $tables = []): void
+    public function fix(Connection|string $connection, array $tables = []): void
     {
         $db = $connection instanceof Connection ? $connection : ConnectionManager::get($connection);
         $driver = $db->getDriver();
@@ -53,7 +53,7 @@ class SequenceFixer
               WHERE table_catalog = current_database()
                 AND table_schema = :schema
                 AND (column_default LIKE 'nextval%' OR is_identity = 'YES')",
-            ['schema' => $schema]
+            ['schema' => $schema],
         )->fetchAll('assoc');
 
         foreach ($columns as $column) {
@@ -67,7 +67,7 @@ class SequenceFixer
             $max = $db->execute(sprintf(
                 'SELECT MAX(%s) AS max FROM %s',
                 $driver->quoteIdentifier($column['column_name']),
-                $driver->quoteIdentifier($schema . '.' . $column['table_name'])
+                $driver->quoteIdentifier($schema . '.' . $column['table_name']),
             ))->fetch('assoc');
             $max = (int)($max['max'] ?? 0);
 
@@ -75,11 +75,11 @@ class SequenceFixer
             $db->execute(
                 'SELECT setval(CAST(:sequence AS regclass), :value, :called)',
                 ['sequence' => $column['sequence_name'], 'value' => max($max, 1), 'called' => $max > 0],
-                ['sequence' => 'string', 'value' => 'integer', 'called' => 'boolean']
+                ['sequence' => 'string', 'value' => 'integer', 'called' => 'boolean'],
             );
             $this->log(
                 sprintf('Sequence %s reset to %d', $column['sequence_name'], $max + 1),
-                LogLevel::WARNING
+                LogLevel::WARNING,
             );
         }
     }
