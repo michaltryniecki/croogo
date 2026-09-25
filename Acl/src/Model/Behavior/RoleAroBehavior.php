@@ -99,14 +99,19 @@ class RoleAroBehavior extends Behavior
     {
         $alias = $this->_table->getAlias();
         $primaryKey = $this->_table->getPrimaryKey();
-        $this->_table->hasOne('ParentAro', [
-            'className' => 'Aros',
-            'bindingKey' => 'id',
-            'foreignKey' => 'foreign_key',
-            'conditions' => [
-                'model' => $alias,
-            ],
-        ]);
+        // Cake 5 refuses to add an association alias twice, and the finder
+        // can run more than once per table instance.
+        if (!$this->_table->associations()->has('ParentAro')) {
+            // Plugin-qualified: skeleton apps disable the fallback table class
+            $this->_table->hasOne('ParentAro', [
+                'className' => 'Croogo/Acl.Aros',
+                'bindingKey' => 'id',
+                'foreignKey' => 'foreign_key',
+                'conditions' => [
+                    'ParentAro.model' => $alias,
+                ],
+            ]);
+        }
 
         $query
             ->contain('ParentAro')

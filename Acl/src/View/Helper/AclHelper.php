@@ -9,6 +9,7 @@ use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\View;
+use Croogo\Acl\Model\Table\PermissionsTable;
 
 /**
  * Acl Helper
@@ -35,6 +36,15 @@ class AclHelper extends Helper
      * Path Whitelist
      */
     protected $_pathWhitelist = ['/', '#'];
+
+    /**
+     * Helper settings (pathWhitelist)
+     */
+    public array $settings = [];
+
+    public PermissionsTable $Permissions;
+
+    public AclComponent $Acl;
 
     /**
      * Constructor

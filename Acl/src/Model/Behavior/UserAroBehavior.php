@@ -57,7 +57,9 @@ class UserAroBehavior extends Behavior
         // update ACO alias
         if (!empty($entity->username)) {
             $model = $event->getSubject();
-            $arosTable = \Cake\ORM\TableRegistry::getTableLocator()->get('Aros');
+            // the Aro association set up by AclBehavior, not a bare 'Aros'
+            // lookup that fails once the fallback table class is disabled
+            $arosTable = $model->Aro->getTarget();
 
             $ref = ['model' => $model->getAlias(), 'foreign_key' => $entity->id];
             // Cake 5.3: metody behaviora na instancji tabeli deprecated
