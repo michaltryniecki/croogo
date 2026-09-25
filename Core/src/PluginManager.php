@@ -1182,7 +1182,13 @@ class PluginManager extends Plugin
     public static function path(string $plugin): string
     {
         if (strstr($plugin, 'Croogo/')) {
-            return realpath(parent::path('Croogo/Core') . '..' . DS . substr($plugin, 7) . DS) . DS;
+            $path = realpath(parent::path('Croogo/Core') . '..' . DS . substr($plugin, 7) . DS);
+            // Without this a dropped plugin resolved to "/" and available() said yes.
+            if ($path === false) {
+                throw new MissingPluginException(['plugin' => $plugin]);
+            }
+
+            return $path . DS;
         }
 
         $path = Configure::read('plugins.' . $plugin);

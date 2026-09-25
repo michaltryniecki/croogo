@@ -7,7 +7,11 @@ use Cake\Routing\Router;
 use Croogo\Core\Utility\StringConverter;
 
 $routes->prefix('admin', function (RouteBuilder $routeBuilder) {
-    $routeBuilder->registerMiddleware('csrf', new CsrfProtectionMiddleware());
+    // Plugin routes load after the app's, so an app that registered its own
+    // `csrf` (cookie options, skipped actions) would silently lose it here.
+    if (!Router::getRouteCollection()->hasMiddleware('csrf')) {
+        $routeBuilder->registerMiddleware('csrf', new CsrfProtectionMiddleware());
+    }
     $routeBuilder->applyMiddleware('csrf');
 
     $dashboardUrl = Configure::read('Site.dashboard_url');

@@ -81,7 +81,8 @@ class InstallCommand extends Command
         $options = ['bootstrap' => true, 'routes' => true];
         $plugins = array_merge(PluginManager::$corePlugins, PluginManager::$bundledPlugins);
         foreach ($plugins as $plugin) {
-            if (!Plugin::isLoaded($plugin)) {
+            // The bundled list still names plugins this fork dropped (Blocks, Nodes, ...).
+            if (!Plugin::isLoaded($plugin) && PluginManager::available($plugin)) {
                 PluginManager::load($plugin, $options);
             }
         }

@@ -303,7 +303,13 @@ class InstallManager
             'controllers/Croogo\Users/Admin/Users/view' => [$admin],
         ];
 
+        $Acos = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Acl.Acos');
         foreach ($setup as $aco => $roles) {
+            // ACOs exist only for the plugins the app runs; an app without
+            // Menus/FileManager would get a DbAcl::allow() "Invalid node" per grant.
+            if (!$Acos->node($aco)) {
+                continue;
+            }
             foreach ($roles as $aro) {
                 try {
                     $result = $Permission->allow($aro, $aco);

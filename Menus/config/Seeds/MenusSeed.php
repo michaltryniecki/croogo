@@ -1,8 +1,9 @@
 <?php
 
-use Phinx\Seed\AbstractSeed;
+use Croogo\Core\Database\SequenceFixer;
+use Migrations\BaseSeed;
 
-class MenusSeed extends AbstractSeed
+class MenusSeed extends BaseSeed
 {
 
     public $records = [
@@ -60,5 +61,7 @@ class MenusSeed extends AbstractSeed
     {
         $Table = $this->table('menus');
         $Table->insert($this->records)->save();
+        // Records carry explicit ids, move the Postgres sequence past them.
+        (new SequenceFixer())->fix($this->getAdapter()->getConnection(), ['menus']);
     }
 }

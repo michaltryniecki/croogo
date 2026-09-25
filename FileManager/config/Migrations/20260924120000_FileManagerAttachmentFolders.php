@@ -1,6 +1,6 @@
 <?php
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
 /**
  * Logical folders for the attachment library.
@@ -14,7 +14,7 @@ use Migrations\AbstractMigration;
  * FileManagerSyncTimestampFields left on `attachments`, so the Timestamp and
  * Trackable behaviors work without configuration.
  */
-class FileManagerAttachmentFolders extends AbstractMigration
+class FileManagerAttachmentFolders extends BaseMigration
 {
     public function up(): void
     {

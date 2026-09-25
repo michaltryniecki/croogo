@@ -1,8 +1,9 @@
 <?php
 
-use Phinx\Seed\AbstractSeed;
+use Croogo\Core\Database\SequenceFixer;
+use Migrations\BaseSeed;
 
-class LinksSeed extends AbstractSeed
+class LinksSeed extends BaseSeed
 {
 
     public $records = [
@@ -223,5 +224,7 @@ class LinksSeed extends AbstractSeed
     {
         $Table = $this->table('links');
         $Table->insert($this->records)->save();
+        // Records carry explicit ids, move the Postgres sequence past them.
+        (new SequenceFixer())->fix($this->getAdapter()->getConnection(), ['links']);
     }
 }

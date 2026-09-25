@@ -2,9 +2,10 @@
 
 use Cake\Log\LogTrait;
 use Cake\ORM\TableRegistry;
-use Phinx\Seed\AbstractSeed;
+use Croogo\Core\Database\SequenceFixer;
+use Migrations\BaseSeed;
 
-class UsersSeed extends AbstractSeed
+class UsersSeed extends BaseSeed
 {
     use LogTrait;
 
@@ -32,6 +33,8 @@ class UsersSeed extends AbstractSeed
         $Users = TableRegistry::getTableLocator()->get('Croogo/Users.Users');
         $entity = $Users->newEntity($this->record);
         $result = $Users->save($entity);
+        // Records carry explicit ids, move the Postgres sequence past them.
+        (new SequenceFixer())->fix($this->getAdapter()->getConnection(), ['users']);
         $this->getAdapter()->beginTransaction();
     }
 }

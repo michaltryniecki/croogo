@@ -1,8 +1,8 @@
 <?php
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
-class MenusInitialMigration extends AbstractMigration
+class MenusInitialMigration extends BaseMigration
 {
     public function up(): void
     {

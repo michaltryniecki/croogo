@@ -18,10 +18,13 @@ $cacheConfig = array_merge(
 $failedLoginDuration = 300;
 Configure::write('User.failed_login_limit', 5);
 Configure::write('User.failed_login_duration', $failedLoginDuration);
-Cache::setConfig('users_login', array_merge($cacheConfig, [
-    'duration' => '+' . $failedLoginDuration . ' seconds',
-    'groups' => ['users'],
-]));
+// Guarded: integration tests bootstrap the app once per request in one process.
+if (!in_array('users_login', Cache::configured(), true)) {
+    Cache::setConfig('users_login', array_merge($cacheConfig, [
+        'duration' => '+' . $failedLoginDuration . ' seconds',
+        'groups' => ['users'],
+    ]));
+}
 
 Croogo::hookAdminRowAction('Croogo/Users.Admin/Users/index', 'Reset Password', [
     'prefix:Admin/plugin:Croogo%2fUsers/controller:Users/action:reset_password/:id' => [

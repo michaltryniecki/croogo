@@ -1,9 +1,9 @@
 <?php
 
 use Cake\I18n\I18n;
-use Phinx\Seed\AbstractSeed;
+use Migrations\BaseSeed;
 
-class LanguagesSeed extends AbstractSeed
+class LanguagesSeed extends BaseSeed
 {
 
     public function run(): void

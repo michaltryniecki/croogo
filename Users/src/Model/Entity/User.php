@@ -34,7 +34,9 @@ class User extends Entity
         if (empty($this->get('role_id'))) {
             return null;
         } else {
-            return ['Roles' => ['id' => $this->get('role_id')]];
+            // Plugin-qualified, so AclNode::node() gets the real table class instead
+            // of an auto-table, which apps with allowFallbackClass(false) refuse.
+            return ['Croogo/Users.Roles' => ['id' => $this->get('role_id')]];
         }
     }
 }

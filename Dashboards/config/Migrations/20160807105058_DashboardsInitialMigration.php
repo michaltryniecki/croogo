@@ -1,8 +1,8 @@
 <?php
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
-class DashboardsInitialMigration extends AbstractMigration
+class DashboardsInitialMigration extends BaseMigration
 {
     public function up(): void
     {
