@@ -45,6 +45,11 @@
             <exclude>./Core/tests/TestCase/Controller/Component/BulkProcessComponentTest.php</exclude>
             <exclude>./Core/tests/TestCase/Model/Behavior/UrlBehaviorTest.php</exclude>
         </testsuite>
+        <testsuite name="Acl">
+            <!-- Tylko nowe testy behaviorów; reszta testów Acl to nieportowany
+                 kod 2.x. -->
+            <directory>./Acl/tests/TestCase/Model/Behavior</directory>
+        </testsuite>
         <testsuite name="FileManager">
             <!-- Tylko nowe testy (foldery załączników); stare testy FileManagera
                  to nieportowany kod 2.x. -->
