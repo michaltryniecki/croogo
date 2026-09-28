@@ -138,7 +138,7 @@ class BulkProcessComponent extends Component
         }
 
         try {
-            $processed = $table->processAction($action, $ids);
+            $processed = $table->getBehavior('BulkProcess')->processAction($action, $ids);
         } catch (\Exception $e) {
             $message = $e->getMessage();
         }

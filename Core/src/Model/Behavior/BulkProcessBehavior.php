@@ -199,7 +199,7 @@ class BulkProcessBehavior extends Behavior
         }
 
         foreach ($ids as $id) {
-            if (!$this->_table->copy($id)) {
+            if (!$this->_table->getBehavior('Copyable')->copy($id)) {
                 return false;
             }
         }
