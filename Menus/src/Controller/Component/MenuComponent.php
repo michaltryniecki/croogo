@@ -102,7 +102,7 @@ class MenuComponent extends Component
         $menus = Hash::merge($menus, array_keys($this->controller->BlocksHook->blocksData['menus']));
 
         $roleId = $this->controller->Croogo->roleId();
-        $status = $this->Links->status();
+        $status = $this->Links->getBehavior('Publishable')->status();
         foreach ($menus as $menuAlias) {
             // Cake 5: opcje findera przez named arguments (positional array deprecated)
             $menu = $this->Links->Menus->find('all', cache: [
