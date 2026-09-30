@@ -57,7 +57,9 @@ class FileManagerEventHandler implements EventListenerInterface
         }
 
         if (empty($attachment->asset->asset_usage)) {
-            Log::error('No asset usage record to register');
+            // Not an error: a file uploaded straight into the library is attached to
+            // nothing yet. Logged as `error`, it was a false alarm on every upload.
+            Log::debug('No asset usage record to register');
 
             return;
         }

@@ -344,14 +344,15 @@ class AttachmentsTable extends CroogoTable
             }
             if (empty($attachment->hash)) {
                 if (empty($file['tmp_name'])) {
-                    return 'Uploaded file is empty';
+                    // Kept as the event result, as it always was; it does not stop the save.
+                    $event->setResult('Uploaded file is empty');
+
+                    return;
                 } else {
                     $attachment->hash = sha1_file($file['tmp_name']);
                 }
             }
         }
-
-        return true;
     }
 
     /**

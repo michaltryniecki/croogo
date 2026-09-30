@@ -3,6 +3,7 @@
 namespace Croogo\FileManager\Event;
 
 use Cake\Core\App;
+use Cake\Event\EventInterface;
 use Cake\Log\LogTrait;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
@@ -52,6 +53,29 @@ abstract class BaseStorageHandler
     }
 
     abstract protected function _parentAsset($attachment);
+
+    /**
+     * Hand a listener's outcome to the event instead of returning it.
+     *
+     * Returning a value from a listener is deprecated since CakePHP 5.2, and these
+     * listeners run on every thumbnail render, so the notice flooded the log. This does
+     * exactly what the event manager did with the returned value: `false` stops the
+     * event, and anything but null becomes its result. Used as `return $this->respond(...)`
+     * so each early exit stays one line.
+     *
+     * @param \Cake\Event\EventInterface $event The event being handled
+     * @param mixed $result What the listener used to return
+     * @return void
+     */
+    protected function respond(EventInterface $event, mixed $result): void
+    {
+        if ($result === false) {
+            $event->stopPropagation();
+        }
+        if ($result !== null) {
+            $event->setResult($result);
+        }
+    }
 
     protected function _check($event)
     {
@@ -122,16 +146,16 @@ abstract class BaseStorageHandler
     public function onResizeImage($Event)
     {
         if (!$this->_check($Event)) {
-            return true;
+            return $this->respond($Event, true);
         }
         if (!$Event->getData('record')) {
-            return true;
+            return $this->respond($Event, true);
         }
 
         $src = $this->_pathFromHtml($Event->getData('record')['result']);
 
         if (!$src) {
-            return false;
+            return $this->respond($Event, false);
         }
 
         try {
@@ -143,14 +167,14 @@ abstract class BaseStorageHandler
             );
             $attachment = $this->Attachments->createFromFile($filename);
             if (is_string($attachment)) {
-                return false;
+                return $this->respond($Event, false);
             }
         } catch (InvalidArgumentException $e) {
             $this->log(get_class($this) . ': ' . $e->getMessage());
             throw $e;
         }
 
-        return $this->_createAsset($attachment);
+        return $this->respond($Event, $this->_createAsset($attachment));
     }
 
     /**

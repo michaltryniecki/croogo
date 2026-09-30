@@ -35,7 +35,7 @@ class LegacyLocalAttachmentStorageHandler extends BaseStorageHandler implements 
     public function onBeforeSave(Event $event)
     {
         if (!$this->_check($event)) {
-            return true;
+            return $this->respond($event, true);
         }
 
         $model = $event->getSubject();
@@ -56,7 +56,7 @@ class LegacyLocalAttachmentStorageHandler extends BaseStorageHandler implements 
                 $storage['extension'] = substr($path, strrpos($path, '.') + 1);
             }
 
-            return true;
+            return $this->respond($event, true);
         }
 
         $file = $storage->file;
@@ -84,11 +84,11 @@ class LegacyLocalAttachmentStorageHandler extends BaseStorageHandler implements 
                 $storage['path'] = '/uploads/' . $file['name'];
             }
 
-            return $result;
+            return $this->respond($event, $result);
         } catch (Exception $e) {
             $this->log($e->getMessage());
 
-            return false;
+            return $this->respond($event, false);
         }
     }
 
@@ -100,7 +100,7 @@ class LegacyLocalAttachmentStorageHandler extends BaseStorageHandler implements 
     public function onBeforeDelete(Event $event)
     {
         if (!$this->_check($event)) {
-            return true;
+            return $this->respond($event, true);
         }
         $model = $event->getSubject();
         $entity = $event->getData('record');
@@ -111,7 +111,7 @@ class LegacyLocalAttachmentStorageHandler extends BaseStorageHandler implements 
             $adapter->delete($asset->filename);
         }
 
-        return $model->deleteAll(['parent_asset_id' => $entity->id], true, true);
+        return $this->respond($event, $model->deleteAll(['parent_asset_id' => $entity->id], true, true));
     }
 
     /**

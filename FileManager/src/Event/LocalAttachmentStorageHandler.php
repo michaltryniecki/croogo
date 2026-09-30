@@ -26,7 +26,7 @@ class LocalAttachmentStorageHandler extends BaseStorageHandler implements EventL
     public function onBeforeSave(Event $event)
     {
         if (!$this->_check($event)) {
-            return true;
+            return $this->respond($event, true);
         }
         $model = $event->getSubject();
 
@@ -48,7 +48,7 @@ class LocalAttachmentStorageHandler extends BaseStorageHandler implements EventL
                 $storage['extension'] = substr($path, strrpos($path, '.') + 1);
             }
 
-            return true;
+            return $this->respond($event, true);
         }
 
         $file = $storage->file;
@@ -83,12 +83,12 @@ class LocalAttachmentStorageHandler extends BaseStorageHandler implements EventL
             $storage['height'] = $imageInfo['height'];
             $storage['extension'] = $extension;
 
-            return $result;
+            return $this->respond($event, $result);
         } catch (Exception $e) {
             $event->getData('record')->setErrors(['path' => $e->getMessage()]);
             $this->log($e->getMessage());
 
-            return false;
+            return $this->respond($event, false);
         }
     }
 
@@ -96,7 +96,7 @@ class LocalAttachmentStorageHandler extends BaseStorageHandler implements EventL
     {
         $model = $event->getSubject();
         if (!$this->_check($event)) {
-            return true;
+            return $this->respond($event, true);
         }
 
         $entity = $event->getData('record');
@@ -134,7 +134,7 @@ class LocalAttachmentStorageHandler extends BaseStorageHandler implements EventL
             $model->delete($toDelete);
         }
 
-        return true;
+        return $this->respond($event, true);
     }
 
     /**

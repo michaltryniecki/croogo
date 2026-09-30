@@ -321,6 +321,20 @@ class AppController extends \App\Controller\AppController implements HookableCom
         }
         $message = $exception ? $exception->getMessage() : null;
         $this->set(compact('type', 'message'));
+
+        // The page below tells the user only that "a security error has occurred", and
+        // nothing was written anywhere: a rejected save left no trace at all, so "my
+        // product would not save" could not be told apart from a user error. The reason
+        // (which field was unexpected, or that the token was missing) is in the message.
+        $request = $this->getRequest();
+        $this->log(sprintf(
+            'Form protection rejected %s %s: %s (referer: %s)',
+            $request->getMethod(),
+            $request->getRequestTarget(),
+            $message ?? 'no details',
+            $request->referer() ?? '-',
+        ), 'warning');
+
         if ($this->getRequest()->getParam('prefix') == 'Admin') {
             $theme = Configure::read('Site.admin_theme');
         } else {

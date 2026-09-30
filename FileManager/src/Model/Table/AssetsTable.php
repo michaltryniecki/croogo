@@ -101,10 +101,11 @@ class AssetsTable extends CroogoTable
             'adapter' => $adapter,
         ]);
         if ($Event->isStopped()) {
-            return false;
+            // A storage handler refused: abort. Set on the event rather than returned -
+            // returning a value from a listener is deprecated since CakePHP 5.2.
+            $event->stopPropagation();
+            $event->setResult(false);
         }
-
-        return true;
     }
 
     public function beforeDelete(\Cake\Event\EventInterface $event, EntityInterface $entity, ?ArrayObject $options = null)
@@ -113,10 +114,11 @@ class AssetsTable extends CroogoTable
             'record' => $entity,
         ]);
         if ($Event->isStopped()) {
-            return false;
+            // A storage handler refused: abort. Set on the event rather than returned -
+            // returning a value from a listener is deprecated since CakePHP 5.2.
+            $event->stopPropagation();
+            $event->setResult(false);
         }
-
-        return true;
     }
 
     public function checkFileUpload($check)
