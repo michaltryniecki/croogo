@@ -389,11 +389,7 @@ class AttachmentsController extends AppController
 
             return $this->redirect($redirect);
         }
-        $attachment = $this->Attachments->get($id, [
-            'contain' => [
-                'Assets',
-            ],
-        ]);
+        $attachment = $this->Attachments->get($id, contain: ['Assets']);
         if (!empty($this->getRequest()->getData())) {
             $data = $this->getRequest()->getData();
             if (array_key_exists('folder_id', $data)) {

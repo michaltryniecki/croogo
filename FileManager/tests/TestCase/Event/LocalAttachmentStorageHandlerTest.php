@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Croogo\FileManager\Test\TestCase\Event;
 
+use Cake\Datasource\EntityInterface;
 use Cake\TestSuite\TestCase;
 use Croogo\FileManager\Event\LocalAttachmentStorageHandler;
 use Croogo\FileManager\Model\Table\AssetsTable;
@@ -187,5 +188,71 @@ class LocalAttachmentStorageHandlerTest extends TestCase
         $this->assertTrue($this->Assets->delete($this->Assets->get(1)));
 
         $this->assertFalse($this->Assets->exists(['id' => 1]));
+    }
+
+    /**
+     * An asset about to be saved with an upload in the `$_FILES` array shape.
+     *
+     * @param string $tmpName Temporary file of the upload
+     * @param int $error Upload error code
+     * @return \Cake\Datasource\EntityInterface
+     */
+    protected function upload(string $tmpName, int $error = UPLOAD_ERR_OK): EntityInterface
+    {
+        $asset = $this->Assets->newEmptyEntity();
+        $asset->patch([
+            'model' => 'Attachments',
+            'foreign_key' => 1,
+            'adapter' => 'LocalAttachment',
+            'file' => [
+                'tmp_name' => $tmpName,
+                'name' => 'Photo.PNG',
+                'size' => is_file($tmpName) ? filesize($tmpName) : 0,
+                'type' => 'image/png',
+                'error' => $error,
+            ],
+        ]);
+
+        return $asset;
+    }
+
+    /**
+     * The listeners no longer return their outcome, so a successful upload has to keep
+     * going all the way to a stored file and a saved row.
+     *
+     * @return void
+     */
+    public function testUploadIsStoredUnderAPathDerivedFromItsContent(): void
+    {
+        $tmp = TMP . 'storage_handler_upload_' . uniqid() . '.png';
+        imagepng(imagecreatetruecolor(20, 10), $tmp);
+        $hash = sha1_file($tmp);
+
+        $saved = $this->Assets->save($this->upload($tmp));
+        unlink($tmp);
+
+        $this->assertNotFalse($saved);
+        $this->assertSame($hash, $saved->hash);
+        $this->assertMatchesRegularExpression('#^/assets/\d\d/\d\d/\d\d/' . $hash . '\.png$#', $saved->path);
+        $this->assertFileExists($this->root . substr($saved->path, strlen('/assets')));
+        $this->assertSame('Photo.PNG', $saved->filename);
+        $this->assertSame('image/png', $saved->mime_type);
+        $this->assertSame(20, $saved->width);
+    }
+
+    /**
+     * ...and a refusal still has to abort the save: `false` used to be returned, now the
+     * event is stopped.
+     *
+     * @return void
+     */
+    public function testUploadWithoutATemporaryFileAbortsTheSave(): void
+    {
+        $asset = $this->upload(TMP . 'storage_handler_upload_missing.png', UPLOAD_ERR_NO_FILE);
+
+        $this->assertFalse($this->Assets->save($asset));
+
+        $this->assertNotEmpty($asset->getError('path'));
+        $this->assertSame(0, $this->Assets->find()->count());
     }
 }
