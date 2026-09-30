@@ -209,24 +209,25 @@ $this->append('action-buttons');
 
         if ($mimeType == 'image') {
             try {
-                $img = $this->AssetsImage->resize(
+                $thumbnail = $this->AssetsImage->thumbnailLink(
                     $attachment->asset->path,
                     100,
                     200,
-                    ['adapter' => $attachment->asset->adapter]
+                    ['adapter' => $attachment->asset->adapter],
+                    [],
+                    ['title' => $attachment->title]
                 );
             } catch (Exception $e) {
-                $img = $this->Html->image($attachment->asset->path, ['style' => 'max-width: 200px']);
+                $thumbnail = $this->Html->link(
+                    $this->Html->image($attachment->asset->path, ['style' => 'max-width: 200px']),
+                    $attachment->asset->path,
+                    [
+                        'data-toggle' => 'lightbox',
+                        'escape' => false,
+                        'title' => $attachment->title,
+                    ]
+                );
             }
-            $thumbnail = $this->Html->link(
-                $img,
-                $attachment->asset->path,
-                [
-                    'data-toggle' => 'lightbox',
-                    'escape' => false,
-                    'title' => $attachment->title,
-                ]
-            );
             if (!empty($attachment['AssetsAssetUsage']['type']) &&
                 $attachment['AssetsAssetUsage']['foreign_key'] === $foreignKey &&
                 $attachment['AssetsAssetUsage']['model'] === $model

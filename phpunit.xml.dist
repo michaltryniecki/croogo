@@ -54,6 +54,8 @@
             <!-- Tylko nowe testy (foldery załączników); stare testy FileManagera
                  to nieportowany kod 2.x. -->
             <directory>./FileManager/tests/TestCase/Model</directory>
+            <directory>./FileManager/tests/TestCase/Event</directory>
+            <directory>./FileManager/tests/TestCase/View</directory>
         </testsuite>
         <testsuite name="Settings">
             <directory>./Settings/tests/TestCase</directory>

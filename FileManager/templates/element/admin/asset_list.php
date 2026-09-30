@@ -113,18 +113,14 @@ foreach ($attachments as $attachment) :
     list($mimeType, ) = explode('/', $attachment->asset->mime_type);
 
     if ($mimeType === 'image') :
-        $imgUrl = $this->AssetsImage->resize(
+        $thumbnail = $this->AssetsImage->thumbnailLink(
             $path,
             100,
             200,
             ['adapter' => $attachment->asset->adapter],
-            ['alt' => $attachment->title, 'class' => 'img-thumbnail']
+            ['alt' => $attachment->title, 'class' => 'img-thumbnail'],
+            ['title' => $attachment->title]
         );
-        $thumbnail = $this->Html->link($imgUrl, $path, [
-            'escape' => false,
-            'data-toggle' => 'lightbox',
-            'title' => $attachment->title
-        ]);
     elseif ($mimeType === 'video') :
         $thumbnail = $this->Html->media([$attachment->asset->path], [
             'width' => 200,
