@@ -25,6 +25,16 @@ use Exception;
  */
 class AttachmentsController extends AppController
 {
+    /**
+     * Rows per page of the library list. It was 5: uploading six photos at once already
+     * pushed one of them to a second page nobody thought to look for.
+     */
+    public const LIST_LIMIT = 20;
+
+    /**
+     * Thumbnails per page of the chooser - a grid, so a multiple of its 2, 3 and 4 columns.
+     */
+    public const CHOOSER_LIMIT = 24;
 
     /**
      * Helpers used by the Controller
@@ -33,7 +43,7 @@ class AttachmentsController extends AppController
      * @access public
      */
     public array $paginate = [
-        'limit' => 5,
+        'limit' => self::LIST_LIMIT,
     ];
 
     public function initialize(): void
@@ -137,12 +147,19 @@ class AttachmentsController extends AppController
         }
 
         if (!$this->getRequest()->getQuery('sort')) {
-            $query->orderBy(['Attachments.created' => 'DESC']);
+            // Newest first, and by id within the same second: files uploaded together
+            // share a timestamp and would otherwise come back in no particular order.
+            $query->orderBy([
+                'Attachments.created' => 'DESC',
+                'Attachments.id' => 'DESC',
+            ]);
         }
 
         $this->applyFolder($query);
 
         if ($isChooser) {
+            $this->paginate['limit'] = self::CHOOSER_LIMIT;
+
             if ($this->getRequest()->getQuery('chooser_type') == 'image') {
                 $query->where([
                     'Assets.mime_type LIKE' => 'image/%',

@@ -28,47 +28,113 @@ endif;
         <hr />
     </div>
 </div>
+<?php
+/*
+ * The grid.
+ *
+ * Each card used to be a full-width block holding the ORIGINAL file: a page of camera
+ * photos was tens of megabytes to download and one photo per screen to scroll through.
+ * Now a card is a grid cell with a thumbnail - the same cached, resized version the
+ * library list shows - and the original is only what the link points at.
+ *
+ * What callers rely on is unchanged: every selectable file is an `a.item-choose` whose
+ * href is the asset path, inside a `.card`.
+ */
+$isNew = function ($created): bool {
+    return $created instanceof DateTimeInterface && $created->getTimestamp() > time() - 900;
+};
+$pages = (int)$this->Paginator->total();
+?>
+<?php if ($pages > 1) : ?>
+    <?php echo $this->element('admin/pagination', ['paginationClass' => 'mb-3']); ?>
+<?php endif ?>
 <div class="<?php echo $this->Theme->getCssClass('row'); ?>">
     <div class="<?php echo $this->Theme->getCssClass('columnFull'); ?>">
         <div id="attachments-for-links" class="row row-cards">
         <?php foreach ($attachments as $attachment) : ?>
-            <div class="card">
-                <?php
-                if (preg_match('/^image/', $attachment->asset->mime_type)) :
-                    echo $this->Html->image($attachment->asset->path, [
-                        'class' => 'card-img-top',
-                    ]);
-                endif;
-                ?>
-
-                <div class="card-body">
-                <?php
-
-                echo $this->Html->para(
-                    null,
-                    $this->Html->link(
-                        $attachment->asset->filename,
-                        $attachment->asset->path,
-                        [
-                            'class' => 'item-choose',
-                            'data-chooser_type' => 'Attachment',
-                            'data-chooser_id' => $attachment->asset->id,
-                            'data-chooser_title' => $attachment->asset->filename,
-                            'rel' => $attachment->asset->path,
-                        ]
-                    )
-                );
-
-                echo $this->Html->para(
-                    null,
-                    __d('croogo', 'Created') . ': ' .
-                    $this->Time->nice($attachment->asset->created)
-                );
-                ?>
+            <?php
+            $asset = $attachment->asset;
+            $isImage = (bool)preg_match('/^image/', (string)$asset->mime_type);
+            $thumbnail = null;
+            if ($isImage) {
+                $thumbnail = $this->AssetsImage->resize($asset->path, 200, 200, [
+                    'adapter' => $asset->adapter,
+                ], [
+                    'alt' => $asset->filename,
+                    'class' => 'chooser-thumb-img',
+                    'loading' => 'lazy',
+                ]);
+            }
+            // An image whose file is gone from disk cannot be chosen: it would put a
+            // broken picture wherever it was inserted.
+            $missing = $isImage && !is_string($thumbnail);
+            ?>
+            <div class="col-6 col-sm-4 col-lg-3">
+                <div class="card card-sm h-100<?= $missing ? ' chooser-missing' : '' ?>">
+                    <div class="chooser-thumb">
+                        <?php
+                        if ($missing) :
+                            echo $this->AssetsImage->missing((string)$asset->path);
+                        elseif ($isImage) :
+                            echo $thumbnail;
+                        else :
+                            echo $this->Html->image('Croogo/Core./img/icons/page_white.png', [
+                                'alt' => (string)$asset->mime_type,
+                            ]);
+                        endif;
+                        ?>
+                    </div>
+                    <div class="card-body p-2">
+                        <?php
+                        if ($missing) :
+                            echo $this->Html->div('text-truncate text-secondary', h($asset->filename), [
+                                'title' => $asset->filename,
+                            ]);
+                        else :
+                            echo $this->Html->link(
+                                $asset->filename,
+                                $asset->path,
+                                [
+                                    'class' => 'item-choose d-block text-truncate',
+                                    'title' => $asset->filename,
+                                    'data-chooser_type' => 'Attachment',
+                                    'data-chooser_id' => $asset->id,
+                                    'data-chooser_title' => $asset->filename,
+                                    'rel' => $asset->path,
+                                ],
+                            );
+                        endif;
+                        ?>
+                        <div class="text-secondary small">
+                            <?= h($this->Time->nice($asset->created)) ?>
+                            <?php if ($isNew($asset->created)) : ?>
+                                <span class="badge bg-green-lt ms-1"><?= __d('croogo', 'New') ?></span>
+                            <?php endif ?>
+                        </div>
+                    </div>
                 </div>
             </div>
         <?php endforeach; ?>
         </div>
+        <style>
+            #attachments-for-links .chooser-thumb {
+                height: 140px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                background: var(--tblr-bg-surface-secondary, #f6f8fb);
+                border-bottom: 1px solid var(--tblr-border-color, #e6e7e9);
+            }
+            #attachments-for-links .chooser-thumb img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+            }
+            #attachments-for-links .chooser-missing {
+                opacity: .7;
+            }
+        </style>
         <?php if ($attachments->count() === 0 && $folderBrowsing) : ?>
             <div class="empty chooser-empty">
                 <p class="empty-title"><?= __d('croogo', 'No files in this folder') ?></p>
