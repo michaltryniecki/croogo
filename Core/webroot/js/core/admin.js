@@ -133,6 +133,32 @@ Admin.protectForms = function () {
   }
 };
 
+/**
+ * Undo what Admin.formFeedback did to the submit buttons: re-enable them and put
+ * the original icons back.
+ */
+Admin.resetFormFeedback = function () {
+  $('[type=submit][data-form-feedback=disabled]')
+    .removeClass('disabled')
+    .removeAttr('data-form-feedback');
+
+  $('i[data-form-feedback=added]').each(function () {
+    var space = this.nextSibling;
+    if (space && space.nodeType === 3 && space.nodeValue === ' ') {
+      space.parentNode.removeChild(space);
+    }
+    $(this).remove();
+  });
+
+  $('i[data-form-feedback=swapped]').each(function () {
+    var $icon = $(this);
+    $icon
+      .attr('class', $icon.attr('data-form-feedback-class'))
+      .removeAttr('data-form-feedback-class')
+      .removeAttr('data-form-feedback');
+  });
+};
+
 Admin.formFeedback = function () {
   $('body').on('submit', 'form', function (el) {
     var submitButtons = $(this).find('[type=submit]');
@@ -141,20 +167,39 @@ Admin.formFeedback = function () {
         return;
     }
 
+    // Another handler cancelled the submit: nothing is being sent, so there is
+    // nothing to wait for and the buttons must stay usable.
+    if (el.isDefaultPrevented()) {
+      return;
+    }
+
     submitButtons
-      .addClass('disabled');
+      .not('.disabled')
+      .addClass('disabled')
+      .attr('data-form-feedback', 'disabled');
 
     if (el.originalEvent && el.originalEvent.submitter) {
       var $button = $(el.originalEvent.submitter);
-      if ($button.find('i').length == 0) {
+      var $icon = $button.find('i').first();
+      if ($icon.length == 0) {
         $button
           .prepend(' ')
-          .prepend($('<i />').addClass(Admin.spinnerClass()));
-      } else {
-        $button.find('i').attr('class', Admin.spinnerClass());
+          .prepend($('<i />').addClass(Admin.spinnerClass()).attr('data-form-feedback', 'added'));
+      } else if (!$icon.attr('data-form-feedback')) {
+        $icon
+          .attr('data-form-feedback-class', $icon.attr('class') || '')
+          .attr('data-form-feedback', 'swapped')
+          .attr('class', Admin.spinnerClass());
       }
     }
   });
+
+  // The feedback above was never undone, which is fine while the page is being
+  // replaced - but the browser keeps the old page for the Back button (bfcache)
+  // exactly as it was left: buttons disabled, spinner turning. Going Apply -> Back
+  // gave a form that could not be saved until a manual reload. `pageshow` fires on
+  // every show of the page, including a restore, and is a no-op on a fresh load.
+  $(window).on('pageshow', Admin.resetFormFeedback);
 
   var activateErrorTab = function(e) {
     var pane = $(e.target).closest('.tab-pane').get(0);

@@ -103,12 +103,27 @@ class LocalAttachmentStorageHandler extends BaseStorageHandler implements EventL
 
         $model = $event->getSubject();
         $fields = ['adapter', 'path'];
-        $data = $model->get($entity->id, compact('fields'));
+        $data = $model->get($entity->id, fields: $fields);
 
-        $filesystem = StorageManager::adapter($data->adapter);
-        $key = str_replace('/assets', '', $data->path);
-        if ($filesystem->has($key)) {
-            $filesystem->delete($key);
+        // The path is derived from the file's content (crc32 directory + sha1 name, see
+        // onBeforeSave), so uploading the same file twice gives two asset rows that point at
+        // ONE file on disk. Deleting it together with the first row left the second row with
+        // no file behind it: a broken image wherever that row was used, and a fatal error in
+        // the attachment list. The file goes only when the last row that uses it goes.
+        $shared = $model->find()
+            ->where([
+                $model->aliasField('path') => $data->path,
+                $model->aliasField('adapter') => $data->adapter,
+                $model->aliasField('id') . ' !=' => $entity->id,
+            ])
+            ->count();
+
+        if ($shared === 0) {
+            $filesystem = StorageManager::adapter($data->adapter);
+            $key = str_replace('/assets', '', $data->path);
+            if ($filesystem->has($key)) {
+                $filesystem->delete($key);
+            }
         }
 
         $forDeletions = $model->find()

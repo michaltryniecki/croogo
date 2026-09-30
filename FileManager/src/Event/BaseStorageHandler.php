@@ -23,6 +23,14 @@ abstract class BaseStorageHandler
     protected $_config = [];
 
     /**
+     * Attachments table. Declared because PHP 8.2 deprecates creating it on the fly, and
+     * both handlers are built on every request: that one notice was 97% of debug.log.
+     *
+     * @var \Croogo\FileManager\Model\Table\AttachmentsTable|null
+     */
+    public $Attachments = null;
+
+    /**
      * Constructor
      */
     public function __construct($config = [])

@@ -121,14 +121,11 @@ $this->append('table-heading');
         $path = $attachment->asset->path;
         switch ($mimeType) {
             case 'image':
-                $imgUrl = $this->AssetsImage->resize($path, 100, 200, [
+                $thumbnail = $this->AssetsImage->thumbnailLink($path, 100, 200, [
                     'adapter' => $attachment->asset->adapter,
                 ], [
                     'alt' => $attachment->title
-                ]);
-                $thumbnail = $this->Html->link($imgUrl, $path, [
-                    'escape' => false,
-                    'data-toggle' => 'lightbox',
+                ], [
                     'title' => $attachment->title,
                 ]);
                 break;

@@ -91,22 +91,13 @@ $this->append('tab-content');
         $fileType = $fileType['0'];
         $path = $attachment->asset->path;
         if ($fileType == 'image') :
-            $imgUrl = $this->AssetsImage->resize(
+            echo $this->Html->beginBox(__d('croogo', 'Preview')) .
+            $this->AssetsImage->thumbnailLink(
                 $path,
                 200,
                 300,
                 ['adapter' => $attachment->asset->adapter]
             );
-        else :
-            $imgUrl = $this->Html->image('Croogo/Core./img/icons/' . $this->FileManager->mimeTypeToImage($attachment->mime_type)) . ' ' . $attachment->mime_type;
-        endif;
-
-        if (preg_match('/^image/', $attachment->asset->mime_type)) :
-            echo $this->Html->beginBox(__d('croogo', 'Preview')) .
-            $this->Html->link($imgUrl, $attachment->asset->path, [
-                'data-toggle' => 'lightbox',
-                'escapeTitle' => false,
-            ]);
             echo $this->Html->endBox();
         endif;
 
