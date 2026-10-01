@@ -133,6 +133,11 @@ class CroogoHelper extends Helper
      * Everything is plain Bootstrap 5 behaviour driven by `data-bs-toggle`; there
      * is no Croogo JavaScript behind it any more.
      *
+     * The entry for the current page is marked `.active`, and so is every
+     * ancestor on the way to it. In the sidebar those ancestors are also rendered
+     * open (`.show`), so after a reload the submenu you are in stays expanded
+     * instead of folding away - the same markup Tabler uses for its own demo.
+     *
      * @param array $menus Menu items, as collected by Nav::items()
      * @param array $options Rendering options
      * @param int $depth Current nesting level, 0 for the top level
@@ -146,6 +151,7 @@ class CroogoHelper extends Helper
             'htmlAttributes' => [
                 'class' => 'navbar-nav',
             ],
+            'activeTrail' => null,
         ], $options);
 
         $userId = $this->getView()->getRequest()->getSession()->read('Auth.User.id');
@@ -165,7 +171,12 @@ class CroogoHelper extends Helper
         }
         $currentRole = $this->Role->getBehavior('Aliasable')->byId($this->Layout->getRoleId());
 
-        foreach ($sorted as $menu) {
+        $activeTrail = $options['activeTrail'];
+        if ($activeTrail === null) {
+            $activeTrail = $this->_activeMenuTrail($sorted, $userId, $currentRole)[1];
+        }
+
+        foreach ($sorted as $key => $menu) {
             if (isset($menu['separator'])) {
                 // A submenu is a <div class="dropdown-menu"> of <a>s, so its
                 // divider is a <hr>; the top level is a <ul>, where it has to be
@@ -175,7 +186,7 @@ class CroogoHelper extends Helper
                     : $this->Html->tag('li', '', ['class' => 'nav-item dropdown-divider']);
                 continue;
             }
-            if ($currentRole != 'superadmin' && !$this->Acl->linkIsAllowedByUserId($userId, $menu['url'])) {
+            if (!$this->_adminMenuAllowed($menu, $userId, $currentRole)) {
                 continue;
             }
 
@@ -184,32 +195,40 @@ class CroogoHelper extends Helper
                 $attributes['class'] = Text::slug(strtolower('menu-' . $menu['title']), '-');
             }
 
+            $isActive = $activeTrail && (string)$activeTrail[0] === (string)$key;
+            // Only the sidebar keeps the current branch open: in the top bar an
+            // open dropdown would hang over the page until clicked away.
+            $isOpen = $isActive && $sidebar && count($activeTrail) > 1;
+
             $children = '';
             if (!empty($menu['children'])) {
+                $menuClass = $sidebar ? 'dropdown-menu' : 'dropdown-menu dropdown-menu-end';
                 $children = $this->adminMenus($menu['children'], [
                     'type' => $options['type'],
                     'children' => true,
                     'htmlAttributes' => [
-                        'class' => $sidebar ? 'dropdown-menu' : 'dropdown-menu dropdown-menu-end',
+                        'class' => $isOpen ? $menuClass . ' show' : $menuClass,
                     ],
+                    'activeTrail' => $isActive ? array_slice($activeTrail, 1) : [],
                 ], $depth + 1);
             }
 
-            $isCurrent = $this->Url->build($menu['url']) === env('REQUEST_URI');
-            if ($isCurrent) {
+            if ($isActive) {
                 $attributes['class'] .= ' active';
             }
 
             $attributes['class'] .= $isSubmenu ? ' dropdown-item' : ' nav-link';
             if ($children) {
-                $attributes['class'] .= ' dropdown-toggle';
+                // Bootstrap reads the open state off `.show` on the toggle and
+                // the menu, so a branch rendered open still closes on first click.
+                $attributes['class'] .= ' dropdown-toggle' . ($isOpen ? ' show' : '');
                 $attributes['data-bs-toggle'] = 'dropdown';
                 $attributes['data-bs-auto-close'] = 'outside';
                 $attributes['role'] = 'button';
-                $attributes['aria-expanded'] = 'false';
+                $attributes['aria-expanded'] = $isOpen ? 'true' : 'false';
             }
 
-            $out .= $this->_adminMenuItem($menu, $attributes, $children, $sidebar, $isSubmenu);
+            $out .= $this->_adminMenuItem($menu, $attributes, $children, $sidebar, $isSubmenu, $isActive);
         }
 
         // (string) cast, and an early return for an empty menu: HtmlHelper::tag()
@@ -236,10 +255,17 @@ class CroogoHelper extends Helper
      * @param string $children Rendered submenu, empty when there is none
      * @param bool $sidebar Whether this belongs to the vertical navbar
      * @param bool $isSubmenu Whether this item sits inside a .dropdown-menu
+     * @param bool $isActive Whether this item is the current page or leads to it
      * @return string
      */
-    protected function _adminMenuItem(array $menu, array $attributes, $children, $sidebar, $isSubmenu)
-    {
+    protected function _adminMenuItem(
+        array $menu,
+        array $attributes,
+        $children,
+        $sidebar,
+        $isSubmenu,
+        $isActive = false,
+    ) {
         $title = h($menu['title']);
         if ($sidebar && !$isSubmenu) {
             // `.nav-link-title` is what Tabler hides when the sidebar collapses,
@@ -276,11 +302,125 @@ class CroogoHelper extends Helper
         }
 
         $liClass = 'nav-item';
+        if ($isActive) {
+            // Tabler draws the sidebar's "you are here" bar off `.nav-item.active`.
+            $liClass .= ' active';
+        }
         if ($children) {
             $liClass .= ' dropdown';
         }
 
         return $this->Html->tag('li', $link . $children, ['class' => $liClass]);
+    }
+
+    /**
+     * Whether the current user may see a menu entry.
+     *
+     * @param array $menu The menu item
+     * @param string|int $userId Current user id
+     * @param string|false $currentRole Alias of the current user's role, false when unknown
+     * @return bool
+     */
+    protected function _adminMenuAllowed(array $menu, int|string $userId, string|false $currentRole): bool
+    {
+        return $currentRole == 'superadmin' || $this->Acl->linkIsAllowedByUserId($userId, $menu['url']);
+    }
+
+    /**
+     * Find the menu entry that best stands for the current page.
+     *
+     * An entry with children is a toggle rather than a page, so it only counts
+     * when none of its children match. The best match across the whole tree
+     * wins, so an edit form lights up its controller's list even though no menu
+     * entry links to the form itself, while an exact link (e.g. a filtered list)
+     * still beats the plain list. On a tie the earlier entry, by weight, wins.
+     *
+     * @param array $menus Menu items, already sorted by weight
+     * @param string|int $userId Current user id
+     * @param string|false $currentRole Alias of the current user's role, false when unknown
+     * @return array [score, keys from the top level down to the matched entry]
+     */
+    protected function _activeMenuTrail(array $menus, int|string $userId, string|false $currentRole): array
+    {
+        $best = [0, []];
+        foreach ($menus as $key => $menu) {
+            if (isset($menu['separator']) || !$this->_adminMenuAllowed($menu, $userId, $currentRole)) {
+                continue;
+            }
+            if (!empty($menu['children'])) {
+                $children = Hash::sort($menu['children'], '{s}.weight', 'ASC');
+                [$score, $trail] = $this->_activeMenuTrail($children, $userId, $currentRole);
+                $trail = array_merge([$key], $trail);
+                if (!$score) {
+                    // No child stands for this page, but the toggle's own link
+                    // may - then it is lit without being opened.
+                    $score = $this->_menuMatchScore($menu['url']);
+                    $trail = [$key];
+                }
+            } else {
+                $score = $this->_menuMatchScore($menu['url']);
+                $trail = [$key];
+            }
+            if ($score > $best[0]) {
+                $best = [$score, $trail];
+            }
+        }
+
+        return $best;
+    }
+
+    /**
+     * How closely a menu link matches the current request, 0 for not at all.
+     *
+     * 4 - the very same URL, query string included
+     * 3 - same path, and the link's query is part of the request's
+     *     (a filtered list, viewed on page 2)
+     * 2 - same path, the link has no query (a plain list, paginated or sorted)
+     * 1 - same prefix, plugin and controller (an edit/add form of that list)
+     *
+     * @param array|string $url Menu link
+     * @return int
+     */
+    protected function _menuMatchScore(array|string $url): int
+    {
+        $request = $this->getView()->getRequest();
+        $built = $this->Url->build($url);
+        $requestUri = (string)env('REQUEST_URI');
+        if ($built === $requestUri) {
+            return 4;
+        }
+
+        $builtPath = (string)parse_url($built, PHP_URL_PATH);
+        if ($builtPath !== '' && $builtPath === (string)parse_url($requestUri, PHP_URL_PATH)) {
+            parse_str((string)parse_url($built, PHP_URL_QUERY), $linkQuery);
+            if (!$linkQuery) {
+                return 2;
+            }
+            $requestQuery = $request->getQueryParams();
+            $contained = true;
+            foreach ($linkQuery as $name => $value) {
+                $contained = $contained && ($requestQuery[$name] ?? null) == $value;
+            }
+            if ($contained) {
+                return 3;
+            }
+        }
+
+        if (!is_array($url) || empty($url['controller'])) {
+            return 0;
+        }
+        // A key left out of a URL array is inherited from the current request
+        // when the link is built, so only the keys that are there can differ.
+        foreach (['prefix', 'plugin', 'controller'] as $part) {
+            if (!array_key_exists($part, $url)) {
+                continue;
+            }
+            if (Inflector::camelize((string)$url[$part]) !== Inflector::camelize((string)$request->getParam($part))) {
+                return 0;
+            }
+        }
+
+        return 1;
     }
 
     /**
