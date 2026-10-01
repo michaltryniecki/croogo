@@ -49,6 +49,31 @@ class InstallManager
         'quoteIdentifiers' => false,
     ];
 
+    /**
+     * @var \Croogo\Core\PluginManager
+     */
+    protected $_croogoPlugin;
+
+    /**
+     * Kontroler (ustawiany przez InstallController przy setupAcos)
+     *
+     * @var \Cake\Controller\Controller|null
+     */
+    public $controller;
+
+    public function __construct()
+    {
+        Configure::write('Trackable.Auth.User.id', 1);
+    }
+
+    public static function versionCheck()
+    {
+        return [
+            'php' => version_compare(phpversion(), static::PHP_VERSION, '>='),
+            'cake' => version_compare(Configure::version(), static::CAKE_VERSION, '>='),
+        ];
+    }
+
     protected function _updateDatasourceConfig($path, $field, $value)
     {
         $config = file_get_contents($path);

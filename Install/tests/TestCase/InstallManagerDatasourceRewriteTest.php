@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace Croogo\Install\Test\TestCase;
 
+use Cake\Core\Configure;
 use Croogo\Install\InstallManager;
 use PHPUnit\Framework\TestCase;
-use ReflectionMethod;
+use ReflectionClass;
 
 /**
  * Regression tests for InstallManager::_updateDatasourceConfig().
@@ -95,6 +96,59 @@ PHP;
     }
 
     /**
+     * The class surface itself, not just the datasource rewrite.
+     *
+     * While replacing _updateDatasourceConfig() a helper script cut the region
+     * between the two markers and took five members with it: $defaultConfig,
+     * $_croogoPlugin, $controller, __construct() and versionCheck(). Only the
+     * datasource tests noticed, and they noticed it late — the first symptom was a
+     * TypeError on an install that had nothing to do with config rewriting.
+     *
+     * A whitelist, not a reflection dump: it states what this class owes its callers
+     * and fails the moment one is missing, which is the check that would have caught
+     * the original accident.
+     *
+     * @return void
+     */
+    public function testClassKeepsItsPublicSurface(): void
+    {
+        $manager = new InstallManager();
+
+        foreach (['defaultConfig', 'controller'] as $property) {
+            $this->assertTrue(
+                property_exists($manager, $property),
+                sprintf('InstallManager::$%s must exist', $property),
+            );
+        }
+
+        // Read by _getCroogoPlugin(); a missing declaration is a warning first and a
+        // broken migration run second.
+        $reflection = new ReflectionClass($manager);
+        $this->assertTrue(
+            $reflection->hasProperty('_croogoPlugin'),
+            'InstallManager::$_croogoPlugin is read by _getCroogoPlugin()',
+        );
+
+        // The constructor seeds Trackable.Auth.User.id, which is what keeps
+        // settings.created_by (int NOT NULL) writable during the install.
+        $this->assertTrue(
+            $reflection->getConstructor() !== null,
+            'InstallManager::__construct() seeds Trackable.Auth.User.id',
+        );
+        $this->assertSame(
+            1,
+            Configure::read('Trackable.Auth.User.id'),
+            'the constructor must set Trackable.Auth.User.id to 1',
+        );
+
+        // Public API, called by the installer UI.
+        $this->assertTrue(
+            $reflection->hasMethod('versionCheck'),
+            'InstallManager::versionCheck() is public API',
+        );
+    }
+
+    /**
      * createDatabaseFile() does `$config += $this->defaultConfig` as its very first
      * statement, so the property has to exist on the class.
      *
@@ -143,7 +197,7 @@ PHP;
     protected function rewrite(string $field, string $value): void
     {
         $manager = new InstallManager();
-        $method = new ReflectionMethod($manager, '_updateDatasourceConfig');
+        $method = new \ReflectionMethod($manager, '_updateDatasourceConfig');
         $method->setAccessible(true);
         $method->invoke($manager, $this->path, $field, $value);
     }
