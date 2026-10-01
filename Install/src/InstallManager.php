@@ -24,6 +24,31 @@ class InstallManager
 
     use LogTrait;
 
+    /**
+     * Default configuration
+     *
+     * @var array
+     * @access public
+     */
+    public $defaultConfig = [
+        'name' => 'default',
+        'className' => 'Cake\Database\Connection',
+        'driver' => 'Cake\Database\Driver\Mysql',
+        'persistent' => false,
+        'host' => 'localhost',
+        'username' => 'root',
+        'password' => '',
+        'database' => 'croogo',
+        'port' => null,
+        'schema' => null,
+        'prefix' => null,
+        'encoding' => 'utf8',
+        'timezone' => 'UTC',
+        'cacheMetadata' => true,
+        'log' => false,
+        'quoteIdentifiers' => false,
+    ];
+
     protected function _updateDatasourceConfig($path, $field, $value)
     {
         $config = file_get_contents($path);

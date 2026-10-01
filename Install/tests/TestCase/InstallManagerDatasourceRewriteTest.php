@@ -95,6 +95,45 @@ PHP;
     }
 
     /**
+     * createDatabaseFile() does `$config += $this->defaultConfig` as its very first
+     * statement, so the property has to exist on the class.
+     *
+     * It was dropped by accident while the rewrite method was being replaced, and the
+     * regression was invisible: every test in this file drives
+     * _updateDatasourceConfig() through reflection, and the suite that runs
+     * createDatabaseFile() for real (crm-v2's install smoke test) was not here. The
+     * first symptom was a TypeError, "Unsupported operand types: array + null", on an
+     * otherwise clean install.
+     *
+     * @return void
+     */
+    public function testDefaultConfigPropertyExistsAndIsComplete(): void
+    {
+        $manager = new InstallManager();
+
+        $this->assertTrue(
+            property_exists($manager, 'defaultConfig'),
+            'InstallManager::$defaultConfig is required by createDatabaseFile()',
+        );
+
+        $config = $manager->defaultConfig;
+        $this->assertIsArray($config);
+
+        foreach (['driver', 'host', 'username', 'password', 'database', 'encoding'] as $key) {
+            $this->assertArrayHasKey(
+                $key,
+                $config,
+                "defaultConfig must default `$key`, createDatabaseFile() reads it unconditionally",
+            );
+        }
+
+        // The encoding default is load-bearing: createDatabaseFile() compares it to
+        // 'utf8' to decide whether to switch the connection to utf8mb4. A null there
+        // would silently skip the languages seed that needs 4-byte characters.
+        $this->assertSame('utf8', $config['encoding']);
+    }
+
+    /**
      * Calls the protected method without booting an application.
      *
      * @param string $field The datasource key to rewrite.
