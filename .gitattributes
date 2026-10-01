@@ -1,0 +1,29 @@
+# Normalize text files to LF in the repository.
+* text=auto
+
+# This project is developed on Windows and consumed on Linux. Shell scripts and
+# the files executed inside the container must keep LF in the working tree, or a
+# CRLF shebang makes the kernel look for `/bin/sh\r` ("no such file or directory").
+*.sh            text eol=lf
+bin/cake        text eol=lf
+bin/cake.php    text eol=lf
+Dockerfile      text eol=lf
+docker-compose.yml text eol=lf
+docker/**       text eol=lf
+.htaccess       text eol=lf
+
+# PHP sources are LF. This is not cosmetic: some tests match with anchored
+# multiline patterns, and a stray \r makes `/^...$/m` stop matching.
+*.php           text eol=lf
+*.json          text eol=lf
+*.xml           text eol=lf
+*.xml.dist      text eol=lf
+*.dist          text eol=lf
+*.yml           text eol=lf
+*.md            text eol=lf
+*.neon          text eol=lf
+*.sql           text eol=lf
+
+# Windows-only helpers stay CRLF.
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
