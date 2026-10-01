@@ -100,6 +100,11 @@ class InstallManager
                 $config['port'] = 5432;
             }
         }
+        // MySQL's 'utf8' is the 3-byte utf8mb3: the languages seed carries 4-byte
+        // characters (e.g. Chakma) and fails on it even in a utf8mb4 database.
+        if ($config['driver'] === 'Cake\Database\Driver\Mysql' && $config['encoding'] === 'utf8') {
+            $config['encoding'] = 'utf8mb4';
+        }
 
         ConnectionManager::drop('default');
         ConnectionManager::setConfig('default', $config);

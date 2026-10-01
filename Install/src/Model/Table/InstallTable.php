@@ -41,6 +41,10 @@ class InstallTable extends Table
         $Users->removeBehavior('Cached');
         $Roles = \Cake\ORM\TableRegistry::getTableLocator()->get('Croogo/Users.Roles');
         $Roles->addBehavior('Croogo/Core.Aliasable');
+        // bin/cake install runs in one process: Roles may have been loaded (and its
+        // alias list cached) before the roles seed ran, so byAlias() would miss and
+        // the admin would be saved without a role.
+        $Roles->getBehavior('Aliasable')->reload();
         $Users->getValidator('default')->remove('email')->remove('password');
         $user['name'] = $user['username'];
         $user['email'] = '';

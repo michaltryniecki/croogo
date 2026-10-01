@@ -43,9 +43,10 @@ use Acl\Model\Table\AcosTable;
  */
 class DbAcl implements AclInterface
 {
-    private PermissionsTable $Permission;
-    private ArosTable $Aro;
-    private AcosTable $Aco;
+    // protected (nie private): CachedDbAcl/HabtmDbAcl odwołują się do $this->Permission
+    protected PermissionsTable $Permission;
+    protected ArosTable $Aro;
+    protected AcosTable $Aco;
 
     /**
      * Constructor
