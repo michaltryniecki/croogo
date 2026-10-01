@@ -213,12 +213,13 @@ return [
             'driver' => 'Cake\Database\Driver\Mysql',
             'persistent' => false,
             'host' => 'localhost',
-            /**
-             * CakePHP will use the default DB port based on the driver selected
-             * MySQL on MAMP uses port 8889, MAMP users will want to uncomment
-             * the following line and set the port accordingly
+            /*
+             * Kept as an ACTIVE entry on purpose. The commented-out form the CakePHP
+             * skeleton ships is invisible to the installer's datasource rewrite, which
+             * made this very file unrewritable by InstallManager::createDatabaseFile().
+             * See InstallManager::_updateDatasourceConfig().
              */
-            //'port' => 'nonstandard_port_number',
+            'port' => '3306',
             'username' => 'my_app',
             'password' => 'secret',
             'database' => 'my_app',
@@ -254,7 +255,7 @@ return [
             'driver' => 'Cake\Database\Driver\Mysql',
             'persistent' => false,
             'host' => 'localhost',
-            //'port' => 'nonstandard_port_number',
+            'port' => '3306',
             'username' => 'my_app',
             'password' => 'secret',
             'database' => 'test_myapp',
