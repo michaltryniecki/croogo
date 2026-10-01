@@ -62,6 +62,12 @@
             <!-- odwołuje się do usuniętego pluginu Blocks (fixtura) -->
             <exclude>./Settings/tests/TestCase/Controller/Admin/LanguagesControllerTest.php</exclude>
         </testsuite>
+        <testsuite name="Install">
+            <!-- InstallTest to nieportowany kod 2.x (ClassRegistry, getMock).
+                 Testy instalatora maja byc w pelni zielone. -->
+            <directory>./Install/tests/TestCase</directory>
+            <exclude>./Install/tests/TestCase/Model/InstallTest.php</exclude>
+        </testsuite>
     </testsuites>
 
     <source>

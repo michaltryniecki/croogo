@@ -2,9 +2,16 @@
 // @codingStandardsIgnoreFile
 
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Croogo\Core\PluginManager;
 use Croogo\Core\Test\Fixture\SettingsFixture;
+use Croogo\Install\Test\Fixture\AdminAcosFixture;
+use Croogo\Install\Test\Fixture\AdminArosAcosFixture;
+use Croogo\Install\Test\Fixture\AdminArosFixture;
+use Croogo\Install\Test\Fixture\AdminRolesFixture;
+use Croogo\Install\Test\Fixture\AdminRolesUsersFixture;
+use Croogo\Install\Test\Fixture\AdminUsersFixture;
 
 $findVendor = function () {
     $root = dirname(__DIR__);
@@ -121,6 +128,28 @@ Configure::write('Acl.database', 'default');
 $settingsFixture->create(ConnectionManager::get('default'));
 $settingsFixture->insert(ConnectionManager::get('default'));
 
+/*
+ * `users`, `roles` and `roles_users` have to exist BEFORE the plugins load, not when
+ * a test declares a fixture.
+ *
+ * UsersTable::initialize() attaches TrackableBehavior, whose _hasTrackableFields()
+ * calls $table->hasField('created_by') — that describes the table. Bootstrapping
+ * Croogo/Users therefore dies with "Cannot describe users. It has 0 columns" on a
+ * database that simply has no users table yet. Fixtures are loaded later (in
+ * setUp), so they cannot help here; the settings fixture below is created inline for
+ * exactly the same reason.
+ */
+foreach ([
+    AdminUsersFixture::class,
+    AdminRolesFixture::class,
+    AdminRolesUsersFixture::class,
+    AdminArosFixture::class,
+    AdminArosAcosFixture::class,
+    AdminAcosFixture::class,
+] as $usersSchema) {
+    (new $usersSchema())->create(ConnectionManager::get('default'));
+}
+
 // Cake 5: PluginCollection::findPath wymaga mapy nazwa->sciezka (Configure 'plugins')
 $repoRoot = dirname(__DIR__) . DS;
 Configure::write('plugins', [
@@ -147,5 +176,24 @@ PluginManager::load('Croogo/Settings', ['bootstrap' => true, 'routes' => true]);
 // Dane settings byly potrzebne tylko podczas bootstrapu pluginow (Configure
 // zaladowane). Czyscimy tabele, zeby fixtury testow nie kolidowaly (UNIQUE id).
 ConnectionManager::get('default')->execute('DELETE FROM settings');
+
+/*
+ * Croogo/Users is loaded (no routes) for the Install tests: UsersTable is the table
+ * under test, and InstallTable::addAdminUser() reaches for it through the locator.
+ *
+ * Two prerequisites, both normally satisfied by PluginManager::setup(), which this
+ * bootstrap does not call:
+ *   - Users/config/bootstrap.php merges Configure::read('Croogo.Cache.defaultConfig'),
+ *     which setup() writes and which is null here -> array_merge(null, ...) TypeError;
+ *   - UsersTable::initialize() must have run, or removeBehavior('Cached') throws
+ *     "Unknown object `Cached`" — the installer drops that behavior and the test has
+ *     to reproduce the same call sequence.
+ */
+if (!Plugin::isLoaded('Croogo/Users')) {
+    if (!Configure::read('Croogo.Cache.defaultConfig')) {
+        Configure::write('Croogo.Cache.defaultConfig', ['className' => 'File']);
+    }
+    PluginManager::load('Croogo/Users', ['bootstrap' => true, 'routes' => false]);
+}
 
 class_alias('Croogo\Core\TestSuite\TestCase', 'Croogo\Core\TestSuite\CroogoTestCase');

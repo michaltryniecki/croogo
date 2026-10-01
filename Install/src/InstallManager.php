@@ -24,73 +24,50 @@ class InstallManager
 
     use LogTrait;
 
-    /**
-     * Default configuration
-     *
-     * @var array
-     * @access public
-     */
-    public $defaultConfig = [
-        'name' => 'default',
-        'className' => 'Cake\Database\Connection',
-        'driver' => 'Cake\Database\Driver\Mysql',
-        'persistent' => false,
-        'host' => 'localhost',
-        'username' => 'root',
-        'password' => '',
-        'database' => 'croogo',
-        'port' => null,
-        'schema' => null,
-        'prefix' => null,
-        'encoding' => 'utf8',
-        'timezone' => 'UTC',
-        'cacheMetadata' => true,
-        'log' => false,
-        'quoteIdentifiers' => false,
-    ];
-
-    /**
-     *
-     * @var \Croogo\Core\PluginManager
-     */
-    protected $_croogoPlugin;
-
-    /**
-     * Kontroler (ustawiany przez InstallController przy setupAcos)
-     *
-     * @var \Cake\Controller\Controller|null
-     */
-    public $controller;
-
-    public function __construct()
-    {
-        Configure::write('Trackable.Auth.User.id', 1);
-    }
-
-    public static function versionCheck()
-    {
-        return [
-            'php' => version_compare(phpversion(), static::PHP_VERSION, '>='),
-            'cake' => version_compare(Configure::version(), static::CAKE_VERSION, '>='),
-        ];
-    }
-
     protected function _updateDatasourceConfig($path, $field, $value)
     {
         $config = file_get_contents($path);
-        $config = preg_replace(
-            str_replace('__FIELD__', $field, InstallManager::DATASOURCE_REGEX),
-            '$1' . addslashes($value) . '$2',
-            $config
-        );
+        if ($config === false) {
+            throw new \RuntimeException(sprintf('Could not read %s', $path));
+        }
+
+        $q = preg_quote($field, '#');
+
+        $dsPos = strpos($config, "'Datasources' => [");
+        if ($dsPos === false) {
+            throw new \RuntimeException(sprintf('No Datasources block in %s', $path));
+        }
+        $blockStart = strpos($config, "'default' => [", $dsPos);
+        $blockEnd = strpos($config, "'test' => [", $dsPos);
+        if ($blockStart === false || $blockEnd === false || $blockEnd <= $blockStart) {
+            throw new \RuntimeException(sprintf(
+                'Could not locate the default datasource block in %s',
+                $path,
+            ));
+        }
+
+        $block = substr($config, $blockStart, $blockEnd - $blockStart);
+
+        $pattern = '/^([ \t]*\'' . $q . '\'[ \t]*=>[ \t]*)\'[^\']*\'/m';
+        $replacement = '${1}\'' . addcslashes((string)$value, '\\\'') . '\'';
+
+        $newBlock = preg_replace($pattern, $replacement, $block, 1, $count);
+        if ($newBlock === null || $count !== 1) {
+            throw new \RuntimeException(sprintf(
+                'Could not rewrite datasource field `%s` in %s; the key was not found as an active entry.',
+                $field,
+                $path,
+            ));
+        }
+
+        $updated = substr($config, 0, $blockStart) . $newBlock . substr($config, $blockEnd);
 
         if (function_exists('opcache_reset')) {
             opcache_reset();
         }
 
-        return file_put_contents($path, $config);
+        return file_put_contents($path, $updated);
     }
-
     public function createDatabaseFile($config)
     {
         $config += $this->defaultConfig;

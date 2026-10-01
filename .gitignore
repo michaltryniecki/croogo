@@ -7,6 +7,8 @@ webroot/uploads/
 */config/Migrations/*.lock
 *.bak
 *.swp
+# PHPUnit result cache - run-local state, never committed
+.phpunit.result.cache
 
 # Cake cache
 tmp/
