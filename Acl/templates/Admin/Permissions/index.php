@@ -60,7 +60,7 @@ $this->Js->buffer('AclPermissions.search();');
 <div class="<?= $this->Theme->getCssClass('row') ?>">
     <div class="<?= $this->Theme->getCssClass('columnFull') ?>">
 
-        <form id="permissions-search" class="mb-3" role="search"
+        <form id="permissions-search" class="mb-3 enter-enabled" role="search"
             data-id-label="<?= h(__d('croogo', 'Id')) ?>"
             data-path-label="<?= h(__d('croogo', 'Path')) ?>"
             data-empty="<?= h(__d('croogo', 'No actions match the filter.')) ?>"

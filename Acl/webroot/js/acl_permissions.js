@@ -370,6 +370,8 @@ AclPermissions.search = function() {
     $icon
       .removeClass(Admin.iconClass('check-mark') + ' ' + Admin.iconClass('x-mark'))
       .addClass(Admin.spinnerClass());
+    // before the request: clearing the filter while it runs must still reload the tree
+    toggled = true;
     $.post({
       url: Croogo.basePath + 'admin/acl/permissions/toggle/' + $icon.data('aco_id') + '/' + $icon.data('aro_id') + '/',
       headers: {
@@ -378,7 +380,6 @@ AclPermissions.search = function() {
     })
       .done((html) => {
         $cell.html(html);
-        toggled = true;
       })
       .fail(() => {
         $cell.text(text('error'));
