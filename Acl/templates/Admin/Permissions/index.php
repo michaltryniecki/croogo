@@ -4,7 +4,9 @@ $tabContentClass = $this->Theme->getCssClass('tabContentClass');
 
 $this->extend('Croogo/Core./Common/admin_index');
 
-$this->Croogo->adminScript('Croogo/Acl.acl_permissions');
+// ?<filemtime>: plugin assets are cached for a day without a cache-buster, and a stale copy
+// lacks AclPermissions.search(), which this page calls
+$this->Croogo->adminScript($this->Url->script('Croogo/Acl.acl_permissions', ['timestamp' => 'force']));
 
 $this->Breadcrumbs->add(
     __d('croogo', 'Users'),
@@ -52,10 +54,24 @@ echo $this->Croogo->adminAction(
 $this->end();
 
 $this->Js->buffer('AclPermissions.tabSwitcher();');
+$this->Js->buffer('AclPermissions.search();');
 
 ?>
 <div class="<?= $this->Theme->getCssClass('row') ?>">
     <div class="<?= $this->Theme->getCssClass('columnFull') ?>">
+
+        <form id="permissions-search" class="mb-3" role="search"
+            data-id-label="<?= h(__d('croogo', 'Id')) ?>"
+            data-path-label="<?= h(__d('croogo', 'Path')) ?>"
+            data-empty="<?= h(__d('croogo', 'No actions match the filter.')) ?>"
+            data-count="<?= h(__d('croogo', 'Matching actions: {0}')) ?>"
+            data-truncated="<?= h(__d('croogo', 'Showing {0} of {1} matching actions. Narrow the filter to see the rest.')) ?>"
+            data-error="<?= h(__d('croogo', 'error')) ?>">
+            <input type="search" class="form-control form-control-sm w-50" autocomplete="off"
+                placeholder="<?= h(__d('croogo', 'Filter by action name or path')) ?>"
+                title="<?= h(__d('croogo', 'Every word must appear in the path, for example: orders admin edit')) ?>">
+        </form>
+        <div id="permissions-search-results" class="hidden"></div>
 
         <ul id="permissions-tab" class="nav nav-tabs">
         <?php
@@ -63,7 +79,7 @@ $this->Js->buffer('AclPermissions.tabSwitcher();');
         ?>
         </ul>
 
-        <div class="<?= $tabContentClass ?>">
+        <div id="permissions-tab-content" class="<?= $tabContentClass ?>">
             <?= $this->Croogo->adminTabs() ?>
         </div>
 

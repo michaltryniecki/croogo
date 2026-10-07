@@ -19,6 +19,11 @@ use Croogo\Core\Croogo;
 class PermissionsController extends AppController
 {
 
+    /**
+     * Most leaves a permissions search lists; the rest is only counted
+     */
+    private const SEARCH_LIMIT = 100;
+
     public function initialize(): void
     {
         parent::initialize();
@@ -50,6 +55,16 @@ class PermissionsController extends AppController
      */
     public function index($id = null, $level = null): void
     {
+        // Cake 4: RequestHandler->ext (rozszerzenie URL) usunięte; $.getJSON wysyła
+        // Accept: application/json bez sufiksu .json -> wykrywamy po nagłówku Accept.
+        $isJson = strpos($this->getRequest()->getHeaderLine('Accept'), 'application/json') !== false;
+        $search = trim((string)$this->getRequest()->getQuery('q'));
+        if ($isJson && $search !== '') {
+            $this->_search($search);
+
+            return;
+        }
+
         if ($this->getRequest()->getQuery('root')) {
             $query = strtolower($this->getRequest()->getQuery('root'));
         }
@@ -74,9 +89,6 @@ class PermissionsController extends AppController
         $this->set(compact('acos', 'roles', 'level'));
 
         $aros = $this->Aros->getRoles($roles);
-        // Cake 4: RequestHandler->ext (rozszerzenie URL) usunięte; $.getJSON wysyła
-        // Accept: application/json bez sufiksu .json -> wykrywamy po nagłówku Accept.
-        $isJson = strpos($this->getRequest()->getHeaderLine('Accept'), 'application/json') !== false;
         if ($root && $isJson) {
             $options = array_intersect_key(
                 $this->getRequest()->getQuery(),
@@ -105,6 +117,35 @@ class PermissionsController extends AppController
         } else {
             $this->_setPermissionRoots();
         }
+    }
+
+    /**
+     * JSON for the filter above the permission tabs: the whole tree, not just the loaded level
+     *
+     * @param string $search Search terms
+     * @return void
+     */
+    protected function _search(string $search): void
+    {
+        $roleList = $this->Roles->find('list');
+        $aros = $this->Aros->getRoles($roleList);
+        $found = $this->Acos->searchLeaves($search, self::SEARCH_LIMIT);
+        $verdicts = $this->Permissions->roleVerdicts($found['acos'], $aros);
+
+        $roles = [];
+        foreach ($roleList as $roleId => $title) {
+            $roles[] = ['id' => $roleId, 'title' => $title, 'aroId' => $aros[$roleId] ?? null];
+        }
+        $results = [];
+        foreach ($found['acos'] as $acoId => $path) {
+            $results[] = ['id' => $acoId, 'path' => $path, 'roles' => $verdicts[$acoId] ?? []];
+        }
+        $total = $found['total'];
+
+        $this->set(compact('roles', 'results', 'total'));
+        $this->viewBuilder()->disableAutoLayout();
+        $this->setResponse($this->getResponse()->withType('application/json'));
+        $this->render('json/search');
     }
 
     protected function _setPermissionRoots()
