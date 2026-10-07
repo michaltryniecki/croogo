@@ -66,6 +66,7 @@ $this->Js->buffer('AclPermissions.search();');
             data-empty="<?= h(__d('croogo', 'No actions match the filter.')) ?>"
             data-count="<?= h(__d('croogo', 'Matching actions: {0}')) ?>"
             data-truncated="<?= h(__d('croogo', 'Showing {0} of {1} matching actions. Narrow the filter to see the rest.')) ?>"
+            data-damaged="<?= h(__d('croogo', 'The ACO tree is damaged here (lft/rght do not match parent_id), so a toggle would change another action. Repair the tree first.')) ?>"
             data-error="<?= h(__d('croogo', 'error')) ?>">
             <input type="search" class="form-control form-control-sm w-50" autocomplete="off"
                 placeholder="<?= h(__d('croogo', 'Filter by action name or path')) ?>"

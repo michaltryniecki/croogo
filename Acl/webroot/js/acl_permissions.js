@@ -273,16 +273,18 @@ AclPermissions.search = function() {
     if (!role.aroId) {
       return '<td></td>';
     }
-    let classes = 'permission-toggle ';
+    let classes = 'red ' + Admin.iconClass('x-mark');
     if (role.id == 1) {
-      classes += 'lightgray permission-disabled ' + Admin.iconClass('check-mark');
+      classes = 'lightgray permission-disabled ' + Admin.iconClass('check-mark');
     } else if (result.roles[role.id]) {
-      classes += 'green ' + Admin.iconClass('check-mark');
-    } else {
-      classes += 'red ' + Admin.iconClass('x-mark');
+      classes = 'green ' + Admin.iconClass('check-mark');
+    }
+    if (result.damaged) {
+      // toggle() resolves this row by its lft/rght path, another action's: verdict only
+      return '<td><i class="' + classes + '" title="' + _.escape(text('damaged')) + '"></i></td>';
     }
     return AclPermissions.templates.toggleButton({
-      classes: classes,
+      classes: 'permission-toggle ' + classes,
       aroId: role.aroId,
       acoId: result.id
     });
@@ -303,7 +305,11 @@ AclPermissions.search = function() {
       });
       let rows = '';
       data.results.forEach((result) => {
-        rows += '<tr><td>' + result.id + '</td><td>' + _.escape(result.path) + '</td>';
+        let path = _.escape(result.path);
+        if (result.damaged) {
+          path += ' <i class="text-warning fa fa-exclamation-triangle" title="' + _.escape(text('damaged')) + '"></i>';
+        }
+        rows += '<tr><td>' + result.id + '</td><td>' + path + '</td>';
         data.roles.forEach((role) => {
           rows += roleCell(result, role);
         });

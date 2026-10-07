@@ -138,7 +138,12 @@ class PermissionsController extends AppController
         }
         $results = [];
         foreach ($found['acos'] as $acoId => $path) {
-            $results[] = ['id' => $acoId, 'path' => $path, 'roles' => $verdicts[$acoId] ?? []];
+            $results[] = [
+                'id' => $acoId,
+                'path' => $path,
+                'roles' => $verdicts[$acoId] ?? [],
+                'damaged' => in_array($acoId, $found['damaged'], true),
+            ];
         }
         $total = $found['total'];
 

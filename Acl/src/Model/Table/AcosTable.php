@@ -169,22 +169,24 @@ class AcosTable extends \Acl\Model\Table\AcosTable
      * term of $search, ignoring case and reading `\` in a plugin alias as `/`
      *
      * One query, then the tree is walked in memory: a path query per node costs tens of ms on
-     * the unindexed acos table, too slow for a search box.
+     * the unindexed acos table, too slow for a search box. `damaged` lists the listed leaves
+     * whose lft/rght path differs from that path: toggle() resolves its node by the lft/rght
+     * path, so there it would change another action.
      *
      * @param string $search Search terms
      * @param int $limit Maximum number of leaves listed
-     * @return array{total: int, acos: array<int, string>} The count of all matching leaves, and the first $limit of them in tree order as id => path
+     * @return array{total: int, acos: array<int, string>, damaged: list<int>} The count of all matching leaves, the first $limit of them in tree order as id => path, and which of those are damaged
      */
     public function searchLeaves(string $search, int $limit): array
     {
-        $found = ['total' => 0, 'acos' => []];
+        $found = ['total' => 0, 'acos' => [], 'damaged' => []];
         $terms = preg_split('/\s+/', $this->_searchable($search), -1, PREG_SPLIT_NO_EMPTY);
         if (!$terms) {
             return $found;
         }
 
         $nodes = $this->find()
-            ->select(['id', 'parent_id', 'alias'])
+            ->select(['id', 'parent_id', 'alias', 'lft', 'rght'])
             ->orderByAsc('lft')
             ->disableHydration()
             ->all()
@@ -206,10 +208,50 @@ class AcosTable extends \Acl\Model\Table\AcosTable
             $found['total']++;
             if (count($found['acos']) < $limit) {
                 $found['acos'][$id] = $path;
+                if (!$this->_isNestedSetPath($id, $nodes, $path)) {
+                    $found['damaged'][] = $id;
+                }
             }
         }
 
         return $found;
+    }
+
+    /**
+     * Whether TreeBehavior::findPath() (lft/rght ancestry, ordered by lft) yields $path
+     *
+     * A tie in lft leaves the database order, and so that path, undefined: it counts as a mismatch.
+     *
+     * @param int $id ACO id
+     * @param array $nodes ACO rows keyed by id, with alias, lft and rght
+     * @param string $path The parent_id path of the node
+     * @return bool
+     */
+    protected function _isNestedSetPath(int $id, array $nodes, string $path): bool
+    {
+        $node = $nodes[$id];
+        if ($node['lft'] === null || $node['rght'] === null) {
+            return false;
+        }
+        $ancestors = [];
+        // $nodes come ordered by lft, and no ancestor starts after the node
+        foreach ($nodes as $candidate) {
+            if ($candidate['lft'] > $node['lft']) {
+                break;
+            }
+            if (
+                $candidate['lft'] !== null && $candidate['rght'] !== null
+                && $candidate['lft'] <= $node['lft'] && $candidate['rght'] >= $node['rght']
+            ) {
+                if (isset($ancestors[$candidate['lft']])) {
+                    return false;
+                }
+                $ancestors[$candidate['lft']] = $candidate['alias'];
+            }
+        }
+        ksort($ancestors);
+
+        return implode('/', $ancestors) === $path;
     }
 
     /**
