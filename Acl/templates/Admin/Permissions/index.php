@@ -20,11 +20,16 @@ $toolsButton = $this->Html->link(__d('croogo', 'Tools'), '#', [
         'escape' => false,
     ]);
 
+// Cake 5 drops URL-array keys that are not route elements: a query string goes under '?',
+// or Generate lands on the Actions screen instead of returning here.
+// No Synchronize entry: its `sync` key was dropped the same way, so it only ever generated,
+// and a working one would delete ACO nodes (with their grants) that this app does not load
+// from the database it shares with the legacy app.
 $generateUrl = [
     'plugin' => 'Croogo/Acl',
     'controller' => 'Actions',
     'action' => 'generate',
-    'permissions' => 1,
+    '?' => ['permissions' => 1],
 ];
 $out = $this->Croogo->adminAction(__d('croogo', 'Generate'), $generateUrl, [
         'button' => false,
@@ -33,16 +38,6 @@ $out = $this->Croogo->adminAction(__d('croogo', 'Generate'), $generateUrl, [
         'class' => 'dropdown-item',
         'tooltip' => [
             'data-title' => __d('croogo', 'Create new actions (no removal)'),
-            'data-placement' => 'left',
-        ],
-    ]);
-$out .= $this->Croogo->adminAction(__d('croogo', 'Synchronize'), $generateUrl + ['sync' => 1], [
-        'button' => false,
-        'list' => true,
-        'method' => 'post',
-        'class' => 'dropdown-item',
-        'tooltip' => [
-            'data-title' => __d('croogo', 'Create new & remove orphaned actions'),
             'data-placement' => 'left',
         ],
     ]);
