@@ -23,11 +23,12 @@ $this->append('action-buttons');
         ]
     );
 
+    // Generate returns to this screen: no `permissions` query here, which would send it to
+    // the Permissions screen. No Synchronize entry, for the reason given in Permissions/index.php.
     $generateUrl = [
         'plugin' => 'Croogo/Acl',
         'controller' => 'Actions',
         'action' => 'generate',
-        'permissions' => 1
     ];
     $out = $this->Croogo->adminAction(
         __d('croogo', 'Generate'),
@@ -39,20 +40,6 @@ $this->append('action-buttons');
             'class' => 'dropdown-item',
             'tooltip' => [
                 'data-title' => __d('croogo', 'Create new actions (no removal)'),
-                'data-placement' => 'left',
-            ],
-        ]
-    );
-    $out .= $this->Croogo->adminAction(
-        __d('croogo', 'Synchronize'),
-        $generateUrl + ['sync' => 1],
-        [
-            'button' => false,
-            'list' => true,
-            'method' => 'post',
-            'class' => 'dropdown-item',
-            'tooltip' => [
-                'data-title' => __d('croogo', 'Create new & remove orphaned actions'),
                 'data-placement' => 'left',
             ],
         ]
