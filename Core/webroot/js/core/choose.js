@@ -55,6 +55,10 @@
           plugin.target.data('chooserAttached', true);
         }
 
+        // Keeps paging, sorting and searching inside the modal - see core/modal.js.
+        if (typeof Admin != 'undefined' && Admin.modal && Admin.modal.markRemote) {
+          Admin.modal.markRemote(plugin.modal);
+        }
         plugin.modal
           .find('.modal-title').html($link.data('title')).end()
           .find('.modal-body').html('Loading...');
@@ -63,10 +67,14 @@
             datatype: 'html'
           })
           .done(function (response) {
+            // One item handler per modal, for the chooser that opened it last.
+            // Binding another one on every load made a pick fire chooserSelect
+            // once per earlier load, on every target that ever used this modal.
             plugin.modal
               .find('.modal-body')
               .html(response).end()
-              .on('click', options.itemSelector, function (e) {
+              .off('click.' + pluginName)
+              .on('click.' + pluginName, options.itemSelector, function (e) {
                 e.preventDefault();
                 plugin.target.trigger('chooserSelect', this);
               });

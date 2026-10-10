@@ -18,7 +18,11 @@ foreach ($linkChoosers as $name => $chooser) :
         'data-chooser-target' => $target,
         'data-type' => 'Node',
         'data-attr' => 'rel',
+        // Bootstrap 5 opens the modal from `data-bs-target` only: with just
+        // `data-target` (still read by core/choose.js) the click threw in the
+        // data-api and the chooser loaded into a modal that never showed.
         'data-target' => '#link-chooser',
+        'data-bs-target' => '#link-chooser',
         'data-bs-toggle' => 'modal',
         'data-chooser' => true
     ]);
