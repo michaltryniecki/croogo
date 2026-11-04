@@ -185,13 +185,7 @@ class AcosTable extends \Acl\Model\Table\AcosTable
             return $found;
         }
 
-        $nodes = $this->find()
-            ->select(['id', 'parent_id', 'alias', 'lft', 'rght'])
-            ->orderByAsc('lft')
-            ->disableHydration()
-            ->all()
-            ->indexBy('id')
-            ->toArray();
+        $nodes = $this->_treeNodes();
         $parents = array_flip(array_filter(array_column($nodes, 'parent_id')));
 
         foreach ($nodes as $id => $node) {
@@ -215,6 +209,48 @@ class AcosTable extends \Acl\Model\Table\AcosTable
         }
 
         return $found;
+    }
+
+    /**
+     * The given ACOs whose lft/rght path is not their parent_id path
+     *
+     * The test behind searchLeaves()' `damaged`, shared with the tree view and with
+     * PermissionsTable::togglePermission(), which must refuse exactly what the screen hides.
+     *
+     * @param array<int|string> $ids ACO ids
+     * @return list<int> The damaged ones; an id with no row is left out
+     */
+    public function damagedIds(array $ids): array
+    {
+        if (!$ids) {
+            return [];
+        }
+        $nodes = $this->_treeNodes();
+        $damaged = [];
+        foreach ($ids as $id) {
+            $id = (int)$id;
+            if (isset($nodes[$id]) && !$this->_isNestedSetPath($id, $nodes, $this->_aliasPath($id, $nodes))) {
+                $damaged[] = $id;
+            }
+        }
+
+        return $damaged;
+    }
+
+    /**
+     * All ACO rows with what both paths need, keyed by id in lft order
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    protected function _treeNodes(): array
+    {
+        return $this->find()
+            ->select(['id', 'parent_id', 'alias', 'lft', 'rght'])
+            ->orderByAsc('lft')
+            ->disableHydration()
+            ->all()
+            ->indexBy('id')
+            ->toArray();
     }
 
     /**

@@ -2,7 +2,15 @@
 
 use Cake\Core\Configure;
 
-if ($success == 1) {
+if (!empty($damaged)) {
+    // HTTP 200 like every other outcome: the screen puts this fragment in the cell it clicked
+    $message = __d('croogo', 'The ACO tree is damaged here (lft/rght do not match parent_id), so a toggle would change another action. Repair the tree first.');
+    echo $this->Html->tag('i', '', [
+        'class' => 'text-warning fa fa-exclamation-triangle',
+        'title' => $message,
+        'aria-label' => $message,
+    ]);
+} elseif ($success == 1) {
     if ($permitted == 1) {
         echo $this->Html->icon($this->Theme->getIcon('check-mark'), [
             'class' => 'permission-toggle green',
