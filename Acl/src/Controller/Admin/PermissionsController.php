@@ -186,11 +186,12 @@ class PermissionsController extends AppController
 
         // see if acoId and aroId combination exists
         $aro = $this->Aros->get($aroId);
-        $path = $this->Acos->find('path', for: $acoId);
-        $path = join('/', collection($path)->extract('alias')->toArray());
-
-        $permitted = !$this->Permissions->check(['model' => $aro->model, 'foreign_key' => $aro->foreign_key], $path);
-        $success = $this->Permissions->allow(['model' => $aro->model, 'foreign_key' => $aro->foreign_key], $path, '*', $permitted ? 1 : -1);
+        $aroRef = ['model' => $aro->model, 'foreign_key' => $aro->foreign_key];
+        [
+            'damaged' => $damaged,
+            'success' => $success,
+            'permitted' => $permitted,
+        ] = $this->Permissions->togglePermission((int)$acoId, $aroRef);
         if ($success) {
             $aco = $this->Acos->get($acoId);
             $cacheName = 'permissions_aco_' . $aco->parent_id;
@@ -200,6 +201,6 @@ class PermissionsController extends AppController
 
         $this->viewBuilder()->enableAutoLayout(false);
 
-        $this->set(compact('acoId', 'aroId', 'success', 'permitted'));
+        $this->set(compact('acoId', 'aroId', 'success', 'permitted', 'damaged'));
     }
 }

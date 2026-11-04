@@ -3,6 +3,7 @@
 namespace Croogo\Acl\Model\Table;
 
 use Cake\Cache\Cache;
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 
 /**
@@ -42,6 +43,7 @@ class PermissionsTable extends \Acl\Model\Table\PermissionsTable
         ], $options);
         extract($options);
         $permissions = [];
+        $damaged = array_flip($this->_croogoAcos()->damagedIds(collection($acos)->extract('id')->toList()));
 
         foreach ($acos as $aco) {
             $acoId = $aco->id;
@@ -53,6 +55,7 @@ class PermissionsTable extends \Acl\Model\Table\PermissionsTable
                 // Cake 5.3: metody behaviora na instancji tabeli deprecated
                 'children' => $this->Acos->getBehavior('Tree')->childCount($aco, true),
                 'depth' => substr_count($path, '/'),
+                'damaged' => isset($damaged[$acoId]),
             ];
 
             foreach ($aros as $aroFk => $aroId) {
@@ -71,6 +74,43 @@ class PermissionsTable extends \Acl\Model\Table\PermissionsTable
         }
 
         return $permissions;
+    }
+
+    /**
+     * Flips one role's permission on one ACO, as the toggle on the permissions screen does
+     *
+     * allow() finds its node by the ACO's lft/rght path, so on a damaged ACO
+     * (AcosTable::damagedIds()) it would write on another action, or on none: refused there.
+     *
+     * @param int $acoId ACO id
+     * @param array $aro ARO reference with `model` and `foreign_key`
+     * @return array{damaged: bool, success: bool, permitted: bool} `permitted` is the state written
+     */
+    public function togglePermission(int $acoId, array $aro): array
+    {
+        $result = ['damaged' => false, 'success' => false, 'permitted' => false];
+        $acos = $this->_croogoAcos();
+        if ($acos->damagedIds([$acoId])) {
+            $result['damaged'] = true;
+
+            return $result;
+        }
+
+        $path = join('/', collection($acos->find('path', for: $acoId))->extract('alias')->toArray());
+        $result['permitted'] = !$this->check($aro, $path);
+        $result['success'] = $this->allow($aro, $path, '*', $result['permitted'] ? 1 : -1);
+
+        return $result;
+    }
+
+    /**
+     * Croogo's AcosTable: the `Acos` association targets the plain Acl one, without damagedIds()
+     *
+     * @return \Croogo\Acl\Model\Table\AcosTable
+     */
+    protected function _croogoAcos(): AcosTable
+    {
+        return TableRegistry::getTableLocator()->get('Croogo/Acl.Acos');
     }
 
     /**

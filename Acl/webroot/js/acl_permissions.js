@@ -17,7 +17,7 @@ AclPermissions.templates = {
 <td> \
   <div class="<%= classes %>" data-alias="<%= alias %>" \
     data-level="<%= level %>" data-id="<%= id %>" > \
-  <%= alias %><i class="pull-right icon-none"></i> \
+  <%= alias %><%= marker %><i class="pull-right icon-none"></i> \
   </div> \
 </td>'),
 
@@ -107,6 +107,11 @@ AclPermissions.permissionToggle = function() {
       success: function(data) {
         target.html(data);
         AclPermissions.permissionToggle();
+      },
+      error: function() {
+        // the handler is bound with one(): without this every toggle stays dead until a reload
+        target.text($('#permissions-search').attr('data-error') || 'error');
+        AclPermissions.permissionToggle();
       }
     });
 
@@ -120,6 +125,10 @@ AclPermissions.permissionToggle = function() {
  * @return void
  */
 AclPermissions.tableToggle = function() {
+
+  var damagedText = function() {
+    return $('#permissions-search').attr('data-damaged') || '';
+  };
 
   // create table rows from json
   var renderPermissions = function(data, textStatus) {
@@ -135,9 +144,14 @@ AclPermissions.tableToggle = function() {
         var children = aco['children'];
         var classes = children > 0 ? 'controller perm-expand' : '';
         classes += " level-" + data.level;
+        var marker = '';
+        if (aco['damaged']) {
+          marker = ' <i class="text-warning fa fa-exclamation-triangle" title="' + _.escape(damagedText()) + '"></i>';
+        }
         text += AclPermissions.templates.controllerCell({
           id: acoId,
           alias: alias,
+          marker: marker,
           level: data.level,
           classes: classes.trim()
         });
@@ -185,6 +199,12 @@ AclPermissions.tableToggle = function() {
         } else {
           cell.classes += "red " + Admin.iconClass("x-mark");
         }
+      }
+      if (roles['damaged']) {
+        // toggle() refuses this ACO, as the search hides it: verdict only
+        text += '<td><i class="' + cell.classes.replace('permission-toggle ', '').trim()
+          + '" title="' + _.escape(damagedText()) + '"></i></td>';
+        continue;
       }
       text += AclPermissions.templates.toggleButton(cell);
     }
